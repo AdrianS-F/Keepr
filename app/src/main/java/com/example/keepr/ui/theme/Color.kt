@@ -2,10 +2,16 @@ package com.example.keepr.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// Keepr Color Palette
+val KeeprDark = Color(0xFF1C393B)
+val KeeprTeal = Color(0xFF1A4A47)
+val KeeprMedium = Color(0xFF537D79)
+val KeeprLight = Color(0xFFB5E0BD)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+// Optional supporting colors (you can adjust as needed)
+val KeeprBackground = KeeprDark
+val KeeprSurface = KeeprMedium
+val KeeprPrimary = KeeprTeal
+val KeeprSecondary = KeeprLight
+val KeeprOnPrimary = Color.White
+val KeeprOnBackground = Color.White
