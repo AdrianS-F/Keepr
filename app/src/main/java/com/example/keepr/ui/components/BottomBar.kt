@@ -24,8 +24,8 @@ fun KeeprBottomBar(
             val selected = currentDestination?.hierarchy?.any { it.route == dest.route } == true
             val icon = when (dest) {
                 NavRoute.Collections -> Icons.Filled.Collections
-                NavRoute.add    -> Icons.Filled.FavoriteBorder
-                NavRoute.profile       -> Icons.Filled.QueryStats
+                NavRoute.Add    -> Icons.Filled.FavoriteBorder
+                NavRoute.Profile       -> Icons.Filled.QueryStats
             }
             NavigationBarItem(
                 selected = selected,

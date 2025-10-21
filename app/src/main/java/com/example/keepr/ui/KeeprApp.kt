@@ -27,8 +27,8 @@ fun KeeprApp() {
             startDestination = NavRoute.Collections.route
         ) {
             composable(NavRoute.Collections.route) { CollectionsScreen(padding) }
-            composable(NavRoute.add.route)   { AddScreen(padding) }
-            composable(NavRoute.profile.route)      { ProfileScreen(padding) }
+            composable(NavRoute.Add.route)   { AddScreen(padding) }
+            composable(NavRoute.Profile.route)      { ProfileScreen(padding) }
         }
     }
 }
