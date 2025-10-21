@@ -4,7 +4,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Collections
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.QueryStats
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -25,9 +24,8 @@ fun KeeprBottomBar(
             val selected = currentDestination?.hierarchy?.any { it.route == dest.route } == true
             val icon = when (dest) {
                 NavRoute.Collections -> Icons.Filled.Collections
-                NavRoute.Wishlist    -> Icons.Filled.FavoriteBorder
-                NavRoute.Stats       -> Icons.Filled.QueryStats
-                NavRoute.Settings    -> Icons.Filled.Settings
+                NavRoute.add    -> Icons.Filled.FavoriteBorder
+                NavRoute.profile       -> Icons.Filled.QueryStats
             }
             NavigationBarItem(
                 selected = selected,
