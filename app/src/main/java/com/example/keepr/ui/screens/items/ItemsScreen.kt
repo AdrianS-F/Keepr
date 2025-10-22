@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -48,7 +49,7 @@ fun ItemsScreen(
             horizontalArrangement = Arrangement.Start
         ) {
             IconButton(onClick = onBack) {
-                Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
             Spacer(Modifier.width(8.dp))
             Text("Items", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
@@ -56,20 +57,12 @@ fun ItemsScreen(
 
         Spacer(Modifier.height(12.dp))
 
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedTextField(
-                value = newItemName,
-                onValueChange = { newItemName = it },
-                label = { Text("Add item") },
-                modifier = Modifier.weight(1f)
-            )
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+
             Button(
                 onClick = {
-                    if (newItemName.isNotBlank()) {
-                        vm.addItem(newItemName.trim())
-                        newItemName = ""
-                    }
-                }
+                },
+                modifier = Modifier.fillMaxWidth(0.8f).fillMaxHeight(0.1f)
             ) { Text("Add") }
         }
 

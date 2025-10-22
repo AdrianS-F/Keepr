@@ -8,6 +8,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -28,6 +29,7 @@ fun KeeprBottomBar(
                 NavRoute.Profile       -> Icons.Filled.QueryStats
                 NavRoute.Items -> TODO()
             }
+
             NavigationBarItem(
                 selected = selected,
                 onClick = {
