@@ -21,6 +21,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.keepr.data.ItemEntity
 import com.example.keepr.ui.viewmodel.ItemsViewModel
 import com.example.keepr.ui.viewmodel.ItemsViewModelFactory
@@ -29,7 +31,8 @@ import com.example.keepr.ui.viewmodel.ItemsViewModelFactory
 fun ItemsScreen(
     padding: PaddingValues,
     collectionId: Long,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    navController: NavHostController
 ) {
     val app = LocalContext.current.applicationContext as android.app.Application
     val vm: ItemsViewModel = viewModel(factory = ItemsViewModelFactory(app, collectionId))
@@ -60,7 +63,7 @@ fun ItemsScreen(
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
 
             Button(
-                onClick = {
+                onClick = { navController.navigate("add")
                 },
                 modifier = Modifier.fillMaxWidth(0.8f).fillMaxHeight(0.1f)
             ) { Text("Add") }

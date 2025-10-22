@@ -2,6 +2,7 @@ package com.example.keepr.ui
 
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -28,15 +29,19 @@ fun KeeprApp() {
         NavHost(
             navController = navController,
             startDestination = NavRoute.Collections.route
+
         ) {
             composable(NavRoute.Collections.route) {
                 CollectionsScreen(
                     padding = padding,
                     onOpen = { collectionId ->
                         navController.navigate(NavRoute.Items.makeRoute(collectionId))
+
                     }
                 )
             }
+
+
 
             composable(NavRoute.Add.route)   { AddScreen(padding) }
             composable(NavRoute.Profile.route)      { ProfileScreen(padding) }
@@ -46,8 +51,21 @@ fun KeeprApp() {
                 arguments = listOf(navArgument("collectionId") { type = NavType.LongType })
             ) { entry ->
                 val cid = entry.arguments!!.getLong("collectionId")
-                ItemsScreen(padding = padding, collectionId = cid, onBack = { navController.popBackStack() })
+                ItemsScreen(
+                    padding = padding,
+                    collectionId = cid,
+                    onBack = { navController.popBackStack()},
+                    navController = navController
+                )
             }
+
         }
     }
+
+    LaunchedEffect(navController) {
+        navController.addOnDestinationChangedListener { _, dest, _ ->
+            android.util.Log.d("Nav", "Now at route: ${dest.route}")
+        }
+    }
+
 }
