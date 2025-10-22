@@ -26,6 +26,7 @@ fun KeeprBottomBar(
                 NavRoute.Collections -> Icons.Filled.Collections
                 NavRoute.Add    -> Icons.Filled.FavoriteBorder
                 NavRoute.Profile       -> Icons.Filled.QueryStats
+                NavRoute.Items -> TODO()
             }
             NavigationBarItem(
                 selected = selected,

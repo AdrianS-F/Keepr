@@ -11,18 +11,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.lifecycleScope
 import com.example.keepr.data.KeeprDatabase
 import com.example.keepr.ui.theme.KeeprTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        val db = KeeprDatabase.get(this)
-        com.example.keepr.util.DatabaseUtils.verifyDatabase(this)
-// example: val collectionsDao = db.collectionsDao()
-
-
         super.onCreate(savedInstanceState)
+        lifecycleScope.launch {
+            com.example.keepr.seed.seedDemoIfNeeded(this@MainActivity)
         enableEdgeToEdge()
         setContent {
             KeeprTheme {
@@ -31,6 +30,7 @@ class MainActivity : ComponentActivity() {
         }
 
     }
+
 }
 
 
@@ -49,4 +49,6 @@ fun GreetingPreview() {
     KeeprTheme {
         Greeting("Android")
     }
+}
+
 }
