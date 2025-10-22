@@ -68,12 +68,14 @@ dependencies {
 // Material icons for the bottom bar
     implementation("androidx.compose.material:material-icons-extended")
 
+
+    implementation("androidx.core:core-splashscreen:1.0.1")
+
     // Room
     implementation("androidx.room:room-ktx:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
 
 // Coroutines for async work
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
-
 
 }

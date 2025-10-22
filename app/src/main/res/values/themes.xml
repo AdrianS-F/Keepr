@@ -2,4 +2,14 @@
 <resources>
 
     <style name="Theme.Keepr" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!-- Splashscreen -->
+    <style name="Theme.Keepr.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/keepr_splash_bg</item>
+
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+
+        <item name="postSplashScreenTheme">@style/Theme.Keepr</item>
+    </style>
+
 </resources>

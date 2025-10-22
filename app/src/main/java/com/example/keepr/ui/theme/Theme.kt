@@ -1,6 +1,5 @@
 package com.example.keepr.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -9,35 +8,42 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+// Dark scheme (bruker de mørke grønntonene som bakgrunn/surface)
+private val KeeprDarkColorScheme = darkColorScheme(
+    primary = KeeprTeal,          // #1A4A47 – hovedfarge
+    onPrimary = Color.White,
+    secondary = KeeprMedium,      // #537D79
+    onSecondary = Color.White,
+    tertiary = KeeprLight,        // #B5E0BD – aksent
+    onTertiary = KeeprDark,
+    background = KeeprDark,       // #1C393B
+    onBackground = Color.White,
+    surface = KeeprTeal,          // litt lysere enn bakgrunn for kort/overflater
+    onSurface = Color.White
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
+// Light scheme (lys bakgrunn, brand-farger på primary/secondary)
+private val KeeprLightColorScheme = lightColorScheme(
+    primary = KeeprTeal,          // #1A4A47
     onPrimary = Color.White,
+    secondary = KeeprMedium,      // #537D79
     onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    tertiary = KeeprLight,        // #B5E0BD
+    onTertiary = KeeprDark,
+    background = Color.White,
+    onBackground = KeeprDark,     // #1C393B
+    surface = Color.White,
+    onSurface = KeeprDark
 )
 
 @Composable
 fun KeeprTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    // Sett til false for å sikre at brand-paletten alltid brukes
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -45,9 +51,8 @@ fun KeeprTheme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        darkTheme -> KeeprDarkColorScheme
+        else -> KeeprLightColorScheme
     }
 
     MaterialTheme(
