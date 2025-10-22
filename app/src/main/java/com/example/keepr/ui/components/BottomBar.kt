@@ -21,27 +21,45 @@ fun KeeprBottomBar(
     navController: NavHostController,
     currentDestination: NavDestination?
 ) {
+    // Hardkodet, ikke-null liste: kun hovedruter
+    val tabs: List<NavRoute> = listOf(
+        NavRoute.Collections,
+        NavRoute.Add,
+        NavRoute.Profile
+    )
+
     NavigationBar {
-        NavRoute.bottomDestinations.forEach { dest ->
+        tabs.forEach { dest ->
+            // ekstra belt-and-suspenders guard (skulle aldri skje nå):
+            if (dest == null) return@forEach
+
             val selected = currentDestination?.hierarchy?.any { it.route == dest.route } == true
+
             val icon = when (dest) {
                 NavRoute.Collections -> Icons.Filled.Collections
                 NavRoute.Add         -> Icons.Filled.FavoriteBorder
                 NavRoute.Profile     -> Icons.Filled.QueryStats
                 NavRoute.Items -> TODO()
+                else                 -> Icons.Filled.Collections
+
             }
 
             NavigationBarItem(
                 selected = selected,
+               
                 onClick = {
-                    Log.d("BottomBar", "Tapped: ${dest.route}")
-                    navController.navigate(dest.route) {
-                        // ensure we switch tabs instead of stacking
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = false   // turn OFF for now to avoid restore loops
+                    if (!selected) {                           // don't re-navigate to the same tab
+                        Log.d("BottomBar", "Tapped: ${dest.route}")
+                        navController.navigate(dest.route) {
+                            //  canonical bottom-nav pattern
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = false              // keep OFF until your nav is stable
+                            }
+                            launchSingleTop = true
+                            restoreState = false               // keep OFF to avoid restore loops
                         }
-                        launchSingleTop = true
-                        restoreState = false   // turn OFF for now
+                    }
+                }
                     }
                 },
                 icon = { Icon(icon, contentDescription = dest.label) },

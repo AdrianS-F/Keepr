@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 // TopAppBar er merket eksperimentell
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+
 fun AddScreen(padding: PaddingValues) {
 
     // 1) Hent ViewModel og strøm av collections fra databasen
@@ -227,3 +228,4 @@ fun AddScreen(padding: PaddingValues) {
         )
     }
 }
+
