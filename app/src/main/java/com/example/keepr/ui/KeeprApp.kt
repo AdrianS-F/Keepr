@@ -1,10 +1,12 @@
 package com.example.keepr.ui
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.navigation.NavType
-import androidx.navigation.compose.*
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.keepr.data.SessionManager
 import com.example.keepr.ui.components.KeeprBottomBar
@@ -30,27 +32,18 @@ fun KeeprApp(
     val userId by session.loggedInUserId.collectAsState(initial = null)
     val isLoggedIn = userId != null
 
-    // Rebuild nav-graf når login-status endrer seg, så startDest fungerer.
-    androidx.compose.runtime.key(userId) {
+    // Rebuild nav-graf når login-status endrer seg, så startDest fungerer riktig
+    key(userId) {
         val backStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = backStackEntry?.destination
 
-        // Bottom bar kun på "main"-ruter
-        val mainRoutes = remember {
-            setOf(
-                NavRoute.Collections.route,
-                NavRoute.Add.route,
-                NavRoute.Profile.route,
-                NavRoute.Items.route
-            )
-        }
-        val showBottomBar = when (val route = currentDestination?.route) {
+        // Vis bottom bar kun på hovedrutene (ikke på auth)
+        val showBottomBar = when (currentDestination?.route) {
             NavRoute.Collections.route,
             NavRoute.Add.route,
             NavRoute.Profile.route -> true
             else -> false
         }
-
 
         Scaffold(
             bottomBar = { if (showBottomBar) KeeprBottomBar(navController, currentDestination) }
@@ -61,14 +54,10 @@ fun KeeprApp(
             ) {
                 // ---------- AUTH GRAF ----------
                 composable(ROUTE_SIGNUP) {
-                    // Din SignUpScreen skal kalle vm.signUp { ... } og deretter route videre
                     com.example.keepr.ui.screens.auth.SignUpScreen(
                         vm = authVm,
-                        onGoToSignIn = {
-                            navController.navigate(ROUTE_SIGNIN) { launchSingleTop = true }
-                        },
+                        onGoToSignIn = { navController.navigate(ROUTE_SIGNIN) { launchSingleTop = true } },
                         onSignedIn = {
-                            // Når signup ok -> til hoved-appen
                             navController.navigate(NavRoute.Collections.route) {
                                 popUpTo(ROUTE_SIGNUP) { inclusive = true }
                                 launchSingleTop = true
@@ -98,22 +87,16 @@ fun KeeprApp(
                         }
                     )
                 }
+
                 composable(NavRoute.Add.route) {
                     AddScreen(paddingValues)
                 }
+
                 composable(NavRoute.Profile.route) {
-                    ProfileScreen(
-                        paddingValues,
-                        // Valgfritt: legg til logout her, f.eks. knapp som:
-                        // onLogout = {
-                        //     CoroutineScope(Dispatchers.IO).launch { session.clear() }
-                        //     navController.navigate(ROUTE_SIGNIN) {
-                        //         popUpTo(0) { inclusive = true }
-                        //         launchSingleTop = true
-                        //     }
-                        // }
-                    )
+                    // Legg inn onLogout her når dere ønsker (kall session.clear() og nav til ROUTE_SIGNIN)
+                    ProfileScreen(paddingValues)
                 }
+
                 composable(
                     route = NavRoute.Items.route,
                     arguments = listOf(navArgument("collectionId") { type = NavType.LongType })
