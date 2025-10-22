@@ -1,5 +1,6 @@
 package com.example.keepr.ui.screens.add
 
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,80 +15,84 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.keepr.R
+import com.example.keepr.data.CollectionEntity
+import kotlinx.coroutines.launch
 
-// Denne annotasjonen trengs fordi CenterAlignedTopAppBar er "eksperimentell" kode
+// TopAppBar er merket eksperimentell
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddScreen(padding: PaddingValues) {
 
-    // ----------------------------- //
-    // 🧠 1. STATE (variabler som husker verdier når skjermen oppdateres)
-    // ----------------------------- //
+    // 1) Hent ViewModel og strøm av collections fra databasen
+    val vm: AddViewModel = viewModel()
+    val collections by vm.collections.collectAsState() // oppdaterer UI når DB endres
 
-    // Midlertidig bilde (vi bruker launcher-ikonet som placeholder)
+    // 2) UI-state (det brukeren skriver/velger)
     var selectedImage by remember { mutableStateOf<Int?>(R.drawable.ic_launcher_foreground) }
-
-    // Tekstfeltene for navn og beskrivelse
     var itemName by remember { mutableStateOf(TextFieldValue("")) }
     var itemDescription by remember { mutableStateOf(TextFieldValue("")) }
+    var selectedCollection by remember { mutableStateOf<CollectionEntity?>(null) }
 
-    // Liste over collections (hardkodet for nå – vi later som det kommer fra database)
-    var collections = remember { mutableStateListOf("Clothes", "Books", "Electronics") }
-    var selectedCollection by remember { mutableStateOf(collections.firstOrNull()) }
-
-    // Variabler for "lag ny collection"-dialogen
+    // Dialog for ny collection
     var showDialog by remember { mutableStateOf(false) }
     var newCollectionName by remember { mutableStateOf(TextFieldValue("")) }
 
-    // ----------------------------- //
-    // 🧱 2. UI (alt du ser på skjermen)
-    // ----------------------------- //
+    // Snackbar for synlig tilbakemelding
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    // 3) Når collections kommer fra DB første gang, velg automatisk første
+    LaunchedEffect(collections) {
+        if (selectedCollection == null && collections.isNotEmpty()) {
+            selectedCollection = collections.first()
+        }
+    }
+
+    // Når vi legger til en ny collection, husk navnet og velg den automatisk når DB-oppdateringen kommer
+    var pendingNewCollectionTitle by remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(collections, pendingNewCollectionTitle) {
+        val wanted = pendingNewCollectionTitle
+        if (wanted != null) {
+            val match = collections.find { it.title == wanted }
+            if (match != null) {
+                selectedCollection = match
+                pendingNewCollectionTitle = null // ferdig
+            }
+        }
+    }
 
     Scaffold(
-        // Toppen av skjermen (header med tittel)
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("Add Item") } // viser "Add Item" øverst
-            )
-        },
-        // Hovedinnholdet
+        topBar = { CenterAlignedTopAppBar(title = { Text("Add Item") }) },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }, // <- viser snackbars
         content = { innerPadding ->
             Column(
                 modifier = Modifier
-                    // Padding brukes for å unngå at innholdet havner bak topBar/bottomBar
                     .padding(padding)
                     .padding(innerPadding)
                     .padding(16.dp)
                     .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
-                // ----------------------------- //
-                // 📸 BILDE (placeholder)
-                // ----------------------------- //
+                // 📸 Bilde (placeholder)
                 Box(
                     modifier = Modifier
                         .size(150.dp)
                         .background(Color.LightGray, RoundedCornerShape(12.dp))
                         .clickable {
-                            // Her kan du senere legge til bildevelger (kamera / galleri)
+                            // TODO: legg til galleri/kamera senere
                         },
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
-                        painter = painterResource(
-                            id = selectedImage ?: R.drawable.ic_launcher_foreground
-                        ),
+                        painter = painterResource(id = selectedImage ?: R.drawable.ic_launcher_foreground),
                         contentDescription = "Selected Image",
                         modifier = Modifier.size(100.dp)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(Modifier.height(20.dp))
 
-                // ----------------------------- //
-                // 🏷️ TEKSTFELT FOR ITEM NAVN
-                // ----------------------------- //
+                // 🏷️ Navn
                 OutlinedTextField(
                     value = itemName,
                     onValueChange = { itemName = it },
@@ -95,11 +100,9 @@ fun AddScreen(padding: PaddingValues) {
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(Modifier.height(12.dp))
 
-                // ----------------------------- //
-                // ✍️ TEKSTFELT FOR BESKRIVELSE
-                // ----------------------------- //
+                // ✍️ Beskrivelse
                 OutlinedTextField(
                     value = itemDescription,
                     onValueChange = { itemDescription = it },
@@ -107,63 +110,80 @@ fun AddScreen(padding: PaddingValues) {
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(Modifier.height(12.dp))
 
-                // ----------------------------- //
-                // 📂 DROPDOWN FOR COLLECTIONS
-                // ----------------------------- //
+                // 📂 Collection dropdown
                 Text(text = "Collection:", style = MaterialTheme.typography.labelLarge)
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(Modifier.height(4.dp))
 
-                var expanded by remember { mutableStateOf(false) } // om menyen er åpen
+                var expanded by remember { mutableStateOf(false) }
 
                 Box {
-                    // Knapp som åpner menyen
-                    OutlinedButton(onClick = { expanded = true }) {
-                        Text(selectedCollection ?: "Select collection")
+                    OutlinedButton(
+                        onClick = { expanded = true },
+                        enabled = collections.isNotEmpty() // grå ut hvis ingen finnes enda
+                    ) {
+                        Text(selectedCollection?.title ?: "No collections")
                     }
 
-                    // Selve menyen
                     DropdownMenu(
                         expanded = expanded,
                         onDismissRequest = { expanded = false }
                     ) {
-                        // For hver collection i listen
-                        collections.forEach { collection ->
+                        collections.forEach { c ->
                             DropdownMenuItem(
-                                text = { Text(collection) },
+                                text = { Text(c.title) },
                                 onClick = {
-                                    selectedCollection = collection
-                                    expanded = false // lukker menyen
+                                    selectedCollection = c
+                                    expanded = false
                                 }
                             )
                         }
-
-                        // Linje og valget for "ny collection"
                         Divider()
                         DropdownMenuItem(
                             text = { Text("➕ New collection") },
                             onClick = {
                                 expanded = false
-                                showDialog = true // viser dialogen under
+                                showDialog = true
                             }
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(Modifier.height(30.dp))
 
-                // ----------------------------- //
-                // 💾 "SAVE ITEM" KNAPP
-                // ----------------------------- //
+                // 💾 Lagre item i DB
                 Button(
                     onClick = {
-                        // Foreløpig bare print til loggen
-                        println(
-                            "Item saved: ${itemName.text} (${itemDescription.text}) in $selectedCollection"
-                        )
+                        when {
+                            itemName.text.isBlank() -> {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar("Please enter an item name.")
+                                }
+                            }
+                            selectedCollection == null -> {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar("Please select or create a collection.")
+                                }
+                            }
+                            else -> {
+                                // Kall VM for å lagre i databasen
+                                vm.addItem(
+                                    collectionId = selectedCollection!!.collectionId,
+                                    itemName = itemName.text,
+                                    description = itemDescription.text,
+                                    imgUri = null // legg til når bildevalg er klart
+                                )
 
-                        // Senere kan du lagre i databasen her
+                                // Tøm felter + vis snackbar
+                                itemName = TextFieldValue("")
+                                itemDescription = TextFieldValue("")
+                                scope.launch {
+                                    snackbarHostState.showSnackbar("Saved '${selectedCollection!!.title}': ${itemName.text.ifBlank { "New item" }}")
+                                    // NB: vi kunne navigert tilbake her hvis dere ønsker
+                                }
+                            }
+                        }
                     },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp)
@@ -174,9 +194,7 @@ fun AddScreen(padding: PaddingValues) {
         }
     )
 
-    // ----------------------------- //
-    // 🪣 DIALOG: LEGG TIL NY COLLECTION
-    // ----------------------------- //
+    // 🪣 Dialog: lag ny collection
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
@@ -190,12 +208,13 @@ fun AddScreen(padding: PaddingValues) {
             },
             confirmButton = {
                 TextButton(onClick = {
-                    // Legger til ny collection hvis tekstfeltet ikke er tomt
-                    if (newCollectionName.text.isNotBlank()) {
-                        collections.add(newCollectionName.text)
-                        selectedCollection = newCollectionName.text
+                    val title = newCollectionName.text.trim()
+                    if (title.isNotEmpty()) {
+                        // Be VM legge til i DB
+                        vm.addCollection(title)
+                        // Marker at vi ønsker å auto-velge denne når DB/Flow oppdateres
+                        pendingNewCollectionTitle = title
                     }
-                    // Nullstill og lukk dialog
                     newCollectionName = TextFieldValue("")
                     showDialog = false
                 }) {
@@ -203,9 +222,7 @@ fun AddScreen(padding: PaddingValues) {
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showDialog = false }) {
-                    Text("Cancel")
-                }
+                TextButton(onClick = { showDialog = false }) { Text("Cancel") }
             }
         )
     }
