@@ -8,6 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun AddScreen(padding: PaddingValues) {
-    Text("Add", modifier = Modifier.padding(padding).padding(16.dp))
+fun AddScreen() {
+    androidx.compose.material3.Text("Add")
 }

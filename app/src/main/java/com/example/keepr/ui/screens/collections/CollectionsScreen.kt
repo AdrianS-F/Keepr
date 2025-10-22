@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.PaddingValues
 
 @Composable
-fun CollectionsScreen(padding: PaddingValues) {
-    Text("Collections", modifier = Modifier.padding(padding).padding(16.dp))
+fun CollectionsScreen() {
+    // midlertidig innhold – bare så det kompilerer
+    androidx.compose.material3.Text("Collections")
 }
