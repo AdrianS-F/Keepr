@@ -2,11 +2,11 @@ package com.example.keepr.ui.navigation
 
 sealed class NavRoute(val route: String, val label: String) {
     data object Collections : NavRoute("collections", "Collections")
-    data object Wishlist   : NavRoute("wishlist",   "Wishlist")
-    data object Stats      : NavRoute("stats",      "Stats")
-    data object Settings   : NavRoute("settings",   "Settings")
+    data object add   : NavRoute("add",   "add")
+    data object profile      : NavRoute("profile",      "profile")
+
 
     companion object {
-        val bottomDestinations = listOf(Collections, Wishlist, Stats, Settings)
+        val bottomDestinations = listOf(Collections, add, profile, )
     }
 }

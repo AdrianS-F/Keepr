@@ -10,9 +10,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.keepr.ui.components.KeeprBottomBar
 import com.example.keepr.ui.navigation.NavRoute
 import com.example.keepr.ui.screens.collections.CollectionsScreen
-import com.example.keepr.ui.screens.settings.SettingsScreen
-import com.example.keepr.ui.screens.stats.StatsScreen
-import com.example.keepr.ui.screens.wishlist.WishlistScreen
+import com.example.keepr.ui.screens.add.AddScreen
+import com.example.keepr.ui.screens.profile.ProfileScreen
 
 @Composable
 fun KeeprApp() {
@@ -28,9 +27,8 @@ fun KeeprApp() {
             startDestination = NavRoute.Collections.route
         ) {
             composable(NavRoute.Collections.route) { CollectionsScreen(padding) }
-            composable(NavRoute.Wishlist.route)   { WishlistScreen(padding) }
-            composable(NavRoute.Stats.route)      { StatsScreen(padding) }
-            composable(NavRoute.Settings.route)   { SettingsScreen(padding) }
+            composable(NavRoute.add.route)   { AddScreen(padding) }
+            composable(NavRoute.profile.route)      { ProfileScreen(padding) }
         }
     }
 }

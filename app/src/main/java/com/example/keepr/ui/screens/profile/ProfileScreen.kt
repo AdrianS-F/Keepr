@@ -1,4 +1,4 @@
-package com.example.keepr.ui.screens.stats
+package com.example.keepr.ui.screens.profile
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -8,6 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun StatsScreen(padding: PaddingValues) {
-    Text("Stats", modifier = Modifier.padding(padding).padding(16.dp))
+fun ProfileScreen(padding: PaddingValues) {
+    Text("Profile", modifier = Modifier.padding(padding).padding(16.dp))
 }
