@@ -1,5 +1,6 @@
 package com.example.keepr.ui.components
 
+import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Collections
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -11,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.example.keepr.ui.navigation.NavRoute
 
@@ -37,18 +39,27 @@ fun KeeprBottomBar(
                 NavRoute.Collections -> Icons.Filled.Collections
                 NavRoute.Add         -> Icons.Filled.FavoriteBorder
                 NavRoute.Profile     -> Icons.Filled.QueryStats
+                NavRoute.Items -> TODO()
                 else                 -> Icons.Filled.Collections
+
             }
 
             NavigationBarItem(
                 selected = selected,
+               
                 onClick = {
-                    if (!selected) {
+                    if (!selected) {                           // don't re-navigate to the same tab
+                        Log.d("BottomBar", "Tapped: ${dest.route}")
                         navController.navigate(dest.route) {
-                            popUpTo(navController.graph.startDestinationId) { saveState = true }
+                            //  canonical bottom-nav pattern
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = false              // keep OFF until your nav is stable
+                            }
                             launchSingleTop = true
-                            restoreState = true
+                            restoreState = false               // keep OFF to avoid restore loops
                         }
+                    }
+                }
                     }
                 },
                 icon = { Icon(icon, contentDescription = dest.label) },
