@@ -24,65 +24,64 @@ import androidx.compose.animation.animateColorAsState
 import com.example.keepr.R
 
 @Composable
-fun ProfileScreen() {
-    // Paletten deres
-    val greenDark = colorResource(R.color.keepr_primary)          // #1A4A47
-    val greenMid  = Color(0xFF537D79)                             // mellomgrønn (lysere)
-    val greenLight = Color(0xFFB5E0BD)                            // lys grønn (brukes lite)
+fun ProfileScreen(
+    onLogout: () -> Unit // 👈 NY
+) {
+    val greenDark = colorResource(R.color.keepr_primary) // #1A4A47
+    val greenMid  = Color(0xFF537D79)
+    val greenLight = Color(0xFFB5E0BD)
     val headerHeight = 120.dp
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(greenDark) // 👈 hele siden grønn
+            .background(greenDark)
     ) {
-
-        // Innhold som scroller – over den grønne bakgrunnen
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(top = headerHeight, bottom = 24.dp)
         ) {
-            // “Profil-kort” (helt enkelt)
             item {
                 Column(
                     Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp, vertical = 16.dp)
                 ) {
-                    Text(
-                        "Sharu",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
+                    Text("Sharu", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White)
                     Spacer(Modifier.height(4.dp))
                     Text("2 samlinger", color = Color(0xFFE6E6E6))
                 }
                 Divider(color = Color.White.copy(alpha = 0.12f))
             }
 
-            // Menyrader – trykk endrer bakgrunn til lysere grønn
-            items(5) { idx ->
-                val label = listOf(
-                    "Endre profilbilde",
-                    "Endre navn",
-                    "Endre språk",
-                    "Logg ut",
-                    "Slett bruker"
-                )[idx]
+            val labels = listOf(
+                "Endre profilbilde",
+                "Endre navn",
+                "Endre språk",
+                "Logg ut",
+                "Slett bruker"
+            )
+
+            items(labels.size) { idx ->
+                val label = labels[idx]
 
                 ProfileOptionRow(
                     text = label,
-                    normalBg = Color.Transparent,           // normal: transparent mot grønn bakgrunn
-                    pressedBg = greenMid.copy(alpha = 0.35f), // trykk: lysere grønn
-                    textColor = if (label == "Slett bruker") Color(0xFFFFC7C7) else Color.White
+                    normalBg = Color.Transparent,
+                    pressedBg = greenMid.copy(alpha = 0.35f),
+                    textColor = if (label == "Slett bruker") Color(0xFFFFC7C7) else Color.White,
+                    onClick = {
+                        when (label) {
+                            "Logg ut" -> onLogout() // 👈 KALLER callbacken
+                            // TODO: håndter andre valg senere
+                        }
+                    }
                 )
 
                 Divider(color = Color.White.copy(alpha = 0.08f))
             }
         }
 
-        // Fast grønn header (samme grønn – ligger over alt annet)
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
@@ -93,27 +92,19 @@ fun ProfileScreen() {
             shadowElevation = 0.dp
         ) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(
-                    "Profil",
-                    color = Color.White,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
+                Text("Profil", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
             }
         }
     }
 }
 
-/**
- * Enkel rad som skifter bakgrunnsfarge når du trykker/holder inne.
- * Ingen avanserte greier – bare InteractionSource + animateColorAsState.
- */
 @Composable
 private fun ProfileOptionRow(
     text: String,
     normalBg: Color,
     pressedBg: Color,
-    textColor: Color
+    textColor: Color,
+    onClick: (() -> Unit)? = null // 👈 NY
 ) {
     val interaction = remember { MutableInteractionSource() }
     val pressed = interaction.collectIsPressedAsState()
@@ -126,17 +117,11 @@ private fun ProfileOptionRow(
             .background(bg.value, RoundedCornerShape(10.dp))
             .clickable(
                 interactionSource = interaction,
-                indication = null // ingen ripple – bare fargeskifte
-            ) { /* TODO: legg inn action senere */ }
+                indication = null
+            ) { onClick?.invoke() } // 👈 NY
             .padding(horizontal = 12.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyLarge,
-            color = textColor
-        )
+        Text(text = text, style = MaterialTheme.typography.bodyLarge, color = textColor)
     }
 }
-
-
