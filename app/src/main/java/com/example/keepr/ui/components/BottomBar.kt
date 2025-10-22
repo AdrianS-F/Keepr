@@ -19,22 +19,36 @@ fun KeeprBottomBar(
     navController: NavHostController,
     currentDestination: NavDestination?
 ) {
+    // Hardkodet, ikke-null liste: kun hovedruter
+    val tabs: List<NavRoute> = listOf(
+        NavRoute.Collections,
+        NavRoute.Add,
+        NavRoute.Profile
+    )
+
     NavigationBar {
-        NavRoute.bottomDestinations.forEach { dest ->
+        tabs.forEach { dest ->
+            // ekstra belt-and-suspenders guard (skulle aldri skje nå):
+            if (dest == null) return@forEach
+
             val selected = currentDestination?.hierarchy?.any { it.route == dest.route } == true
+
             val icon = when (dest) {
                 NavRoute.Collections -> Icons.Filled.Collections
-                NavRoute.Add    -> Icons.Filled.FavoriteBorder
-                NavRoute.Profile       -> Icons.Filled.QueryStats
-                NavRoute.Items -> TODO()
+                NavRoute.Add         -> Icons.Filled.FavoriteBorder
+                NavRoute.Profile     -> Icons.Filled.QueryStats
+                else                 -> Icons.Filled.Collections
             }
+
             NavigationBarItem(
                 selected = selected,
                 onClick = {
-                    navController.navigate(dest.route) {
-                        popUpTo(navController.graph.startDestinationId) { saveState = true }
-                        launchSingleTop = true
-                        restoreState = true
+                    if (!selected) {
+                        navController.navigate(dest.route) {
+                            popUpTo(navController.graph.startDestinationId) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
                 },
                 icon = { Icon(icon, contentDescription = dest.label) },

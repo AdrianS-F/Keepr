@@ -26,7 +26,10 @@ suspend fun seedDemoIfNeeded(appContext: Context) {
             email = "demo@keepr.app",
             firstName = "Demo",
             lastName = "User",
-            password = "HASH_OR_TEMP"
+            passwordHash = at.favre.lib.crypto.bcrypt.BCrypt
+                .withDefaults()
+                .hashToString(12, "demo123".toCharArray())
+
         )
     )
 
