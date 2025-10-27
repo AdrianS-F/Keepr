@@ -10,6 +10,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -25,6 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.keepr.data.ItemEntity
+import com.example.keepr.ui.navigation.NavRoute
 import com.example.keepr.ui.viewmodel.ItemsViewModel
 import com.example.keepr.ui.viewmodel.ItemsViewModelFactory
 
@@ -43,29 +45,23 @@ fun ItemsScreen(
         modifier = Modifier
             .padding(padding)
             .fillMaxSize()
+            .padding(16.dp)
     ) {
-        // content layer (header + list)
-        Column(Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp),
-                horizontalArrangement = Arrangement.Start
-            ) {
+        // CONTENT
+        Column(Modifier.fillMaxSize()) {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
                 IconButton(onClick = onBack) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
                 Spacer(Modifier.width(8.dp))
                 Text("Items", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
             }
-
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(12.dp))
 
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 88.dp), // keep last row visible under the FAB
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(bottom = 88.dp)
             ) {
                 items(items, key = { it.itemId }) { item ->
                     ItemRow(
@@ -77,12 +73,12 @@ fun ItemsScreen(
             }
         }
 
-        // floating action button layer
-        androidx.compose.material3.FloatingActionButton(
-            onClick = { navController.navigate("add") }, // or NavRoute.Add.route
+        // FAB
+        FloatingActionButton(
+            onClick = { navController.navigate(NavRoute.Add.route) }, // or open inline add
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(16.dp),
+                .padding(end = 16.dp, bottom = 16.dp + padding.calculateBottomPadding()),
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary
         ) {
@@ -94,6 +90,7 @@ fun ItemsScreen(
         }
     }
 }
+
 
 
 
