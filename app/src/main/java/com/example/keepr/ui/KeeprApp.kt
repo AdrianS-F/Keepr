@@ -85,6 +85,9 @@ fun KeeprApp(
                     padding = paddingValues,
                     onOpen = { collectionId ->
                         navController.navigate(NavRoute.Items.makeRoute(collectionId))
+                    },
+                    onAdd = {
+                        navController.navigate(NavRoute.Add.route)
                     }
                 )
             }

@@ -5,11 +5,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -21,26 +27,50 @@ import com.example.keepr.ui.viewmodel.CollectionsViewModel
 @Composable
 fun CollectionsScreen(
     padding: PaddingValues,
-    onOpen: (Long) -> Unit
+    onOpen: (Long) -> Unit,
+    onAdd:() -> Unit
 ) {
     val vm: CollectionsViewModel = viewModel()
     val collections by vm.collections.collectAsState()
 
     Column(Modifier.padding(padding).fillMaxSize().padding(16.dp)) {
+
+
         Text("Your Collections", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
         Spacer(Modifier.height(12.dp))
         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+
             items(collections) { row ->
                 CollectionCard(row, onClick = { onOpen(row.collection.collectionId) })
+
             }
+
+        }
+
+        FloatingActionButton(
+            onClick = onAdd,
+            modifier = Modifier
+                .align(Alignment.End)
+                .padding(16.dp),
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.Add,
+                contentDescription = "Add",
+                modifier = Modifier.size(28.dp)
+            )
         }
     }
+
 }
+
+
 
 @Composable
 private fun CollectionCard(row: CollectionWithCount, onClick: () -> Unit) {
     Card(
-        Modifier.fillMaxWidth().clickable(onClick = onClick),  // NEW
+        Modifier.fillMaxWidth().clickable(onClick = onClick),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
     ) {
         Column(Modifier.padding(16.dp)) {
