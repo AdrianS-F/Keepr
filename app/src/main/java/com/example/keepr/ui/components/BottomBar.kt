@@ -30,7 +30,7 @@ fun KeeprBottomBar(
 
     NavigationBar {
         tabs.forEach { dest ->
-            // ekstra belt-and-suspenders guard (skulle aldri skje nå):
+            // ekstra belt-and-suspenders guard (skulle aldri skje nÃ¥):
             if (dest == null) return@forEach
 
             val selected = currentDestination?.hierarchy?.any { it.route == dest.route } == true
@@ -46,7 +46,7 @@ fun KeeprBottomBar(
 
             NavigationBarItem(
                 selected = selected,
-               
+
                 onClick = {
                     if (!selected) {                           // don't re-navigate to the same tab
                         Log.d("BottomBar", "Tapped: ${dest.route}")
@@ -58,8 +58,6 @@ fun KeeprBottomBar(
                             launchSingleTop = true
                             restoreState = false               // keep OFF to avoid restore loops
                         }
-                    }
-                }
                     }
                 },
                 icon = { Icon(icon, contentDescription = dest.label) },
