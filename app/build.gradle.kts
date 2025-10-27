@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.devtools.ksp") version "2.0.21-1.0.25"
 }
 
 android {
@@ -36,6 +37,7 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
     buildFeatures {
         compose = true
     }
@@ -67,6 +69,21 @@ dependencies {
 // Material icons for the bottom bar
     implementation("androidx.compose.material:material-icons-extended")
 
+    // Splashscreen
     implementation("androidx.core:core-splashscreen:1.0.1")
+
+    // Room
+    implementation("androidx.room:room-ktx:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
+
+// Coroutines for async work
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
+
+    // DataStore for å huske innlogget bruker
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+
+// BCrypt for sikker hashing av passord
+    implementation("at.favre.lib:bcrypt:0.10.2")
+
 
 }

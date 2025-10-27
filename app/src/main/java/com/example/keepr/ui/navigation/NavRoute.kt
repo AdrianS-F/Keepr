@@ -1,12 +1,21 @@
 package com.example.keepr.ui.navigation
 
-sealed class NavRoute(val route: String, val label: String) {
-    data object Collections : NavRoute("collections", "Collections")
-    data object add   : NavRoute("add",   "add")
-    data object profile      : NavRoute("profile",      "profile")
 
+sealed class NavRoute(val route: String, val label: String) {
+    data object Collections : NavRoute(route = "collections", label = "Collections")
+    data object Add        : NavRoute(route = "add",         label = "Add")
+    data object Profile    : NavRoute(route = "profile",     label = "Profile")
+    data object Items      : NavRoute(route = "items/{collectionId}", label = "Items") {
+        fun makeRoute(collectionId: Long) = "items/$collectionId"
+    }
+
+    // Auth-ruter – label brukes ikke i bottom bar, men må oppgis
+    data object SignUp     : NavRoute(route = "signup",  label = "Sign up")
+    data object SignIn     : NavRoute(route = "signin",  label = "Sign in")
 
     companion object {
-        val bottomDestinations = listOf(Collections, add, profile, )
+        // Bottom bar skal bare vise hovedruter, ikke auth
+        val bottomDestinations: List<NavRoute> =
+            listOf(Collections, Add, Profile)
     }
 }
