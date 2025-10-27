@@ -14,6 +14,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.keepr.data.CollectionWithCount
 import com.example.keepr.ui.viewmodel.CollectionsViewModel
+import androidx.compose.ui.res.stringResource
+import com.example.keepr.R
 
 @Composable
 fun CollectionsScreen(
@@ -24,7 +26,12 @@ fun CollectionsScreen(
     val collections by vm.collections.collectAsState()
 
     Column(Modifier.padding(padding).fillMaxSize().padding(16.dp)) {
-        Text("Your Collections", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
+        Text(
+            stringResource(R.string.collections_title),
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.SemiBold
+        )
+
         Spacer(Modifier.height(12.dp))
         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(collections) { row ->
@@ -46,7 +53,10 @@ private fun CollectionCard(row: CollectionWithCount, onClick: () -> Unit) {
                 Text(row.collection.description!!, style = MaterialTheme.typography.bodyMedium)
             }
             Spacer(Modifier.height(8.dp))
-            Text("${row.itemCount} item(s)", style = MaterialTheme.typography.bodySmall)
+            Text(
+                stringResource(R.string.collections_items, row.itemCount),
+                style = MaterialTheme.typography.bodySmall
+            )
         }
     }
 }

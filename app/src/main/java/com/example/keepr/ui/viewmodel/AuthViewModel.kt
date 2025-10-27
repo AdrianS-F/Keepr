@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+
 data class AuthUiState(
     val email: String = "",
     val password: String = "",
@@ -36,7 +37,7 @@ class AuthViewModel(
     fun signUp(onSuccess: () -> Unit) = viewModelScope.launch {
         val s = _state.value
         if (s.password != s.repeatPassword) {
-            _state.value = s.copy(error = "Passordene er ikke like.")
+            _state.value = s.copy(error = "PASSWORDS_MISMATCH")
             return@launch
         }
         _state.value = s.copy(loading = true, error = null)
@@ -46,7 +47,7 @@ class AuthViewModel(
             session.setLoggedIn(userId)   // 🔗 KOBLINGEN: marker innlogget
             onSuccess()
         }.onFailure { e ->
-            _state.value = _state.value.copy(error = e.message ?: "Noe gikk galt.")
+            _state.value = _state.value.copy(error = "GENERIC_ERROR")
         }
     }
 
@@ -59,7 +60,7 @@ class AuthViewModel(
             session.setLoggedIn(user.userId) // 🔗 KOBLINGEN
             onSuccess()
         }.onFailure { e ->
-            _state.value = _state.value.copy(error = e.message ?: "Feil e-post eller passord.")
+            _state.value = _state.value.copy(error = "WRONG_CREDENTIALS")
         }
     }
 }

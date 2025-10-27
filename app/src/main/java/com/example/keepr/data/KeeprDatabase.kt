@@ -10,16 +10,19 @@ import androidx.room.RoomDatabase
         UserEntity::class,
         CollectionEntity::class,
         ItemEntity::class,
-        ProfileEntity::class
+        ProfileEntity::class,
+        SettingsEntity::class
+
     ],
-    version = 1,
-    exportSchema = true
+    version = 2,
+    exportSchema = false
 )
 abstract class KeeprDatabase : RoomDatabase() {
     abstract fun usersDao(): UsersDao
     abstract fun collectionsDao(): CollectionsDao
     abstract fun itemsDao(): ItemsDao
     abstract fun profileDao(): ProfileDao
+    abstract fun settingsDao(): SettingsDao
 
     companion object {
         @Volatile private var INSTANCE: KeeprDatabase? = null
@@ -27,6 +30,8 @@ abstract class KeeprDatabase : RoomDatabase() {
         fun get(context: Context): KeeprDatabase =
             INSTANCE ?: synchronized(this) {
                 Room.databaseBuilder(context.applicationContext, KeeprDatabase::class.java, "keepr.db")
+                    .fallbackToDestructiveMigration()
+                    .allowMainThreadQueries()
                     .build()
                     .also { INSTANCE = it }
             }
