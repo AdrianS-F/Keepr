@@ -20,6 +20,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
@@ -32,8 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.keepr.data.CollectionWithCount
 import com.example.keepr.ui.viewmodel.CollectionsViewModel
-import androidx.compose.ui.res.stringResource
-import com.example.keepr.R
+import com.example.keepr.ui.viewmodel.AddResult
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -67,7 +70,8 @@ fun CollectionsScreen(
 
     var pendingNewCollectionTitle by remember { mutableStateOf<String?>(null) }
 
-
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(collections, pendingNewCollectionTitle) {
         val wanted = pendingNewCollectionTitle
@@ -81,12 +85,16 @@ fun CollectionsScreen(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .padding(padding)
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .padding(padding)
+                .padding(innerPadding)      // ✅ add Scaffold padding
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
         Column(Modifier.fillMaxSize()) {
             Text(
                 "Your Collections",
@@ -148,8 +156,6 @@ fun CollectionsScreen(
         }
 
 
-
-
         FloatingActionButton(
             onClick = { showCreateDialog = true },
             modifier = Modifier
@@ -166,7 +172,6 @@ fun CollectionsScreen(
         }
     }
 
-
     if (showCreateDialog) {
         AlertDialog(
             onDismissRequest = { showCreateDialog = false },
@@ -182,8 +187,20 @@ fun CollectionsScreen(
                 TextButton(onClick = {
                     val title = newCollectionName.text.trim()
                     if (title.isNotEmpty()) {
-                        vm.addCollection(title)
-                        pendingNewCollectionTitle = title
+                        scope.launch {
+                            when (val res = vm.addCollection(title)) {
+                                is AddResult.Success -> {
+                                    // Keep your auto-open logic
+                                    pendingNewCollectionTitle = title
+                                }
+                                AddResult.Duplicate -> {
+                                    snackbarHostState.showSnackbar("A collection named \"$title\" already exists.")
+                                }
+                                AddResult.NoUser -> {
+                                    snackbarHostState.showSnackbar("No user is signed in.")
+                                }
+                            }
+                        }
                     }
                     newCollectionName = TextFieldValue("")
                     showCreateDialog = false
@@ -194,7 +211,6 @@ fun CollectionsScreen(
             }
         )
     }
-
 
     pendingDeleteId?.let { id ->
         AlertDialog(
@@ -211,14 +227,9 @@ fun CollectionsScreen(
                 TextButton(onClick = { pendingDeleteId = null }) { Text("Cancel") }
             }
         )
+     }
     }
-
 }
-
-
-
-
-
 
 @Composable
 private fun CollectionCard(

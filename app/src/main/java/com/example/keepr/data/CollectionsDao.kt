@@ -27,10 +27,21 @@ interface CollectionsDao {
     @Query("SELECT * FROM collections WHERE collection_id = :collectionId")
     fun observeWithItems(collectionId: Long): Flow<CollectionWithItems?>
 
-    @Insert suspend fun insert(collection: CollectionEntity): Long
     @Update suspend fun update(collection: CollectionEntity)
     @Delete suspend fun delete(collection: CollectionEntity)
 
     @Query("DELETE FROM collections WHERE collection_id = :id")
     suspend fun deleteById(id: Long)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(collection: CollectionEntity): Long
+
+    // Optional but nice for pre-check / better UX:
+    @Query("""
+        SELECT EXISTS(
+            SELECT 1 FROM collections
+            WHERE user_id = :userId AND LOWER(title) = LOWER(:title)
+        )
+    """)
+    suspend fun existsTitleForUser(userId: Long, title: String): Boolean
 }

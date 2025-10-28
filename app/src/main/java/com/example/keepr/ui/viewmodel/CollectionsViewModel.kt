@@ -4,43 +4,46 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.keepr.data.CollectionEntity
-import com.example.keepr.data.KeeprDatabase
 import com.example.keepr.data.CollectionWithCount
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import com.example.keepr.data.KeeprDatabase
 import com.example.keepr.data.SessionManager
 import kotlinx.coroutines.flow.*
-
 import kotlinx.coroutines.launch
+
+sealed class AddResult {
+    data class Success(val id: Long) : AddResult()
+    object Duplicate : AddResult()
+    object NoUser : AddResult()
+}
 
 class CollectionsViewModel(app: Application) : AndroidViewModel(app) {
     private val dao = KeeprDatabase.get(app).collectionsDao()
     private val sessionManager = SessionManager(app)
 
+
     val collections: StateFlow<List<CollectionWithCount>> =
         sessionManager.loggedInUserId
             .filterNotNull()
-            .flatMapLatest { userId ->
-                dao.observeWithCountForUser(userId)
-            }
+            .flatMapLatest { userId -> dao.observeWithCountForUser(userId) }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
-    fun addCollection(title: String) {
-        viewModelScope.launch {
-            val newCollection = CollectionEntity(
+    suspend fun addCollection(title: String): AddResult {
+        val uid = sessionManager.loggedInUserId.firstOrNull() ?: return AddResult.NoUser
+
+
+        if (dao.existsTitleForUser(uid, title)) return AddResult.Duplicate
+
+        val id = dao.insert(
+            CollectionEntity(
                 title = title,
                 description = null,
-                userId = demoUserId
+                userId = uid
             )
-            dao.insert(newCollection)
-        }
+        )
+        return if (id == -1L) AddResult.Duplicate else AddResult.Success(id)
     }
 
     fun deleteCollection(collectionId: Long) {
-        viewModelScope.launch {
-            dao.deleteById(collectionId)
-        }
+        viewModelScope.launch { dao.deleteById(collectionId) }
     }
 }
