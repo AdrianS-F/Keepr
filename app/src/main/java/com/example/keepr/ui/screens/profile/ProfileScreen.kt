@@ -35,10 +35,14 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.res.stringResource
 import com.example.keepr.ui.components.ChangeLanguageDialog
+import com.example.keepr.ui.components.ChangeNameDialog
+
+
 
 @Composable
 fun ProfileScreen(onLogout: () -> Unit){
     var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
+    var showNameDialog by rememberSaveable { mutableStateOf(false) }
     
     val vm: ProfileViewModel = viewModel()
     val state by vm.state.collectAsState()
@@ -167,7 +171,7 @@ fun ProfileScreen(onLogout: () -> Unit){
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 14.dp)
-                            .clickable {}, // have to code
+                            .clickable { showNameDialog = true},
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -240,6 +244,19 @@ fun ProfileScreen(onLogout: () -> Unit){
                     if (showLanguageDialog) {
                         ChangeLanguageDialog(onDismiss = { showLanguageDialog = false })
                     }
+
+                    if (showNameDialog && user != null) {
+                        ChangeNameDialog(
+                            firstInit = user.firstName,
+                            lastInit = user.lastName,
+                            onSave = { f, l ->
+                                vm.updateName(f, l)
+                                showNameDialog = false
+                            },
+                            onDismiss = { showNameDialog = false }
+                        )
+                    }
+
                 }
             }
 

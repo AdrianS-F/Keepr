@@ -5,6 +5,9 @@
 
     <string name="change_profile_picture">Change profile picture</string>
     <string name="change_name">Change name</string>
+    <string name="change_name_title">Change name</string>
+    <string name="toast_name_changed">Your name is changed</string>
+    <string name="toast_fill_both">Please fill in both fields</string>
     <string name="change_language">Change language</string>
     <string name="log_out">Log out</string>
     <string name="delete_user">Delete user</string>

@@ -8,6 +8,7 @@ import com.example.keepr.data.SessionManager
 import com.example.keepr.data.UserEntity
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.firstOrNull
 
 data class ProfileUiState(
     val user: UserEntity? = null,
@@ -37,6 +38,18 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
                     }
                 }
                 .collect { _state.value = it }
+        }
+    }
+
+    fun updateName(first: String, last: String) {
+        viewModelScope.launch {
+            val userId = sessionManager.loggedInUserId.firstOrNull() ?: return@launch
+
+            val f = first.trim()
+            val l = last.trim()
+            if (f.isEmpty() || l.isEmpty()) return@launch
+
+            usersDao.updateName(userId, f, l)
         }
     }
 }

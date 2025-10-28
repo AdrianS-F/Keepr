@@ -24,6 +24,10 @@ interface UsersDao {
     @Update
     suspend fun update(user: UserEntity)
 
+    @Query("UPDATE user SET first_name = :first, last_name = :last WHERE user_id = :userId")
+    suspend fun updateName(userId: Long, first: String, last: String)
+
+
     @Delete
     suspend fun delete(user: UserEntity)
 }
