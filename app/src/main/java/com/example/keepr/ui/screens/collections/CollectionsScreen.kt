@@ -6,18 +6,24 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -27,6 +33,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.keepr.data.CollectionWithCount
 import com.example.keepr.ui.viewmodel.CollectionsViewModel
 
+
 @Composable
 fun CollectionsScreen(
     padding: PaddingValues,
@@ -35,12 +42,30 @@ fun CollectionsScreen(
     val vm: CollectionsViewModel = viewModel()
     val collections by vm.collections.collectAsState()
 
+    var query by rememberSaveable { mutableStateOf("") }
+
+    val filteredCollections by remember(collections, query) {
+        val q = query.trim().lowercase()
+        mutableStateOf(
+            if (q.isEmpty()) collections
+            else collections.filter { row ->
+                val title = row.collection.title.orEmpty().lowercase()
+                val desc  = row.collection.description.orEmpty().lowercase()
+                val count = row.itemCount.toString()
+                title.contains(q) || desc.contains(q) || count.contains(q)
+            }
+        )
+    }
+
     var showCreateDialog by remember { mutableStateOf(false) }
     var newCollectionName by remember { mutableStateOf(TextFieldValue("")) }
 
     var pendingDeleteId by remember { mutableStateOf<Long?>(null) }
 
     var pendingNewCollectionTitle by remember { mutableStateOf<String?>(null) }
+
+
+
     LaunchedEffect(collections, pendingNewCollectionTitle) {
         val wanted = pendingNewCollectionTitle
         if (wanted != null) {
@@ -58,7 +83,6 @@ fun CollectionsScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // CONTENT
         Column(Modifier.fillMaxSize()) {
             Text(
                 "Your Collections",
@@ -67,25 +91,61 @@ fun CollectionsScreen(
             )
             Spacer(Modifier.height(12.dp))
 
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(bottom = 88.dp)
-            ) {
-                items(
-                    items = collections,
-                    key = { it.collection.collectionId }
-                ) { row ->
-                    CollectionCard(
-                        row = row,
-                        onOpen = { onOpen(row.collection.collectionId) },
-                        onDelete = { pendingDeleteId = row.collection.collectionId }
+
+            OutlinedTextField(
+                value = query,
+                onValueChange = { query = it },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                label = { Text("Search collections") },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                trailingIcon = {
+                    if (query.isNotEmpty()) {
+                        IconButton(onClick = { query = "" }) {
+                            Icon(Icons.Default.Close, contentDescription = "Clear")
+                        }
+                    }
+                }
+            )
+            Spacer(Modifier.height(12.dp))
+
+
+            if (filteredCollections.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 32.dp),
+                    contentAlignment = Alignment.TopCenter
+                ) {
+                    Text(
+                        text = "No collections match your search.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(bottom = 88.dp)
+                ) {
+                    items(
+                        items = filteredCollections,
+                        key = { it.collection.collectionId }
+                    ) { row ->
+                        CollectionCard(
+                            row = row,
+                            onOpen = { onOpen(row.collection.collectionId) },
+                            onDelete = { pendingDeleteId = row.collection.collectionId }
+                        )
+                    }
                 }
             }
         }
 
-        // FAB
+
+
+
         FloatingActionButton(
             onClick = { showCreateDialog = true },
             modifier = Modifier
@@ -102,7 +162,7 @@ fun CollectionsScreen(
         }
     }
 
-// Create dialog
+
     if (showCreateDialog) {
         AlertDialog(
             onDismissRequest = { showCreateDialog = false },
@@ -136,7 +196,7 @@ fun CollectionsScreen(
         AlertDialog(
             onDismissRequest = { pendingDeleteId = null },
             title = { Text("Delete collection?") },
-            text = { Text("This will delete the collection and its items.") },
+            text = { Text("This will delete the collection and its itoms.") },
             confirmButton = {
                 TextButton(onClick = {
                     vm.deleteCollection(id)
@@ -155,12 +215,15 @@ fun CollectionsScreen(
 
 
 
+
 @Composable
 private fun CollectionCard(
     row: CollectionWithCount,
     onOpen: () -> Unit,
     onDelete: () -> Unit
 ) {
+    var menuExpanded by remember { mutableStateOf(false) }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
@@ -190,16 +253,30 @@ private fun CollectionCard(
                     Text("${row.itemCount} item(s)", style = MaterialTheme.typography.bodySmall)
                 }
 
-                TextButton(
-                    onClick = onDelete,
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    )
-                ) {
-                    Text("Delete")
-                }
+                Box {
+                    IconButton(onClick = { menuExpanded = true }) {
+                        Icon(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = "More options",
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
 
+                    DropdownMenu(
+                        expanded = menuExpanded,
+                        onDismissRequest = { menuExpanded = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Delete") },
+                            onClick = {
+                                menuExpanded = false
+                                onDelete()
+                            }
+                        )
+                    }
+                }
             }
         }
     }
 }
+
