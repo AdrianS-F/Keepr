@@ -12,17 +12,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 // Dark scheme (bruker de mørke grønntonene som bakgrunn/surface)
+
 private val KeeprDarkColorScheme = darkColorScheme(
-    primary = KeeprTeal,          // #1A4A47 – hovedfarge
-    onPrimary = Color.White,
-    secondary = KeeprMedium,      // #537D79
-    onSecondary = Color.White,
-    tertiary = KeeprLight,        // #B5E0BD – aksent
-    onTertiary = KeeprDark,
-    background = KeeprDark,       // #1C393B
+    background = KeeprDark,
     onBackground = Color.White,
-    surface = KeeprTeal,          // litt lysere enn bakgrunn for kort/overflater
-    onSurface = Color.White
+    // Ting du trykker på (knapper, primært)
+    primary = KeeprTeal,
+    onPrimary = Color.White,
+    // Flater/kort/inputs – BRUK denne i tekstfelt
+    surface = KeeprDark,                 // hovedflate (screen)
+    onSurface = Color.White,
+    surfaceVariant = KeeprMedium,        // <— LYSERE grønn for kort/inputs
+    // Kantfarge for OutlinedTextField m.m.
+    outline = KeeprLight.copy(alpha = 0.60f),
+    // valgfritt: aksenter
+    secondary = KeeprMedium,
+    onSecondary = Color.White
 )
 
 // Light scheme (lys bakgrunn, brand-farger på primary/secondary)

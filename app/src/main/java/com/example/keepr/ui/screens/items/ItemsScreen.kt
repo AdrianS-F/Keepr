@@ -32,6 +32,8 @@ import com.example.keepr.data.ItemEntity
 import com.example.keepr.ui.navigation.NavRoute
 import com.example.keepr.ui.viewmodel.ItemsViewModel
 import com.example.keepr.ui.viewmodel.ItemsViewModelFactory
+import androidx.compose.ui.res.stringResource
+import com.example.keepr.R
 
 @Composable
 fun ItemsScreen(
@@ -67,6 +69,7 @@ fun ItemsScreen(
             .padding(16.dp)
     ) {
 
+
         Spacer(Modifier.height(12.dp))
 
         Column(Modifier.fillMaxSize()) {
@@ -98,6 +101,7 @@ fun ItemsScreen(
                 }
             )
             Spacer(Modifier.height(12.dp))
+
 
             if (filteredItems.isEmpty()) {
                 Box(
@@ -167,7 +171,7 @@ private fun ItemRow(
                     Checkbox(checked = item.acquired, onCheckedChange = onToggle)
                     Text(item.itemName, style = MaterialTheme.typography.titleMedium)
                 }
-                TextButton(onClick = onDelete) { Text("Delete") }
+                TextButton(onClick = onDelete) { Text(stringResource(R.string.delete)) }
             }
             val notes = item.notes
             if (!notes.isNullOrBlank()) {

@@ -2,10 +2,6 @@ package com.example.keepr.data
 
 import at.favre.lib.crypto.bcrypt.BCrypt
 
-/**
- * Enkel repo for signup/signin mot Room via UsersDao.
- * Bruker BCrypt for hashing og Result for enkel feilvisning i UI.
- */
 class AuthRepository(private val db: KeeprDatabase) {
 
     private val usersDao: UsersDao = db.usersDao()

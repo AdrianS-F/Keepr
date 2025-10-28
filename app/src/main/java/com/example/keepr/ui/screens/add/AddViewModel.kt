@@ -13,19 +13,24 @@ class AddViewModel(application: Application) : AndroidViewModel(application) {
     private val db = KeeprDatabase.get(application)
     private val collectionsDao = db.collectionsDao()
     private val itemsDao = db.itemsDao()
+    private val sessionManager = SessionManager(application)
 
     // Bruker Flow for å observere collections
     private val _collections = MutableStateFlow<List<CollectionEntity>>(emptyList())
     val collections: StateFlow<List<CollectionEntity>> = _collections.asStateFlow()
 
-    // Midlertidig userId (kan byttes til innlogget bruker senere)
-    private val userId = 1L
+    private val _userId = MutableStateFlow<Long?>(null)
 
     init {
         // Starter å lytte etter endringer i databasen (collections)
         viewModelScope.launch {
-            collectionsDao.observeForUser(userId).collect { list ->
-                _collections.value = list
+            sessionManager.loggedInUserId.collect { userId ->
+                if (userId != null) {
+                    _userId.value = userId
+                    collectionsDao.observeForUser(userId).collect { list ->
+                        _collections.value = list
+                    }
+                }
             }
         }
     }
@@ -33,12 +38,14 @@ class AddViewModel(application: Application) : AndroidViewModel(application) {
     // 👉 Legger til en ny collection i databasen
     fun addCollection(title: String, description: String = "") {
         viewModelScope.launch {
-            val newCollection = CollectionEntity(
-                userId = userId,
-                title = title,
-                description = description
-            )
-            collectionsDao.insert(newCollection)
+            _userId.value?.let { userId ->
+                val newCollection = CollectionEntity(
+                    userId = userId,
+                    title = title,
+                    description = description
+                )
+                collectionsDao.insert(newCollection)
+            }
         }
     }
 

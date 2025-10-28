@@ -32,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.keepr.data.CollectionWithCount
 import com.example.keepr.ui.viewmodel.CollectionsViewModel
+import androidx.compose.ui.res.stringResource
+import com.example.keepr.R
 
 
 @Composable
@@ -41,6 +43,7 @@ fun CollectionsScreen(
 ) {
     val vm: CollectionsViewModel = viewModel()
     val collections by vm.collections.collectAsState()
+
 
     var query by rememberSaveable { mutableStateOf("") }
 
@@ -73,6 +76,7 @@ fun CollectionsScreen(
             if (match != null) {
                 onOpen(match.collection.collectionId)
                 pendingNewCollectionTitle = null
+
             }
         }
     }
@@ -276,6 +280,7 @@ private fun CollectionCard(
                     }
                 }
             }
+
         }
     }
 }
