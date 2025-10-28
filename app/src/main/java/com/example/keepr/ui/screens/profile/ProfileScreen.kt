@@ -106,7 +106,7 @@ fun ProfileScreen(onLogout: () -> Unit){
 
             Spacer(Modifier.height(6.dp))
             Text(
-                stringResource(R.string.collections_count, state.collectionCount) // shows the collction
+                stringResource(R.string.collections_count, state.collectionCount), // shows the collction
                 color = KeeprOnPrimary.copy(alpha = 0.8f), // lighter white color
                 fontSize =  18.sp // Smaller size on the font
             )

@@ -115,14 +115,6 @@ fun SignUpScreen(
             shape = RoundedCornerShape(16.dp)
         )
 
-        OutlinedTextField(
-            s.lastName,
-            vm::updateLast,
-            label = { Text(stringResource(R.string.last_name_label)) },
-            placeholder = { Text(stringResource(R.string.last_name_placeholder)) },
-            singleLine = true
-        )
-
 
         // --- Feilmelding ---
         if (s.error != null) {
