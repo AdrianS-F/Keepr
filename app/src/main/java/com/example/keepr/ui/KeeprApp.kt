@@ -86,6 +86,7 @@ fun KeeprApp(
                     onOpen = { collectionId ->
                         navController.navigate(NavRoute.Items.makeRoute(collectionId))
                     }
+
                 )
             }
 
