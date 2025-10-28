@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -20,6 +21,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.keepr.data.ItemEntity
 import com.example.keepr.ui.viewmodel.ItemsViewModel
 import com.example.keepr.ui.viewmodel.ItemsViewModelFactory
@@ -30,7 +33,8 @@ import com.example.keepr.R
 fun ItemsScreen(
     padding: PaddingValues,
     collectionId: Long,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    navController: NavHostController
 ) {
     val app = LocalContext.current.applicationContext as android.app.Application
     val vm: ItemsViewModel = viewModel(factory = ItemsViewModelFactory(app, collectionId))
@@ -50,7 +54,7 @@ fun ItemsScreen(
             horizontalArrangement = Arrangement.Start
         ) {
             IconButton(onClick = onBack) {
-                Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
             Spacer(Modifier.width(8.dp))
             Text(

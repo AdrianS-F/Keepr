@@ -1,5 +1,6 @@
 package com.example.keepr.ui.screens.profile // screen for profile
 
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,6 +9,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -33,15 +36,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.res.stringResource
 import com.example.keepr.ui.components.ChangeLanguageDialog
 
-
-
 @Composable
 fun ProfileScreen(onLogout: () -> Unit){
     var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
+    
+    val vm: ProfileViewModel = viewModel()
+    val state by vm.state.collectAsState()
+    val user = state.user
 
-    // We make a hardcoded name for now.
-    val name = "Sharu" // Name of the profile
-    val collectionsCount = 2 // hardcoded for now
 
     // We make the main container for the page, this is the green background with two tone
     Box(
@@ -96,7 +98,7 @@ fun ProfileScreen(onLogout: () -> Unit){
 
             // The name text
             Text(
-                text = name, // the name we made earlier
+                text = user?.let { "${it.firstName} ${it.lastName}" } ?: "",
                 color = KeeprOnPrimary, // white text
                 fontSize = 28.sp, // gives the size of the name
                 fontWeight = FontWeight.Bold // gives the name bold text
@@ -104,7 +106,7 @@ fun ProfileScreen(onLogout: () -> Unit){
 
             Spacer(Modifier.height(6.dp))
             Text(
-                text = stringResource(R.string.collections_count, collectionsCount), // shows the collction
+                stringResource(R.string.collections_count, state.collectionCount) // shows the collction
                 color = KeeprOnPrimary.copy(alpha = 0.8f), // lighter white color
                 fontSize =  18.sp // Smaller size on the font
             )
@@ -263,42 +265,3 @@ fun ProfileScreen(onLogout: () -> Unit){
         }
     }
 }
-
-
-
-
-
-
-
-
-/*
-@Composable
-private fun CardRow( // Function for the card
-    text: String, // we tell that it is a string
-    onClick: () -> Unit = {} // this is a onclick
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 14.dp)
-            .clickable { onClick()},
-        verticalAlignment = Alignment.CenterVertically // tells that is is going verticaly
-    ) {
-        Text(
-            text = text, // tells that it is a text
-            color = KeeprOnPrimary, // keeps the color to match
-            style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.weight(1f)
-        )
-    }
-
-    // This gives us the lines between the buttons
-    androidx.compose.material3.Divider( // gives us the divider
-        color = KeeprOnPrimary.copy(alpha = 0.2f), // changes the color
-        thickness = 1.dp // the height on the line
-    )
-
-    Spacer(Modifier.height(4.dp)) // gives us new space for above and under
-}
-
-*/ // denne brukte jeg før jeg hadde ikoner, vet ikke helt ennå om jeg skal fjerne 

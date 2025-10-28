@@ -1,12 +1,17 @@
 package com.example.keepr.ui.screens.auth
 
+
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.shape.RoundedCornerShape
 import com.example.keepr.ui.viewmodel.AuthViewModel
 import androidx.compose.ui.res.stringResource
 import com.example.keepr.R
@@ -20,46 +25,94 @@ fun SignUpScreen(
     val s by vm.state.collectAsState()
 
     Column(
-        Modifier.fillMaxSize().padding(24.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 24.dp, vertical = 36.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Keepr", style = MaterialTheme.typography.headlineSmall)
-        Spacer(Modifier.height(16.dp))
+        // --- Tittel ---
+        Text("Keepr", style = MaterialTheme.typography.headlineMedium)
+        Spacer(Modifier.height(8.dp))
         Text(stringResource(R.string.signup_title), style = MaterialTheme.typography.titleMedium)
+        Spacer(Modifier.height(32.dp))
 
-        Spacer(Modifier.height(16.dp))
+        // --- Inputfelt ---
         OutlinedTextField(
-            s.email,
-            vm::updateEmail,
+            value = s.email,
+            onValueChange = vm::updateEmail,
             label = { Text(stringResource(R.string.email_label)) },
             placeholder = { Text(stringResource(R.string.email_placeholder)) },
-            singleLine = true
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next
+            ),
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp)
         )
 
+        Spacer(Modifier.height(12.dp))
+
         OutlinedTextField(
-            s.password,
-            vm::updatePassword,
+            value = s.password,
+            onValueChange = vm::updatePassword,
             label = { Text(stringResource(R.string.password_label)) },
             placeholder = { Text(stringResource(R.string.password_placeholder)) },
             singleLine = true,
-            visualTransformation = PasswordVisualTransformation()
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Next
+            ),
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp)
         )
 
+        Spacer(Modifier.height(12.dp))
+
         OutlinedTextField(
-            s.repeatPassword,
-            vm::updateRepeat,
+            value = s.repeatPassword,
+            onValueChange = vm::updateRepeat,
             label = { Text(stringResource(R.string.repeat_password_label)) },
             placeholder = { Text(stringResource(R.string.repeat_password_placeholder)) },
             singleLine = true,
-            visualTransformation = PasswordVisualTransformation()
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Next
+            ),
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp)
         )
 
+        Spacer(Modifier.height(12.dp))
+
         OutlinedTextField(
-            s.firstName,
-            vm::updateFirst,
+            value = s.firstName,
+            onValueChange = vm::updateFirst,
             label = { Text(stringResource(R.string.first_name_label)) },
             placeholder = { Text(stringResource(R.string.first_name_placeholder)) },
-            singleLine = true
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            ),
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp)
+        )
+
+        Spacer(Modifier.height(12.dp))
+
+        OutlinedTextField(
+            value = s.lastName,
+            onValueChange = vm::updateLast,
+            label = { Text(stringResource(R.string.last_name_label)) },
+            placeholder = { Text(stringResource(R.string.last_name_placeholder)) },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            ),
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp)
         )
 
         OutlinedTextField(
@@ -71,6 +124,7 @@ fun SignUpScreen(
         )
 
 
+        // --- Feilmelding ---
         if (s.error != null) {
             Spacer(Modifier.height(8.dp))
             val errMsg = when (s.error) {
@@ -82,10 +136,24 @@ fun SignUpScreen(
             Text(errMsg, color = MaterialTheme.colorScheme.error)
         }
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(24.dp))
+
+        // --- Knapp ---
         Button(
             onClick = { vm.signUp(onSignedIn) },
-            enabled = !s.loading && s.email.isNotBlank() && s.password.length >= 6 && s.firstName.isNotBlank()
+            enabled = !s.loading &&
+                    s.email.isNotBlank() &&
+                    s.password.length >= 6 &&
+                    s.password == s.repeatPassword &&
+                    s.firstName.isNotBlank(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(54.dp),
+            shape = RoundedCornerShape(50.dp), // rund knapp
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            )
         ) {
             Text(
                 if (s.loading) stringResource(R.string.please_wait)
@@ -93,8 +161,10 @@ fun SignUpScreen(
             )
         }
 
+        Spacer(Modifier.height(16.dp))
 
-        Spacer(Modifier.height(12.dp))
+        // --- Gå til Sign In ---
         TextButton(onClick = onGoToSignIn) { Text(stringResource(R.string.signup_have_account)) }
+
     }
 }
