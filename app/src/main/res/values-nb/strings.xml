@@ -1,0 +1,59 @@
+<resources>
+    <string name="app_name">Keepr</string>
+    <string name="profile_title">Profil</string>
+    <string name="collections_count">%1$d samlinger</string>
+
+    <string name="change_profile_picture">Bytt profilbilde</string>
+    <string name="change_name">Endre navn</string>
+    <string name="change_language">Endre språk</string>
+    <string name="log_out">Logg ut</string>
+    <string name="delete_user">Slett bruker</string>
+
+    <!-- THIS IS FOR THE LANGUAGE OPTION -->
+    <string name="language_title">Velg språk</string>
+    <string name="english">English</string>
+    <string name="norwegian_bokmaal">Norsk bokmål</string>
+    <string name="save">Lagre</string>
+    <string name="cancel">Avbryt</string>
+    <string name="restart_to_apply">Språket endres når appen startes på nytt</string>
+
+    <!-- THIS IS FOR THE BOTTOMBAR -->
+    <string name="nav_collections">Samlinger</string>
+    <string name="nav_add">Legg til</string>
+    <string name="nav_profile">Profil</string>
+
+    <!-- THIS IS FOR THE SIGN IN PAGE -->
+    <string name="login_title">Logg inn</string>
+    <string name="email_label">E-post</string>
+    <string name="email_placeholder">E-post</string>
+    <string name="password_label">Passord</string>
+    <string name="password_placeholder">Passord</string>
+    <string name="login_button">Logg inn</string>
+    <string name="please_wait">Vent litt…</string>
+
+    <string name="err_wrong_credentials">Feil e-post eller passord</string>
+    <string name="err_passwords_mismatch">Passordene er ikke like</string>
+    <string name="err_generic">Noe gikk galt</string>
+
+    <!-- THIS IS FOR THE SIGN UP PAGE -->
+    <string name="signup_title">Registrer deg</string>
+    <string name="first_name_label">Fornavn</string>
+    <string name="first_name_placeholder">Fornavn</string>
+    <string name="last_name_label">Etternavn</string>
+    <string name="last_name_placeholder">Etternavn</string>
+    <string name="repeat_password_label">Gjenta passord</string>
+    <string name="repeat_password_placeholder">Gjenta passord</string>
+    <string name="signup_button">Opprett bruker</string>
+    <string name="signup_have_account">Har du en bruker? Logg inn</string>
+
+    <!-- THIS IS FOR THE COLLECTION PAGE -->
+    <string name="collections_title">Dine samlinger</string>
+    <string name="collections_items">%1$d gjendstand(er)</string>
+
+    <!-- THIS IS FOR THE ITEM PAGE -->
+    <string name="items_title">Gjenstander</string>
+    <string name="items_add_placeholder">Legg til gjenstand</string>
+    <string name="add">Legg til</string>
+    <string name="delete">Slett</string>
+
+</resources>

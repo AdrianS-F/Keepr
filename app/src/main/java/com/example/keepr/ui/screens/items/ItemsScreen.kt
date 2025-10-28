@@ -26,6 +26,8 @@ import androidx.navigation.NavHostController
 import com.example.keepr.data.ItemEntity
 import com.example.keepr.ui.viewmodel.ItemsViewModel
 import com.example.keepr.ui.viewmodel.ItemsViewModelFactory
+import androidx.compose.ui.res.stringResource
+import com.example.keepr.R
 
 @Composable
 fun ItemsScreen(
@@ -55,18 +57,30 @@ fun ItemsScreen(
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
             Spacer(Modifier.width(8.dp))
-            Text("Items", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
+            Text(
+                stringResource(R.string.items_title),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold
+            )
         }
 
         Spacer(Modifier.height(12.dp))
 
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            OutlinedTextField(
+                value = newItemName,
+                onValueChange = { newItemName = it },
+                label = { Text(stringResource(R.string.items_add_placeholder)) },
+                modifier = Modifier.weight(1f)
+            )
             Button(
-                onClick = { navController.navigate("add")
-                },
-                modifier = Modifier.fillMaxWidth(0.8f).fillMaxHeight(0.1f)
-            ) { Text("Add") }
+                onClick = {
+                    if (newItemName.isNotBlank()) {
+                        vm.addItem(newItemName.trim())
+                        newItemName = ""
+                    }
+                }
+            ) { Text(stringResource(R.string.add)) }
         }
 
         Spacer(Modifier.height(12.dp))
@@ -100,7 +114,7 @@ private fun ItemRow(
                     Checkbox(checked = item.acquired, onCheckedChange = onToggle)
                     Text(item.itemName, style = MaterialTheme.typography.titleMedium)
                 }
-                TextButton(onClick = onDelete) { Text("Delete") }
+                TextButton(onClick = onDelete) { Text(stringResource(R.string.delete)) }
             }
             val notes = item.notes
             if (!notes.isNullOrBlank()) {

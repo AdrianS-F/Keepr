@@ -1,3 +1,59 @@
 <resources>
     <string name="app_name">Keepr</string>
+    <string name="profile_title">Profile</string>
+    <string name="collections_count">%1$d Collections</string>
+
+    <string name="change_profile_picture">Change profile picture</string>
+    <string name="change_name">Change name</string>
+    <string name="change_language">Change language</string>
+    <string name="log_out">Log out</string>
+    <string name="delete_user">Delete user</string>
+
+    <!-- THIS IS FOR THE LANGUAGE OPTIONS -->
+    <string name="language_title">Choose language</string>
+    <string name="english">English</string>
+    <string name="norwegian_bokmaal">Norsk bokmål</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="restart_to_apply">Language will change when the app is restarted</string>
+
+    <!-- THIS IS FOR THE BOTTOMBAR -->
+    <string name="nav_collections">Collections</string>
+    <string name="nav_add">Add</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- THIS IS FOR THE SIGN IN PAGE -->
+    <string name="login_title">Sign in</string>
+    <string name="email_label">E-mail</string>
+    <string name="email_placeholder">E-mail</string>
+    <string name="password_label">Password</string>
+    <string name="password_placeholder">Password</string>
+    <string name="login_button">Sign in</string>
+    <string name="please_wait">Please wait…</string>
+
+    <string name="err_wrong_credentials">Wrong e-mail or password</string>
+    <string name="err_passwords_mismatch">Passwords do not match</string>
+    <string name="err_generic">Something went wrong</string>
+
+    <!-- THIS IS FOR THE SIGN UP PAGE -->
+    <string name="signup_title">Sign up</string>
+    <string name="first_name_label">First Name</string>
+    <string name="first_name_placeholder">First Name</string>
+    <string name="last_name_label">Last Name</string>
+    <string name="last_name_placeholder">Last Name</string>
+    <string name="repeat_password_label">Repeat password</string>
+    <string name="repeat_password_placeholder">Repeat password</string>
+    <string name="signup_button">Create an account</string>
+    <string name="signup_have_account">Already have an account? Sign in</string>
+
+    <!-- THIS IS FOR THE COLLECTION PAGE -->
+    <string name="collections_title">Your collections</string>
+    <string name="collections_items">%1$d item(s)</string>
+
+    <!-- THIS IS FOR THE ITEM PAGE -->
+    <string name="items_title">Items</string>
+    <string name="items_add_placeholder">Add item</string>
+    <string name="add">Add</string>
+    <string name="delete">Delete</string>
+
 </resources>

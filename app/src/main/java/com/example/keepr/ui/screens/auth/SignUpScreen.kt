@@ -13,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.shape.RoundedCornerShape
 import com.example.keepr.ui.viewmodel.AuthViewModel
+import androidx.compose.ui.res.stringResource
+import com.example.keepr.R
 
 @Composable
 fun SignUpScreen(
@@ -31,14 +33,15 @@ fun SignUpScreen(
         // --- Tittel ---
         Text("Keepr", style = MaterialTheme.typography.headlineMedium)
         Spacer(Modifier.height(8.dp))
-        Text("Sign up", style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.signup_title), style = MaterialTheme.typography.titleMedium)
         Spacer(Modifier.height(32.dp))
 
         // --- Inputfelt ---
         OutlinedTextField(
             value = s.email,
             onValueChange = vm::updateEmail,
-            label = { Text("Email") },
+            label = { Text(stringResource(R.string.email_label)) },
+            placeholder = { Text(stringResource(R.string.email_placeholder)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
@@ -53,7 +56,8 @@ fun SignUpScreen(
         OutlinedTextField(
             value = s.password,
             onValueChange = vm::updatePassword,
-            label = { Text("Password") },
+            label = { Text(stringResource(R.string.password_label)) },
+            placeholder = { Text(stringResource(R.string.password_placeholder)) },
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(
@@ -69,7 +73,8 @@ fun SignUpScreen(
         OutlinedTextField(
             value = s.repeatPassword,
             onValueChange = vm::updateRepeat,
-            label = { Text("Repeat password") },
+            label = { Text(stringResource(R.string.repeat_password_label)) },
+            placeholder = { Text(stringResource(R.string.repeat_password_placeholder)) },
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(
@@ -85,7 +90,8 @@ fun SignUpScreen(
         OutlinedTextField(
             value = s.firstName,
             onValueChange = vm::updateFirst,
-            label = { Text("First name") },
+            label = { Text(stringResource(R.string.first_name_label)) },
+            placeholder = { Text(stringResource(R.string.first_name_placeholder)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
@@ -99,7 +105,8 @@ fun SignUpScreen(
         OutlinedTextField(
             value = s.lastName,
             onValueChange = vm::updateLast,
-            label = { Text("Last name") },
+            label = { Text(stringResource(R.string.last_name_label)) },
+            placeholder = { Text(stringResource(R.string.last_name_placeholder)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done
@@ -108,10 +115,25 @@ fun SignUpScreen(
             shape = RoundedCornerShape(16.dp)
         )
 
+        OutlinedTextField(
+            s.lastName,
+            vm::updateLast,
+            label = { Text(stringResource(R.string.last_name_label)) },
+            placeholder = { Text(stringResource(R.string.last_name_placeholder)) },
+            singleLine = true
+        )
+
+
         // --- Feilmelding ---
         if (s.error != null) {
             Spacer(Modifier.height(8.dp))
-            Text(s.error!!, color = MaterialTheme.colorScheme.error)
+            val errMsg = when (s.error) {
+                "PASSWORDS_MISMATCH" -> stringResource(R.string.err_passwords_mismatch)
+                "GENERIC_ERROR"      -> stringResource(R.string.err_generic)
+                "WRONG_CREDENTIALS"  -> stringResource(R.string.err_wrong_credentials)
+                else                 -> s.error!!
+            }
+            Text(errMsg, color = MaterialTheme.colorScheme.error)
         }
 
         Spacer(Modifier.height(24.dp))
@@ -133,14 +155,16 @@ fun SignUpScreen(
                 contentColor = MaterialTheme.colorScheme.onPrimary
             )
         ) {
-            Text(if (s.loading) "Please wait…" else "Create account")
+            Text(
+                if (s.loading) stringResource(R.string.please_wait)
+                else stringResource(R.string.signup_button)
+            )
         }
 
         Spacer(Modifier.height(16.dp))
 
         // --- Gå til Sign In ---
-        TextButton(onClick = onGoToSignIn) {
-            Text("Already have an account? Sign in")
-        }
+        TextButton(onClick = onGoToSignIn) { Text(stringResource(R.string.signup_have_account)) }
+
     }
 }

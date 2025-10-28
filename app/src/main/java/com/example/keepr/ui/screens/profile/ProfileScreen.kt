@@ -4,7 +4,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.RoundedCornerShape // imports the rounded edge
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -19,24 +19,31 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.keepr.R
-import com.example.keepr.ui.theme.KeeprOnPrimary
-import com.example.keepr.ui.theme.KeeprPrimary
-import com.example.keepr.ui.theme.KeeprMedium
+import com.example.keepr.ui.theme.KeeprOnPrimary // imports the colors
+import com.example.keepr.ui.theme.KeeprPrimary // imports the colors
+import com.example.keepr.ui.theme.KeeprMedium // imports the colors
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.Alignment
-import androidx.compose.material3.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.PhotoCamera
-import androidx.compose.material.icons.outlined.Badge
-import androidx.compose.material.icons.outlined.Translate
-import androidx.compose.material.icons.outlined.Logout
+import androidx.compose.material3.Icon // // imports the icon package
+import androidx.compose.material.icons.Icons // imports the icons
+import androidx.compose.material.icons.outlined.PhotoCamera // imports the camera icon
+import androidx.compose.material.icons.outlined.Badge // imports the badge icon
+import androidx.compose.material.icons.outlined.Translate // imports the translate icon
+import androidx.compose.material.icons.outlined.Logout // imports the logout icon
 import androidx.compose.material3.Divider
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.res.stringResource
+import com.example.keepr.ui.components.ChangeLanguageDialog
 
 @Composable
 fun ProfileScreen(onLogout: () -> Unit){
+    var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
+    
     val vm: ProfileViewModel = viewModel()
     val state by vm.state.collectAsState()
     val user = state.user
+
 
     // We make the main container for the page, this is the green background with two tone
     Box(
@@ -69,7 +76,7 @@ fun ProfileScreen(onLogout: () -> Unit){
 
             // The actual title for the page "profile"
             Text(
-                text = "Profile", // tittle
+                text = stringResource(R.string.profile_title), // tittle
                 color = KeeprOnPrimary, // prdefined color
                 fontSize = 20.sp, // font color
                 fontWeight = FontWeight.SemiBold // make it bold
@@ -80,7 +87,7 @@ fun ProfileScreen(onLogout: () -> Unit){
             // This is the profile picture part
             Image(
                 painter = painterResource(id = R.drawable.sharu), // image hardcoded for now
-                contentDescription = "Profile picture", // tells that this is a profile picture for accebility
+                contentDescription = stringResource(R.string.change_profile_picture), // tells that this is a profile picture for accebility
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(175.dp) // image size
@@ -99,7 +106,7 @@ fun ProfileScreen(onLogout: () -> Unit){
 
             Spacer(Modifier.height(6.dp))
             Text(
-                text = "${state.collectionCount} Collections", // shows the collction
+                stringResource(R.string.collections_count, state.collectionCount) // shows the collction
                 color = KeeprOnPrimary.copy(alpha = 0.8f), // lighter white color
                 fontSize =  18.sp // Smaller size on the font
             )
@@ -120,7 +127,7 @@ fun ProfileScreen(onLogout: () -> Unit){
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
                 ) {
                     Text(
-                        text = "Profile",
+                        text = stringResource(R.string.profile_title),
                         color = KeeprOnPrimary,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -138,7 +145,7 @@ fun ProfileScreen(onLogout: () -> Unit){
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Change profile picture",
+                            text = stringResource(R.string.change_profile_picture),
                             color = KeeprOnPrimary,
                             style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.weight(1f)
@@ -147,7 +154,7 @@ fun ProfileScreen(onLogout: () -> Unit){
                         //Icon for profile picture
                         Icon(
                             imageVector = Icons.Outlined.PhotoCamera,
-                            contentDescription = "Profile icon",
+                            contentDescription = stringResource(R.string.change_profile_picture),
                             tint = KeeprOnPrimary,
                             modifier = Modifier.size(22.dp)
                         )
@@ -164,7 +171,7 @@ fun ProfileScreen(onLogout: () -> Unit){
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Change name",
+                            text = stringResource(R.string.change_name),
                             color = KeeprOnPrimary,
                             style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.weight(1f)
@@ -173,7 +180,7 @@ fun ProfileScreen(onLogout: () -> Unit){
                         //Icon for change name
                         Icon(
                             imageVector = Icons.Outlined.Badge,
-                            contentDescription = "Name icon",
+                            contentDescription = stringResource(R.string.change_name),
                             tint = KeeprOnPrimary,
                             modifier = Modifier.size(22.dp)
                         )
@@ -186,11 +193,11 @@ fun ProfileScreen(onLogout: () -> Unit){
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 14.dp)
-                            .clickable {}, // have to code
+                            .clickable { showLanguageDialog = true}, // have to code
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Change language",
+                            text = stringResource(R.string.change_language),
                             color = KeeprOnPrimary,
                             style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.weight(1f)
@@ -198,7 +205,7 @@ fun ProfileScreen(onLogout: () -> Unit){
 
                         Icon(
                             imageVector = Icons.Outlined.Translate,
-                            contentDescription = "Language icon",
+                            contentDescription = stringResource(R.string.change_language),
                             tint = KeeprOnPrimary,
                             modifier = Modifier.size(22.dp)
                         )
@@ -216,7 +223,7 @@ fun ProfileScreen(onLogout: () -> Unit){
                         
                     ){
                         Text(
-                            text = "Log out",
+                            text = stringResource(R.string.log_out),
                             color = KeeprOnPrimary,
                             style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.weight(1f)
@@ -224,10 +231,14 @@ fun ProfileScreen(onLogout: () -> Unit){
 
                         Icon(
                             imageVector = Icons.Outlined.Logout,
-                            contentDescription = "Logout icon",
+                            contentDescription = stringResource(R.string.log_out),
                             tint = KeeprOnPrimary,
                             modifier = Modifier.size(22.dp)
                         )
+                    }
+
+                    if (showLanguageDialog) {
+                        ChangeLanguageDialog(onDismiss = { showLanguageDialog = false })
                     }
                 }
             }
@@ -245,7 +256,7 @@ fun ProfileScreen(onLogout: () -> Unit){
             ) {
                 // The text for the delete button
                 Text(
-                    text = "Delete user",
+                    text = stringResource(R.string.delete_user),
                     color = androidx.compose.ui.graphics.Color(0xFFFF6B6B),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold

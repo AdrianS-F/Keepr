@@ -15,6 +15,8 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.example.keepr.ui.navigation.NavRoute
+import androidx.compose.ui.res.stringResource
+import com.example.keepr.R
 
 @Composable
 fun KeeprBottomBar(
@@ -60,8 +62,27 @@ fun KeeprBottomBar(
                         }
                     }
                 },
-                icon = { Icon(icon, contentDescription = dest.label) },
-                label = { Text(dest.label) }
+                icon = {
+                    Icon(
+                        icon,
+                        contentDescription = when (dest) {
+                            NavRoute.Collections -> stringResource(R.string.nav_collections)
+                            NavRoute.Add         -> stringResource(R.string.nav_add)
+                            NavRoute.Profile     -> stringResource(R.string.nav_profile)
+                            else                 -> dest.label
+                        }
+                    )
+                },
+                label = {
+                    Text(
+                        text = when (dest) {
+                            NavRoute.Collections -> stringResource(R.string.nav_collections)
+                            NavRoute.Add         -> stringResource(R.string.nav_add)
+                            NavRoute.Profile     -> stringResource(R.string.nav_profile)
+                            else                 -> dest.label
+                        }
+                    )
+                }
             )
         }
     }
