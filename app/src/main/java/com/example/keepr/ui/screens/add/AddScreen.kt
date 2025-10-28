@@ -117,37 +117,47 @@ fun AddScreen(padding: PaddingValues) {
                 Text(text = "Collection:", style = MaterialTheme.typography.labelLarge)
                 Spacer(Modifier.height(4.dp))
 
-                var expanded by remember { mutableStateOf(false) }
-
-                Box {
+                if (collections.isEmpty()) {
                     OutlinedButton(
-                        onClick = { expanded = true },
-                        enabled = collections.isNotEmpty() // grå ut hvis ingen finnes enda
+                        onClick = { showDialog = true },
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(selectedCollection?.title ?: "No collections")
+                        Text("➕ Add new collection")
                     }
+                } else {
+                    var expanded by remember { mutableStateOf(false) }
 
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        collections.forEach { c ->
+                    Box {
+                        OutlinedButton(
+                            onClick = { expanded = true },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(selectedCollection?.title ?: "Select a collection")
+                        }
+
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            collections.forEach { c ->
+                                DropdownMenuItem(
+                                    text = { Text(c.title) },
+                                    onClick = {
+                                        selectedCollection = c
+                                        expanded = false
+                                    }
+                                )
+                            }
+                            Divider()
                             DropdownMenuItem(
-                                text = { Text(c.title) },
+                                text = { Text("➕ New collection") },
                                 onClick = {
-                                    selectedCollection = c
                                     expanded = false
+                                    showDialog = true
                                 }
                             )
                         }
-                        Divider()
-                        DropdownMenuItem(
-                            text = { Text("➕ New collection") },
-                            onClick = {
-                                expanded = false
-                                showDialog = true
-                            }
-                        )
                     }
                 }
 
@@ -180,7 +190,7 @@ fun AddScreen(padding: PaddingValues) {
                                 itemName = TextFieldValue("")
                                 itemDescription = TextFieldValue("")
                                 scope.launch {
-                                    snackbarHostState.showSnackbar("Saved '${selectedCollection!!.title}': ${itemName.text.ifBlank { "New item" }}")
+                                    snackbarHostState.showSnackbar("Saved in '${selectedCollection!!.title}': ${itemName.text.ifBlank { "New item" }}")
                                     // NB: vi kunne navigert tilbake her hvis dere ønsker
                                 }
                             }
@@ -228,4 +238,3 @@ fun AddScreen(padding: PaddingValues) {
         )
     }
 }
-
