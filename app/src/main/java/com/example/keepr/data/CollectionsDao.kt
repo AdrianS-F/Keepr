@@ -36,7 +36,6 @@ interface CollectionsDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(collection: CollectionEntity): Long
 
-    // Optional but nice for pre-check / better UX:
     @Query("""
         SELECT EXISTS(
             SELECT 1 FROM collections

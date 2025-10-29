@@ -3,6 +3,8 @@ package com.example.keepr.ui.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import com.example.keepr.data.CollectionEntity
 import com.example.keepr.data.CollectionWithCount
 import com.example.keepr.data.KeeprDatabase
@@ -46,4 +48,5 @@ class CollectionsViewModel(app: Application) : AndroidViewModel(app) {
     fun deleteCollection(collectionId: Long) {
         viewModelScope.launch { dao.deleteById(collectionId) }
     }
+
 }

@@ -21,6 +21,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -43,6 +44,7 @@ import kotlinx.coroutines.launch
 fun CollectionsScreen(
     padding: PaddingValues,
     onOpen: (Long) -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
     val vm: CollectionsViewModel = viewModel()
     val collections by vm.collections.collectAsState()
@@ -69,8 +71,7 @@ fun CollectionsScreen(
     var pendingDeleteId by remember { mutableStateOf<Long?>(null) }
 
     var pendingNewCollectionTitle by remember { mutableStateOf<String?>(null) }
-
-    val snackbarHostState = remember { SnackbarHostState() }
+    
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(collections, pendingNewCollectionTitle) {
@@ -86,12 +87,21 @@ fun CollectionsScreen(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState) { data ->
+                Snackbar(
+                    snackbarData = data,
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    actionColor = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
     ) { innerPadding ->
         Box(
             modifier = Modifier
                 .padding(padding)
-                .padding(innerPadding)      // ✅ add Scaffold padding
+                .padding(innerPadding)
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
@@ -156,6 +166,7 @@ fun CollectionsScreen(
         }
 
 
+
         FloatingActionButton(
             onClick = { showCreateDialog = true },
             modifier = Modifier
@@ -172,51 +183,62 @@ fun CollectionsScreen(
         }
     }
 
-    if (showCreateDialog) {
-        AlertDialog(
-            onDismissRequest = { showCreateDialog = false },
-            title = { Text("New Collection") },
-            text = {
-                OutlinedTextField(
-                    value = newCollectionName,
-                    onValueChange = { newCollectionName = it },
-                    label = { Text("Collection name") }
-                )
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    val title = newCollectionName.text.trim()
-                    if (title.isNotEmpty()) {
-                        scope.launch {
-                            when (val res = vm.addCollection(title)) {
-                                is AddResult.Success -> {
-                                    // Keep your auto-open logic
-                                    pendingNewCollectionTitle = title
-                                }
-                                AddResult.Duplicate -> {
-                                    snackbarHostState.showSnackbar("A collection named \"$title\" already exists.")
-                                }
-                                AddResult.NoUser -> {
-                                    snackbarHostState.showSnackbar("No user is signed in.")
+        if (showCreateDialog) {
+            AlertDialog(
+
+                onDismissRequest = {  },
+
+                title = { Text("New Collection") },
+                text = {
+                    OutlinedTextField(
+                        value = newCollectionName,
+                        onValueChange = { newCollectionName = it },
+                        label = { Text("Collection name") },
+                        singleLine = true
+                    )
+                },
+
+
+                        confirmButton = {
+                    TextButton(onClick = {
+                        val title = newCollectionName.text.trim()
+                        if (title.isNotEmpty()) {
+                            scope.launch {
+                                when (vm.addCollection(title)) {
+                                    is AddResult.Success -> {
+                                        pendingNewCollectionTitle = title
+                                        showCreateDialog = false
+                                    }
+                                    AddResult.Duplicate -> {
+                                        showCreateDialog = false
+                                        newCollectionName = TextFieldValue("")
+                                        snackbarHostState.showSnackbar("A collection named \"$title\" already exists.")
+                                    }
+                                    AddResult.NoUser -> {
+                                        showCreateDialog = false
+                                        newCollectionName = TextFieldValue("")
+                                        snackbarHostState.showSnackbar("No user is signed in.")
+                                    }
                                 }
                             }
+                        } else {
+                            showCreateDialog = false
                         }
-                    }
-                    newCollectionName = TextFieldValue("")
-                    showCreateDialog = false
-                }) { Text("Add") }
-            },
-            dismissButton = {
-                TextButton(onClick = { showCreateDialog = false }) { Text("Cancel") }
-            }
-        )
-    }
+                    }) { Text("Add") }
+                }
+,
+                dismissButton = {
+                    TextButton(onClick = { showCreateDialog = false }) { Text("Cancel") }
+                }
+            )
+        }
 
-    pendingDeleteId?.let { id ->
+
+        pendingDeleteId?.let { id ->
         AlertDialog(
             onDismissRequest = { pendingDeleteId = null },
             title = { Text("Delete collection?") },
-            text = { Text("This will delete the collection and its itoms.") },
+            text = { Text("This will delete the collection and its items.") },
             confirmButton = {
                 TextButton(onClick = {
                     vm.deleteCollection(id)
