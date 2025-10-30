@@ -1,13 +1,16 @@
 package com.example.keepr.ui.screens.items
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -61,6 +64,9 @@ fun ItemsScreen(
         )
     }
 
+    var isEditingTitle by remember { mutableStateOf(false) }
+    var titleText by remember { mutableStateOf("Items") }
+
 
     Box(
         modifier = Modifier
@@ -73,16 +79,34 @@ fun ItemsScreen(
         Spacer(Modifier.height(12.dp))
 
         Column(Modifier.fillMaxSize()) {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = onBack) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
                 Spacer(Modifier.width(8.dp))
-                Text(
-                    "Items",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold
-                )
+                if (isEditingTitle) {
+                    OutlinedTextField(
+                        value = titleText,
+                        onValueChange = { titleText = it },
+                        singleLine = true,
+                        modifier = Modifier.weight(1f)
+                    )
+                    TextButton(onClick = {
+                        if (titleText.isNotBlank()) vm.renameCurrentCollection(titleText)
+                        isEditingTitle = false
+                    }) { Text("Save") }
+                    TextButton(onClick = { isEditingTitle = false }) { Text("Cancel") }
+                } else {
+                    Text(
+                        titleText,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.weight(1f)
+                    )
+                    IconButton(onClick = { isEditingTitle = true }) {
+                        Icon(imageVector = Icons.Default.Edit, contentDescription = "Rename collection")
+                    }
+                }
             }
 
             OutlinedTextField(
@@ -127,7 +151,8 @@ fun ItemsScreen(
                         ItemRow(
                             item = item,
                             onToggle = { checked -> vm.toggleAcquired(item, checked) },
-                            onDelete = { vm.delete(item) }
+                            onDelete = { vm.delete(item) },
+                            onEdit = { newName, newNotes -> vm.updateItem(item.itemId, newName, newNotes) }
                         )
                     }
                 }
@@ -159,9 +184,16 @@ fun ItemsScreen(
 private fun ItemRow(
     item: ItemEntity,
     onToggle: (Boolean) -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onEdit: (String, String?) -> Unit
 ) {
-    Card(Modifier.fillMaxWidth()) {
+    var showEdit by remember { mutableStateOf(false) }
+
+    Card(
+        Modifier
+            .fillMaxWidth()
+            .clickable { showEdit = true }
+    ) {
         Column(Modifier.padding(16.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -173,11 +205,67 @@ private fun ItemRow(
                 }
                 TextButton(onClick = onDelete) { Text(stringResource(R.string.delete)) }
             }
-            val notes = item.notes
-            if (!notes.isNullOrBlank()) {
+
+            item.notes?.takeIf { it.isNotBlank() }?.let {
                 Spacer(Modifier.height(4.dp))
-                Text(notes, style = MaterialTheme.typography.bodySmall)
+                Text(it, style = MaterialTheme.typography.bodySmall)
             }
         }
     }
+
+    if (showEdit) {
+        EditItemDialog(
+            initialName = item.itemName,
+            initialNotes = item.notes ?: "",
+            onDismiss = { showEdit = false },
+            onSave = { newName, newNotes ->
+                onEdit(newName, newNotes)
+                showEdit = false
+            }
+        )
+    }
 }
+
+
+@Composable
+private fun EditItemDialog(
+    initialName: String,
+    initialNotes: String,
+    onDismiss: () -> Unit,
+    onSave: (String, String?) -> Unit
+) {
+    var name by remember { mutableStateOf(initialName) }
+    var notes by remember { mutableStateOf(initialNotes) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Edit item") },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Name") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = notes,
+                    onValueChange = { notes = it },
+                    label = { Text("Description") },
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = 3
+                )
+                // (Add picture picker later)
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                if (name.isNotBlank()) onSave(name, notes.ifBlank { null }) else onDismiss()
+            }) { Text("Save") }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } }
+    )
+}
+
+

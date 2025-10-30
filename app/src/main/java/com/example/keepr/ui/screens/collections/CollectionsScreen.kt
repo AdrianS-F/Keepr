@@ -313,8 +313,6 @@ private fun CollectionCard(
                     }
                 }
             }
-
         }
     }
 }
-

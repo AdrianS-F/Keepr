@@ -43,4 +43,7 @@ interface CollectionsDao {
         )
     """)
     suspend fun existsTitleForUser(userId: Long, title: String): Boolean
+
+    @Query("UPDATE collections SET title = :newTitle WHERE collection_id = :collectionId")
+    suspend fun renameCollection(collectionId: Long, newTitle: String)
 }
