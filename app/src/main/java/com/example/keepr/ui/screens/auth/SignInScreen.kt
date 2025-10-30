@@ -25,9 +25,9 @@ fun SignInScreen(
 ) {
     val s by vm.state.collectAsState()
 
-    // FIKS: Kaller resetState() når skjermen forlates.
-    DisposableEffect(Unit) {
-        onDispose { vm.resetState() }
+    // FIKS: Bytter til LaunchedEffect for å nullstille state når skjermen lastes, ikke når den forlates.
+    LaunchedEffect(Unit) {
+        vm.resetState()
     }
 
     Surface(

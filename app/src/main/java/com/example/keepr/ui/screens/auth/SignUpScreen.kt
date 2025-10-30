@@ -24,9 +24,9 @@ fun SignUpScreen(
 ) {
     val s by vm.state.collectAsState()
 
-    // FIKS: Kaller resetState() når skjermen forlates.
-    DisposableEffect(Unit) {
-        onDispose { vm.resetState() }
+    // FIKS: Bytter til LaunchedEffect for å nullstille state når skjermen lastes, ikke når den forlates.
+    LaunchedEffect(Unit) {
+        vm.resetState()
     }
 
     Surface(
@@ -103,7 +103,6 @@ fun SignUpScreen(
                 text = stringResource(R.string.password_requirements),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                // FIKS: Legg til fillMaxWidth() for å tvinge teksten til venstre.
                 modifier = Modifier.fillMaxWidth()
             )
 
