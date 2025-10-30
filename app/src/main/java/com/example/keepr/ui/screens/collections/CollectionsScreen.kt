@@ -75,14 +75,8 @@ fun CollectionsScreen(
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(collections, pendingNewCollectionTitle) {
-        val wanted = pendingNewCollectionTitle
-        if (wanted != null) {
-            val match = collections.firstOrNull { it.collection.title == wanted }
-            if (match != null) {
-                onOpen(match.collection.collectionId)
-                pendingNewCollectionTitle = null
-
-            }
+        if (pendingNewCollectionTitle != null) {
+            pendingNewCollectionTitle = null
         }
     }
 
