@@ -42,7 +42,7 @@ fun ChangeLanguageDialog(onDismiss: () -> Unit) {
                 Toast.makeText(
                     context,
                     context.getString(R.string.restart_to_apply),
-                    Toast.LENGTH_SHORT
+                    Toast.LENGTH_LONG
                 ).show()
                 onDismiss()
             }) { Text(stringResource(R.string.save)) }

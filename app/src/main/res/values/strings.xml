@@ -5,6 +5,9 @@
 
     <string name="change_profile_picture">Change profile picture</string>
     <string name="change_name">Change name</string>
+    <string name="change_name_title">Change name</string>
+    <string name="toast_name_changed">Your name is changed</string>
+    <string name="toast_fill_both">Please fill in both fields</string>
     <string name="change_language">Change language</string>
     <string name="log_out">Log out</string>
     <string name="delete_user">Delete user</string>
@@ -60,5 +63,13 @@
     <string name="items_add_placeholder">Add item</string>
     <string name="add">Add</string>
     <string name="delete">Delete</string>
+
+    <!-- THIS IS FOR THE DELETE OPTIONS -->
+    <string name="delete_user_title">Delete user</string>
+    <string name="delete_user_warning">You cannot regret this action</string>
+    <string name="password">Password</string>
+    <string name="user_deleted">User is successfully deleted</string>
+    <string name="err_wrong_password">Wrong password</string>
+
 
 </resources>

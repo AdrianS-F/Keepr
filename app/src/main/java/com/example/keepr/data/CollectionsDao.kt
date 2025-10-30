@@ -33,6 +33,9 @@ interface CollectionsDao {
     @Query("DELETE FROM collections WHERE collection_id = :id")
     suspend fun deleteById(id: Long)
 
+    @Query("DELETE FROM collections WHERE user_id = :userId")
+    suspend fun deleteByUser(userId: Long)
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(collection: CollectionEntity): Long
 
