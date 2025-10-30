@@ -59,4 +59,11 @@
     <string name="add">Legg til</string>
     <string name="delete">Slett</string>
 
+    <!-- THIS IS FOR THE DELETE OPTIONS -->
+    <string name="delete_user_title">Slett bruker</string>
+    <string name="delete_user_warning">Du kan ikke angre denne handlingen</string>
+    <string name="password">Passord</string>
+    <string name="user_deleted">Bruker ble slettet</string>
+    <string name="err_wrong_password">Feil passord</string>
+
 </resources>

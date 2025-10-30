@@ -30,4 +30,9 @@ interface CollectionsDao {
     @Insert suspend fun insert(collection: CollectionEntity): Long
     @Update suspend fun update(collection: CollectionEntity)
     @Delete suspend fun delete(collection: CollectionEntity)
+
+    @Query("DELETE FROM collections WHERE user_id = :userId")
+    suspend fun deleteByUser(userId: Long)
+
+
 }

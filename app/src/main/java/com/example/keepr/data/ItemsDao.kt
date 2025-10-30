@@ -14,4 +14,6 @@ interface ItemsDao {
 
     @Query("UPDATE items SET acquired = :acquired WHERE item_id = :itemId")
     suspend fun setAcquired(itemId: Long, acquired: Boolean)
+
+
 }

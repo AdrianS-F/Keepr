@@ -36,6 +36,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.res.stringResource
 import com.example.keepr.ui.components.ChangeLanguageDialog
 import com.example.keepr.ui.components.ChangeNameDialog
+import com.example.keepr.ui.components.DeleteUserDialog
+import android.widget.Toast
 
 
 
@@ -43,6 +45,9 @@ import com.example.keepr.ui.components.ChangeNameDialog
 fun ProfileScreen(onLogout: () -> Unit){
     var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
     var showNameDialog by rememberSaveable { mutableStateOf(false) }
+    var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
+    var wrongPass by remember { mutableStateOf(false) }
+    val ctx = androidx.compose.ui.platform.LocalContext.current
     
     val vm: ProfileViewModel = viewModel()
     val state by vm.state.collectAsState()
@@ -260,6 +265,29 @@ fun ProfileScreen(onLogout: () -> Unit){
                 }
             }
 
+            if (showDeleteDialog) {
+                DeleteUserDialog(
+                    onDelete = { pass ->
+                        vm.deleteUser(pass) { ok ->
+                            if (ok) {
+                                Toast.makeText(
+                                    ctx,
+                                    ctx.getString(R.string.user_deleted),
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                showDeleteDialog = false
+                                onLogout()
+                            } else {
+                                wrongPass = true
+                            }
+                        }
+                    },
+                    onDismiss = { showDeleteDialog = false; wrongPass = false },
+                    wrongPassword = wrongPass
+                )
+            }
+
+
             Spacer(Modifier.height(40.dp)) // gives us space over and under
 
             Box(
@@ -268,7 +296,7 @@ fun ProfileScreen(onLogout: () -> Unit){
                     .padding(horizontal = 10.dp)
                     .clip(RoundedCornerShape(18.dp))
                     .background(KeeprMedium.copy(alpha = 0.25f))
-                    .clickable {}
+                    .clickable { showDeleteDialog = true}
                     .padding(horizontal = 18.dp, vertical = 16.dp)
             ) {
                 // The text for the delete button
