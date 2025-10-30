@@ -56,6 +56,7 @@ fun KeeprApp(
                 com.example.keepr.ui.screens.auth.SignUpScreen(
                     vm = authVm,
                     onGoToSignIn = {
+                        // FIKS: resetState() er flyttet til selve skjermene.
                         navController.navigate(ROUTE_SIGNIN) { launchSingleTop = true }
                     },
                     onSignedIn = {
@@ -70,6 +71,10 @@ fun KeeprApp(
             composable(ROUTE_SIGNIN) {
                 com.example.keepr.ui.screens.auth.SignInScreen(
                     vm = authVm,
+                    onGoToSignUp = {
+                        // FIKS: resetState() er flyttet til selve skjermene.
+                        navController.navigate(ROUTE_SIGNUP) { launchSingleTop = true }
+                    },
                     onSignedIn = {
                         navController.navigate(NavRoute.Collections.route) {
                             popUpTo(ROUTE_SIGNIN) { inclusive = true }

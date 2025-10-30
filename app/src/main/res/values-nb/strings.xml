@@ -30,6 +30,8 @@
     <string name="password_placeholder">Passord</string>
     <string name="login_button">Logg inn</string>
     <string name="please_wait">Vent litt…</string>
+    <string name="login_no_account">Har du ikke bruker? Registrer deg</string>
+
 
     <string name="err_wrong_credentials">Feil e-post eller passord</string>
     <string name="err_passwords_mismatch">Passordene er ikke like</string>
@@ -43,8 +45,11 @@
     <string name="last_name_placeholder">Etternavn</string>
     <string name="repeat_password_label">Gjenta passord</string>
     <string name="repeat_password_placeholder">Gjenta passord</string>
+    <string name="password_requirements">Minst 6 tegn, én stor bokstav og ett tall.</string>
     <string name="signup_button">Opprett bruker</string>
     <string name="signup_have_account">Har du en bruker? Logg inn</string>
+
+    <string name="err_password_strength">Passordet oppfyller ikke kravene.</string>
 
     <!-- THIS IS FOR THE COLLECTION PAGE -->
     <string name="collections_title">Dine samlinger</string>

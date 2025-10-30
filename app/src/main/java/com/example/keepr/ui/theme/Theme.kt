@@ -1,53 +1,43 @@
 package com.example.keepr.ui.theme
 
+import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 
-// Dark scheme (bruker de mørke grønntonene som bakgrunn/surface)
-
-private val KeeprDarkColorScheme = darkColorScheme(
-    background = KeeprDark,
-    onBackground = Color.White,
-    // Ting du trykker på (knapper, primært)
-    primary = KeeprTeal,
-    onPrimary = Color.White,
-    // Flater/kort/inputs – BRUK denne i tekstfelt
-    surface = KeeprDark,                 // hovedflate (screen)
-    onSurface = Color.White,
-    surfaceVariant = KeeprMedium,        // <— LYSERE grønn for kort/inputs
-    // Kantfarge for OutlinedTextField m.m.
-    outline = KeeprLight.copy(alpha = 0.60f),
-    // valgfritt: aksenter
-    secondary = KeeprMedium,
-    onSecondary = Color.White
+private val KeeprLightColorScheme = lightColorScheme(
+    primary = KeeprBrand,
+    onPrimary = KeeprDark,
+    surface = KeeprOffWhite,
+    onSurface = KeeprAccent,
+    background = KeeprLightGreenBg,
+    onBackground = KeeprAccent,
+    outline = KeeprAccent.copy(alpha = 0.5f),
+    error = KeeprErrorRed,
+    onError = KeeprWhite
 )
 
-// Light scheme (lys bakgrunn, brand-farger på primary/secondary)
-private val KeeprLightColorScheme = lightColorScheme(
-    primary = KeeprTeal,          // #1A4A47
-    onPrimary = Color.White,
-    secondary = KeeprMedium,      // #537D79
-    onSecondary = Color.White,
-    tertiary = KeeprLight,        // #B5E0BD
-    onTertiary = KeeprDark,
-    background = Color.White,
-    onBackground = KeeprDark,     // #1C393B
-    surface = Color.White,
-    onSurface = KeeprDark
+private val KeeprDarkColorScheme = darkColorScheme(
+    primary = KeeprBrand,
+    onPrimary = KeeprDark,
+    surface = KeeprAccent.copy(alpha = 0.3f),
+    onSurface = KeeprWhite,
+    background = KeeprDark,
+    onBackground = KeeprWhite,
+    outline = KeeprBrand.copy(alpha = 0.4f),
+    error = KeeprErrorRed,
+    onError = KeeprWhite
 )
 
 @Composable
 fun KeeprTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Sett til false for å sikre at brand-paletten alltid brukes
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
@@ -58,6 +48,16 @@ fun KeeprTheme(
         }
         darkTheme -> KeeprDarkColorScheme
         else -> KeeprLightColorScheme
+    }
+
+    // Kode for å fargelegge system-navbaren (hvis bruker har den gamle akrivert)
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.navigationBarColor = colorScheme.surface.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !darkTheme
+        }
     }
 
     MaterialTheme(
