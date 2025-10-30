@@ -41,8 +41,7 @@ class AddViewModel(application: Application) : AndroidViewModel(application) {
             _userId.value?.let { userId ->
                 val newCollection = CollectionEntity(
                     userId = userId,
-                    title = title,
-                    description = description
+                    title = title
                 )
                 collectionsDao.insert(newCollection)
             }

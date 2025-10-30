@@ -58,9 +58,8 @@ fun CollectionsScreen(
             if (q.isEmpty()) collections
             else collections.filter { row ->
                 val title = row.collection.title.orEmpty().lowercase()
-                val desc  = row.collection.description.orEmpty().lowercase()
                 val count = row.itemCount.toString()
-                title.contains(q) || desc.contains(q) || count.contains(q)
+                title.contains(q) || count.contains(q)
             }
         )
     }
@@ -276,10 +275,6 @@ private fun CollectionCard(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold
                     )
-                    row.collection.description?.takeIf { it.isNotBlank() }?.let {
-                        Spacer(Modifier.height(4.dp))
-                        Text(it, style = MaterialTheme.typography.bodyMedium)
-                    }
                     Spacer(Modifier.height(6.dp))
                     Text("${row.itemCount} item(s)", style = MaterialTheme.typography.bodySmall)
                 }

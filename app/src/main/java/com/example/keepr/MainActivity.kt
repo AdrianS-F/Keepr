@@ -28,10 +28,6 @@ class MainActivity : ComponentActivity() {
 
         // Vis splash før innhold
         installSplashScreen()
-        // Kjør evt. seeding før UI (ikke blokkér main-tråden)
-        lifecycleScope.launch {
-            com.example.keepr.seed.seedDemoIfNeeded(this@MainActivity)
-        }
 
         // Edge-to-edge
         enableEdgeToEdge()

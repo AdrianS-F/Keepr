@@ -38,7 +38,6 @@ class CollectionsViewModel(app: Application) : AndroidViewModel(app) {
         val id = dao.insert(
             CollectionEntity(
                 title = title,
-                description = null,
                 userId = uid
             )
         )
