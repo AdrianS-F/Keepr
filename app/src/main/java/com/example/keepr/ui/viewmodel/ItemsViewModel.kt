@@ -14,6 +14,8 @@ class ItemsViewModel(app: Application, private val collectionId: Long) : Android
     private val db = KeeprDatabase.get(app)
     private val itemsDao = db.itemsDao()
 
+    private val collectionsDao = db.collectionsDao()
+
     val items: StateFlow<List<ItemEntity>> =
         itemsDao.observeForCollection(collectionId)
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
@@ -30,5 +32,17 @@ class ItemsViewModel(app: Application, private val collectionId: Long) : Android
 
     fun delete(item: ItemEntity) = viewModelScope.launch {
         itemsDao.delete(item)
+    }
+
+    fun renameCurrentCollection(newTitle: String) {
+        viewModelScope.launch {
+            collectionsDao.renameCollection(collectionId, newTitle.trim())
+        }
+    }
+
+    fun updateItem(itemId: Long, name: String, notes: String?) {
+        viewModelScope.launch {
+            itemsDao.updateItemDetails(itemId, name.trim(), notes?.trim())
+        }
     }
 }

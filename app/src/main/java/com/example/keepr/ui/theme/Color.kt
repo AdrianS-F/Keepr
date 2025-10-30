@@ -2,16 +2,19 @@ package com.example.keepr.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Keepr Color Palette
-val KeeprDark = Color(0xFF1C393B)
-val KeeprTeal = Color(0xFF1A4A47)
-val KeeprMedium = Color(0xFF537D79)
-val KeeprLight = Color(0xFFB5E0BD)
+// ---- NY, FORBEDRET FARGEPALETT ----
 
-// Optional supporting colors (you can adjust as needed)
-val KeeprBackground = KeeprDark
-val KeeprSurface = KeeprMedium
-val KeeprPrimary = KeeprTeal
-val KeeprSecondary = KeeprLight
-val KeeprOnPrimary = Color.White
-val KeeprOnBackground = Color.White
+// Hovedfarger (Branding)
+val KeeprBrand = Color(0xFF57AF9A) // Den lyse, fine grønnfargen (vår 'primary')
+val KeeprAccent = Color(0xFF3E8E7E) // En mørkere grønn for kontrast og tekst
+
+// Lyse tema-farger (NY)
+val KeeprOffWhite = Color(0xFFF7FAF9)  // En "nesten hvit" med et hint av grønt. Perfekt for kort/tekstfelt.
+val KeeprLightGreenBg = Color(0xFFEBF5F3) // En svak, lys grønn bakgrunnsfarge.
+
+// Mørke tema-farger
+val KeeprDark = Color(0xFF0F3D3E)   // Veldig mørk, for bakgrunn i mørkt tema
+
+// Systemfarger
+val KeeprErrorRed = Color(0xFFD32F2F) // Tydelig rødfarge for feil
+val KeeprWhite = Color(0xFFFFFFFF)  // Ren hvit (brukes nå mer sparsomt)

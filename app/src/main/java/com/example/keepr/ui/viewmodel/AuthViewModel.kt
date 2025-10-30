@@ -34,12 +34,25 @@ class AuthViewModel(
     fun updateFirst(v: String) { _state.value = _state.value.copy(firstName = v) }
     fun updateLast(v: String) { _state.value = _state.value.copy(lastName = v) }
 
+    fun resetState() {
+        _state.value = AuthUiState()
+    }
+
     fun signUp(onSuccess: () -> Unit) = viewModelScope.launch {
         val s = _state.value
         if (s.password != s.repeatPassword) {
             _state.value = s.copy(error = "PASSWORDS_MISMATCH")
             return@launch
         }
+
+        // FIKS 1: Sjekker om passordet inneholder minst én stor bokstav og ett tall.
+        val hasUppercase = s.password.any { it.isUpperCase() }
+        val hasDigit = s.password.any { it.isDigit() }
+        if (!hasUppercase || !hasDigit) {
+            _state.value = s.copy(error = "PASSWORD_WEAK")
+            return@launch
+        }
+
         _state.value = s.copy(loading = true, error = null)
         val res = repo.signUp(s.email, s.firstName, s.lastName, s.password)
         _state.value = _state.value.copy(loading = false)

@@ -1,4 +1,4 @@
-package com.example.keepr.ui.screens.profile
+package com.example.keepr.ui.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
