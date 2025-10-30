@@ -1,6 +1,10 @@
 package com.example.keepr.ui
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -43,7 +47,19 @@ fun KeeprApp(
         // If you want to show the bar on Items too, you can add:
         // || currentRoute?.startsWith("items/") == true
 
+    val appSnackbarHostState = remember { SnackbarHostState() }
+
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = appSnackbarHostState) { data ->
+                Snackbar(
+                    snackbarData = data,
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor   = MaterialTheme.colorScheme.onSurfaceVariant,
+                    actionColor    = MaterialTheme.colorScheme.primary
+                )
+            }
+        },
         bottomBar = { if (showBottomBar) KeeprBottomBar(navController, navController.currentDestination) }
     ) { paddingValues ->
 
@@ -90,7 +106,9 @@ fun KeeprApp(
                     padding = paddingValues,
                     onOpen = { collectionId ->
                         navController.navigate(NavRoute.Items.makeRoute(collectionId))
-                    }
+                    },
+                    snackbarHostState = appSnackbarHostState
+
                 )
             }
 
