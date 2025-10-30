@@ -16,5 +16,5 @@ val KeeprLightGreenBg = Color(0xFFEBF5F3) // En svak, lys grønn bakgrunnsfarge.
 val KeeprDark = Color(0xFF0F3D3E)   // Veldig mørk, for bakgrunn i mørkt tema
 
 // Systemfarger
-val KeeprErrorRed = Color(0xFFD32F2F) // Tydelig rødfarge for feil
+val KeeprErrorRed = Color(0xFFFF0000) // Tydelig rødfarge for feil
 val KeeprWhite = Color(0xFFFFFFFF)  // Ren hvit (brukes nå mer sparsomt)
