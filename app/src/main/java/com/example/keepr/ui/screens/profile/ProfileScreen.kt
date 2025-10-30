@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.keepr.R
 import com.example.keepr.ui.components.ChangeLanguageDialog
+import com.example.keepr.ui.viewmodel.ProfileViewModel
 
 @Composable
 fun ProfileScreen(onLogout: () -> Unit) {
