@@ -49,4 +49,8 @@ interface CollectionsDao {
 
     @Query("UPDATE collections SET title = :newTitle WHERE collection_id = :collectionId")
     suspend fun renameCollection(collectionId: Long, newTitle: String)
+
+    @Query("SELECT title FROM collections WHERE collection_id = :collectionId")
+    fun observeTitle(collectionId: Long): Flow<String?>
+
 }

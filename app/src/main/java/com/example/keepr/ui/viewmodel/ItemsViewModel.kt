@@ -7,6 +7,7 @@ import com.example.keepr.data.ItemEntity
 import com.example.keepr.data.KeeprDatabase
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -45,4 +46,10 @@ class ItemsViewModel(app: Application, private val collectionId: Long) : Android
             itemsDao.updateItemDetails(itemId, name.trim(), notes?.trim())
         }
     }
+
+    val collectionTitle: StateFlow<String> =
+        collectionsDao.observeTitle(collectionId)
+            .map { it ?: "Items" }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), "Items")
+
 }

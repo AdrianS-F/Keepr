@@ -64,8 +64,10 @@ fun ItemsScreen(
         )
     }
 
+    val liveTitle by vm.collectionTitle.collectAsState()   // <- from VM
     var isEditingTitle by remember { mutableStateOf(false) }
-    var titleText by remember { mutableStateOf("Items") }
+    var titleDraft by remember(liveTitle) { mutableStateOf(liveTitle) } // reset when DB title changes
+
 
 
     Box(
@@ -83,31 +85,49 @@ fun ItemsScreen(
                 IconButton(onClick = onBack) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
-                Spacer(Modifier.width(8.dp))
-                if (isEditingTitle) {
-                    OutlinedTextField(
-                        value = titleText,
-                        onValueChange = { titleText = it },
-                        singleLine = true,
-                        modifier = Modifier.weight(1f)
-                    )
-                    TextButton(onClick = {
-                        if (titleText.isNotBlank()) vm.renameCurrentCollection(titleText)
-                        isEditingTitle = false
-                    }) { Text("Save") }
-                    TextButton(onClick = { isEditingTitle = false }) { Text("Cancel") }
-                } else {
-                    Text(
-                        titleText,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.weight(1f)
-                    )
-                    IconButton(onClick = { isEditingTitle = true }) {
-                        Icon(imageVector = Icons.Default.Edit, contentDescription = "Rename collection")
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Spacer(Modifier.width(8.dp))
+
+                    if (isEditingTitle) {
+                        OutlinedTextField(
+                            value = titleDraft,
+                            onValueChange = { titleDraft = it },
+                            singleLine = true,
+                            modifier = Modifier.weight(1f)
+                        )
+                        TextButton(onClick = {
+                            if (titleDraft.isNotBlank()) vm.renameCurrentCollection(titleDraft)
+                            isEditingTitle = false
+                        }) { Text("Save") }
+                        TextButton(onClick = {
+                            // cancel: revert draft to live title
+                            titleDraft = liveTitle
+                            isEditingTitle = false
+                        }) { Text("Cancel") }
+                    } else {
+                        Text(
+                            liveTitle,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.weight(1f)
+                        )
+                        IconButton(onClick = {
+                            titleDraft = liveTitle
+                            isEditingTitle = true
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Rename items"
+                            )
+                        }
                     }
                 }
             }
+
 
             OutlinedTextField(
                 value = query,
@@ -135,7 +155,7 @@ fun ItemsScreen(
                     contentAlignment = Alignment.TopCenter
                 ) {
                     Text(
-                        text = "No collections match your search.",
+                        text = "No items match your search.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
