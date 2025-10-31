@@ -1,16 +1,21 @@
-package com.example.keepr.ui.screens.add
+package com.example.keepr.ui.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.keepr.data.*
-import kotlinx.coroutines.flow.*
+import com.example.keepr.data.CollectionEntity
+import com.example.keepr.data.ItemEntity
+import com.example.keepr.data.KeeprDatabase
+import com.example.keepr.data.SessionManager
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class AddViewModel(application: Application) : AndroidViewModel(application) {
 
     // Henter database og DAO-er
-    private val db = KeeprDatabase.get(application)
+    private val db = KeeprDatabase.Companion.get(application)
     private val collectionsDao = db.collectionsDao()
     private val itemsDao = db.itemsDao()
     private val sessionManager = SessionManager(application)

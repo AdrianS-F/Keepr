@@ -1,5 +1,6 @@
 package com.example.keepr.ui.screens.items
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,33 +11,24 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.example.keepr.R
 import com.example.keepr.data.ItemEntity
 import com.example.keepr.ui.navigation.NavRoute
 import com.example.keepr.ui.viewmodel.ItemsViewModel
 import com.example.keepr.ui.viewmodel.ItemsViewModelFactory
-import androidx.compose.ui.res.stringResource
-import com.example.keepr.R
 
 @Composable
 fun ItemsScreen(
@@ -64,141 +56,159 @@ fun ItemsScreen(
         )
     }
 
-    val liveTitle by vm.collectionTitle.collectAsState()   // <- from VM
+    val liveTitle by vm.collectionTitle.collectAsState()
     var isEditingTitle by remember { mutableStateOf(false) }
-    var titleDraft by remember(liveTitle) { mutableStateOf(liveTitle) } // reset when DB title changes
+    var titleDraft by remember(liveTitle) { mutableStateOf(liveTitle) }
 
-
-
-    Box(
+    // FIKS 1: Bruker en Surface med riktig bakgrunnsfarge fra temaet.
+    Surface(
         modifier = Modifier
-            .padding(padding)
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(padding), // Respekterer system-padding (status bar)
+        color = MaterialTheme.colorScheme.background
     ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 16.dp) // Gir litt pusterom i bunnen
+        ) {
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
+            ) {
+                Spacer(Modifier.height(12.dp))
 
-
-        Spacer(Modifier.height(12.dp))
-
-        Column(Modifier.fillMaxSize()) {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = onBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                }
+                // Topplinje
                 Row(
                     Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Spacer(Modifier.width(8.dp))
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            // FIKS 2: Ikoner rett på bakgrunnen må ha riktig farge.
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Spacer(Modifier.width(8.dp))
 
-                    if (isEditingTitle) {
-                        OutlinedTextField(
-                            value = titleDraft,
-                            onValueChange = { titleDraft = it },
-                            singleLine = true,
-                            modifier = Modifier.weight(1f)
-                        )
-                        TextButton(onClick = {
-                            if (titleDraft.isNotBlank()) vm.renameCurrentCollection(titleDraft)
-                            isEditingTitle = false
-                        }) { Text("Save") }
-                        TextButton(onClick = {
-                            // cancel: revert draft to live title
-                            titleDraft = liveTitle
-                            isEditingTitle = false
-                        }) { Text("Cancel") }
-                    } else {
+                        if (isEditingTitle) {
+                            OutlinedTextField(
+                                value = titleDraft,
+                                onValueChange = { titleDraft = it },
+                                singleLine = true,
+                                modifier = Modifier.weight(1f)
+                            )
+                            TextButton(onClick = {
+                                if (titleDraft.isNotBlank()) vm.renameCurrentCollection(titleDraft)
+                                isEditingTitle = false
+                            }) { Text("Save") }
+                            TextButton(onClick = {
+                                titleDraft = liveTitle
+                                isEditingTitle = false
+                            }) { Text("Cancel") }
+                        } else {
+                            Text(
+                                liveTitle,
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.weight(1f),
+                                // FIKS 3: Tittelen må ha riktig farge.
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                            IconButton(onClick = {
+                                titleDraft = liveTitle
+                                isEditingTitle = true
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.Edit,
+                                    contentDescription = "Rename items",
+                                    // FIKS 4: Også dette ikonet må fargelegges.
+                                    tint = MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Spacer(Modifier.height(12.dp))
+
+                // Søkefelt (er allerede OK, da OutlinedTextField henter farger fra temaet)
+                OutlinedTextField(
+                    value = query,
+                    onValueChange = { query = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    label = { Text("Search items") },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                    trailingIcon = {
+                        if (query.isNotEmpty()) {
+                            IconButton(onClick = { query = "" }) {
+                                Icon(Icons.Default.Close, contentDescription = "Clear")
+                            }
+                        }
+                    }
+                )
+                Spacer(Modifier.height(12.dp))
+
+                if (filteredItems.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 32.dp),
+                        contentAlignment = Alignment.TopCenter
+                    ) {
                         Text(
-                            liveTitle,
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.weight(1f)
+                            text = "No items match your search.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            // FIKS 5: Tekstfargen må passe på bakgrunnen.
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                         )
-                        IconButton(onClick = {
-                            titleDraft = liveTitle
-                            isEditingTitle = true
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.Edit,
-                                contentDescription = "Rename items"
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        contentPadding = PaddingValues(bottom = 88.dp)
+                    ) {
+                        items(filteredItems, key = { it.itemId }) { item ->
+                            ItemRow(
+                                item = item,
+                                onToggle = { checked -> vm.toggleAcquired(item, checked) },
+                                onDelete = { vm.delete(item) },
+                                onEdit = { newName, newNotes -> vm.updateItem(item.itemId, newName, newNotes) }
                             )
                         }
                     }
                 }
             }
 
-
-            OutlinedTextField(
-                value = query,
-                onValueChange = { query = it },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                label = { Text("Search items") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                trailingIcon = {
-                    if (query.isNotEmpty()) {
-                        IconButton(onClick = { query = "" }) {
-                            Icon(Icons.Default.Close, contentDescription = "Clear")
-                        }
-                    }
-                }
-            )
-            Spacer(Modifier.height(12.dp))
-
-
-            if (filteredItems.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 32.dp),
-                    contentAlignment = Alignment.TopCenter
-                ) {
-                    Text(
-                        text = "No items match your search.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            } else {
-
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(bottom = 88.dp)
-                ) {
-                    items(filteredItems, key = { it.itemId }) { item ->
-                        ItemRow(
-                            item = item,
-                            onToggle = { checked -> vm.toggleAcquired(item, checked) },
-                            onDelete = { vm.delete(item) },
-                            onEdit = { newName, newNotes -> vm.updateItem(item.itemId, newName, newNotes) }
-                        )
-                    }
-                }
+            FloatingActionButton(
+                onClick = { navController.navigate(NavRoute.Add.route) },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .navigationBarsPadding() // Sikrer at den ikke havner bak systemlinjen
+                    .padding(end = 16.dp), // Legger til litt ekstra margin fra kanten
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Add,
+                    contentDescription = "Add item",
+                    modifier = Modifier.size(28.dp)
+                )
             }
-        }
-
-        // FAB
-        FloatingActionButton(
-            onClick = { navController.navigate(NavRoute.Add.route) }, // or open inline add
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(end = 16.dp, bottom = 16.dp + padding.calculateBottomPadding()),
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.Add,
-                contentDescription = "Add item",
-                modifier = Modifier.size(28.dp)
-            )
         }
     }
 }
-
-
-
 
 @Composable
 private fun ItemRow(
@@ -209,26 +219,42 @@ private fun ItemRow(
 ) {
     var showEdit by remember { mutableStateOf(false) }
 
+    // FIKS 6: Kortet må bruke 'surface'-fargen for å skille seg ut.
     Card(
         Modifier
             .fillMaxWidth()
-            .clickable { showEdit = true }
+            .clickable { showEdit = true },
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
-        Column(Modifier.padding(16.dp)) {
+        Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Checkbox(checked = item.acquired, onCheckedChange = onToggle)
-                    Text(item.itemName, style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        item.itemName,
+                        style = MaterialTheme.typography.titleMedium,
+                        // FIKS 7: Teksten må ha 'onSurface'-farge.
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                 }
                 TextButton(onClick = onDelete) { Text(stringResource(R.string.delete)) }
             }
 
             item.notes?.takeIf { it.isNotBlank() }?.let {
                 Spacer(Modifier.height(4.dp))
-                Text(it, style = MaterialTheme.typography.bodySmall)
+                Text(
+                    it,
+                    style = MaterialTheme.typography.bodySmall,
+                    // FIKS 8: Notat-teksten må også ha riktig farge.
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                )
             }
         }
     }
@@ -246,7 +272,7 @@ private fun ItemRow(
     }
 }
 
-
+// EditItemDialog er OK, da AlertDialog henter farger fra temaet.
 @Composable
 private fun EditItemDialog(
     initialName: String,
@@ -276,7 +302,6 @@ private fun EditItemDialog(
                     modifier = Modifier.fillMaxWidth(),
                     minLines = 3
                 )
-                // (Add picture picker later)
             }
         },
         confirmButton = {
@@ -287,5 +312,3 @@ private fun EditItemDialog(
         dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } }
     )
 }
-
-

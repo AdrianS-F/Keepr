@@ -1,33 +1,19 @@
 package com.example.keepr.ui.screens.collections
 
-
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -35,10 +21,9 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.keepr.data.CollectionWithCount
-import com.example.keepr.ui.viewmodel.CollectionsViewModel
 import com.example.keepr.ui.viewmodel.AddResult
+import com.example.keepr.ui.viewmodel.CollectionsViewModel
 import kotlinx.coroutines.launch
-
 
 @Composable
 fun CollectionsScreen(
@@ -48,7 +33,6 @@ fun CollectionsScreen(
 ) {
     val vm: CollectionsViewModel = viewModel()
     val collections by vm.collections.collectAsState()
-
 
     var query by rememberSaveable { mutableStateOf("") }
 
@@ -66,11 +50,8 @@ fun CollectionsScreen(
 
     var showCreateDialog by remember { mutableStateOf(false) }
     var newCollectionName by remember { mutableStateOf(TextFieldValue("")) }
-
     var pendingDeleteId by remember { mutableStateOf<Long?>(null) }
-
     var pendingNewCollectionTitle by remember { mutableStateOf<String?>(null) }
-    
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(collections, pendingNewCollectionTitle) {
@@ -79,33 +60,50 @@ fun CollectionsScreen(
         }
     }
 
+    // FIKS 1: Bruker Scaffold for å få riktig bakgrunnsfarge og plassering av knapper.
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState) { data ->
                 Snackbar(
                     snackbarData = data,
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    // Bruker 'surface' og 'onSurface' for et rent utseende som matcher temaet.
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
                     actionColor = MaterialTheme.colorScheme.primary
+                )
+            }
+        },
+        containerColor = MaterialTheme.colorScheme.background,
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { showCreateDialog = true },
+                modifier = Modifier.navigationBarsPadding(),
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Add,
+                    contentDescription = "Add collection",
+                    modifier = Modifier.size(28.dp)
                 )
             }
         }
     ) { innerPadding ->
-        Box(
-            modifier = Modifier
+        Column(
+            Modifier
                 .padding(padding)
                 .padding(innerPadding)
-                .fillMaxSize()
-                .padding(16.dp)
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
         ) {
-        Column(Modifier.fillMaxSize()) {
+            Spacer(Modifier.height(16.dp))
             Text(
                 "Your Collections",
                 style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onBackground
             )
             Spacer(Modifier.height(12.dp))
-
 
             OutlinedTextField(
                 value = query,
@@ -122,8 +120,7 @@ fun CollectionsScreen(
                     }
                 }
             )
-            Spacer(Modifier.height(12.dp))
-
+            Spacer(Modifier.height(16.dp))
 
             if (filteredCollections.isEmpty()) {
                 Box(
@@ -135,14 +132,13 @@ fun CollectionsScreen(
                     Text(
                         text = "No collections match your search.",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                     )
                 }
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(bottom = 88.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     items(
                         items = filteredCollections,
@@ -157,77 +153,52 @@ fun CollectionsScreen(
                 }
             }
         }
-
-
-
-        FloatingActionButton(
-            onClick = { showCreateDialog = true },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp),
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.Add,
-                contentDescription = "Add collection",
-                modifier = Modifier.size(28.dp)
-            )
-        }
     }
 
-        if (showCreateDialog) {
-            AlertDialog(
-
-                onDismissRequest = {  },
-
-                title = { Text("New Collection") },
-                text = {
-                    OutlinedTextField(
-                        value = newCollectionName,
-                        onValueChange = { newCollectionName = it },
-                        label = { Text("Collection name") },
-                        singleLine = true
-                    )
-                },
-
-
-                        confirmButton = {
-                    TextButton(onClick = {
-                        val title = newCollectionName.text.trim()
-                        if (title.isNotEmpty()) {
-                            scope.launch {
-                                when (vm.addCollection(title)) {
-                                    is AddResult.Success -> {
-                                        pendingNewCollectionTitle = title
-                                        showCreateDialog = false
-                                    }
-                                    AddResult.Duplicate -> {
-                                        showCreateDialog = false
-                                        newCollectionName = TextFieldValue("")
-                                        snackbarHostState.showSnackbar("A collection named \"$title\" already exists.")
-                                    }
-                                    AddResult.NoUser -> {
-                                        showCreateDialog = false
-                                        newCollectionName = TextFieldValue("")
-                                        snackbarHostState.showSnackbar("No user is signed in.")
-                                    }
+    if (showCreateDialog) {
+        AlertDialog(
+            onDismissRequest = { showCreateDialog = false }, // Gir mulighet til å lukke dialogen
+            title = { Text("New Collection") },
+            text = {
+                OutlinedTextField(
+                    value = newCollectionName,
+                    onValueChange = { newCollectionName = it },
+                    label = { Text("Collection name") },
+                    singleLine = true
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    val title = newCollectionName.text.trim()
+                    if (title.isNotEmpty()) {
+                        scope.launch {
+                            when (vm.addCollection(title)) {
+                                is AddResult.Success -> {
+                                    pendingNewCollectionTitle = title
+                                    showCreateDialog = false
+                                }
+                                AddResult.Duplicate -> {
+                                    showCreateDialog = false
+                                    newCollectionName = TextFieldValue("")
+                                    snackbarHostState.showSnackbar("A collection named \"$title\" already exists.")
+                                }
+                                AddResult.NoUser -> {
+                                    showCreateDialog = false
+                                    newCollectionName = TextFieldValue("")
+                                    snackbarHostState.showSnackbar("No user is signed in.")
                                 }
                             }
-                        } else {
-                            showCreateDialog = false
                         }
-                    }) { Text("Add") }
-                }
-,
-                dismissButton = {
-                    TextButton(onClick = { showCreateDialog = false }) { Text("Cancel") }
-                }
-            )
-        }
+                    }
+                }) { Text("Add") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showCreateDialog = false }) { Text("Cancel") }
+            }
+        )
+    }
 
-
-        pendingDeleteId?.let { id ->
+    pendingDeleteId?.let { id ->
         AlertDialog(
             onDismissRequest = { pendingDeleteId = null },
             title = { Text("Delete collection?") },
@@ -242,7 +213,6 @@ fun CollectionsScreen(
                 TextButton(onClick = { pendingDeleteId = null }) { Text("Cancel") }
             }
         )
-     }
     }
 }
 
@@ -255,51 +225,56 @@ private fun CollectionCard(
     var menuExpanded by remember { mutableStateOf(false) }
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onOpen),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
-        Column(Modifier.padding(16.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 4.dp, top = 8.dp, bottom = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier.weight(1f)
             ) {
+                Text(
+                    text = row.collection.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    "${row.itemCount} item(s)",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                )
+            }
 
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clickable(onClick = onOpen)
-                ) {
-                    Text(
-                        text = row.collection.title,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
+            Box {
+                IconButton(onClick = { menuExpanded = true }) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = "More options",
+                        // FIKS 7: Ikonfargen må også passe på 'surface'.
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    Spacer(Modifier.height(6.dp))
-                    Text("${row.itemCount} item(s)", style = MaterialTheme.typography.bodySmall)
                 }
 
-                Box {
-                    IconButton(onClick = { menuExpanded = true }) {
-                        Icon(
-                            imageVector = Icons.Default.MoreVert,
-                            contentDescription = "More options",
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-
-                    DropdownMenu(
-                        expanded = menuExpanded,
-                        onDismissRequest = { menuExpanded = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("Delete") },
-                            onClick = {
-                                menuExpanded = false
-                                onDelete()
-                            }
-                        )
-                    }
+                DropdownMenu(
+                    expanded = menuExpanded,
+                    onDismissRequest = { menuExpanded = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Delete") },
+                        onClick = {
+                            menuExpanded = false
+                            onDelete()
+                        }
+                    )
                 }
             }
         }

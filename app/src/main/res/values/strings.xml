@@ -48,7 +48,7 @@
     <string name="last_name_placeholder">Last Name</string>
     <string name="repeat_password_label">Repeat password</string>
     <string name="repeat_password_placeholder">Repeat password</string>
-    <string name="password_requirements">Must be at least 6 characters long, contain a capital letter and a number.</string>
+    <string name="password_requirements">At least 6 characters long, contain a capital letter and a number.</string>
     <string name="signup_button">Create an account</string>
     <string name="signup_have_account">Already have an account? Sign in</string>
 
