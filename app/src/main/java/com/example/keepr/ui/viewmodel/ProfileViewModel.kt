@@ -9,10 +9,12 @@ import com.example.keepr.data.UserEntity
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.firstOrNull
+import com.example.keepr.data.ProfileEntity
 
 data class ProfileUiState(
     val user: UserEntity? = null,
-    val collectionCount: Int = 0
+    val collectionCount: Int = 0,
+    val avatarUri: String? = null
 )
 
 class ProfileViewModel(application: Application) : AndroidViewModel(application) {
@@ -21,6 +23,8 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
     private val usersDao = db.usersDao()
     private val collectionsDao = db.collectionsDao()
     private val sessionManager = SessionManager(application)
+
+    private val profileDao = db.profileDao()
 
     private val repo = com.example.keepr.data.AuthRepository(db)
 
@@ -34,9 +38,14 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
                 .flatMapLatest { userId ->
                     combine(
                         usersDao.observeById(userId),
-                        collectionsDao.observeForUser(userId)
-                    ) { user, collections ->
-                        ProfileUiState(user, collections.size)
+                        collectionsDao.observeForUser(userId),
+                        profileDao.observe(userId)
+                    ) { user, collections, profile ->
+                        ProfileUiState(
+                            user = user,
+                            collectionCount = collections.size,
+                            avatarUri = profile?.avatarUri
+                        )
                     }
                 }
                 .collect { _state.value = it }
@@ -52,6 +61,26 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
             if (f.isEmpty() || l.isEmpty()) return@launch
 
             usersDao.updateName(userId, f, l)
+        }
+    }
+
+    fun updatePhoto(uri: String) {
+        viewModelScope.launch {
+            val userId = sessionManager.loggedInUserId.firstOrNull() ?: return@launch
+
+            // Finn profil-rad hvis den finnes fra før
+            val existing = profileDao.getOnce(userId)
+            if (existing == null) {
+                profileDao.upsert(
+                    ProfileEntity(
+                        userId = userId,
+                        avatarUri = uri
+                    )
+                )
+            } else {
+                // U i CRUD – vanlig oppdatering
+                profileDao.updateAvatar(userId, uri)
+            }
         }
     }
 

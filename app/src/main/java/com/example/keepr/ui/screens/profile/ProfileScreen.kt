@@ -30,6 +30,12 @@ import com.example.keepr.ui.components.ChangeLanguageDialog
 import com.example.keepr.ui.components.ChangeNameDialog
 import com.example.keepr.ui.components.DeleteUserDialog
 import com.example.keepr.ui.viewmodel.ProfileViewModel
+import android.content.Intent
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import coil.compose.rememberAsyncImagePainter
+
 
 @Composable
 fun ProfileScreen(onLogout: () -> Unit) {
@@ -39,9 +45,27 @@ fun ProfileScreen(onLogout: () -> Unit) {
     var wrongPass by remember { mutableStateOf(false) }
     val ctx = LocalContext.current
 
+
     val vm: ProfileViewModel = viewModel()
     val state by vm.state.collectAsState()
     val user = state.user
+
+    val openImagePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument(),
+        onResult = { uri: Uri? ->
+            uri?.let {
+                try{
+                    ctx.contentResolver.takePersistableUriPermission(
+                        it,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
+                } catch (_: SecurityException) { }
+
+                vm.updatePhoto(it.toString())
+            }
+
+        }
+    )
 
     // FIKS: Gjeninnfører den todelte bakgrunnen med korrekte temafarger
     Box(
@@ -80,13 +104,19 @@ fun ProfileScreen(onLogout: () -> Unit) {
 
             Spacer(Modifier.height(25.dp))
 
+            val avatarUri = state.avatarUri
+
             Image(
-                painter = painterResource(id = R.drawable.sharu),
+                painter = if (avatarUri.isNullOrBlank())
+                    painterResource(id = R.drawable.placeholder_profile)
+                else
+                    rememberAsyncImagePainter(model = avatarUri),
                 contentDescription = stringResource(R.string.change_profile_picture),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(175.dp)
                     .clip(RoundedCornerShape(16.dp))
+                    .clickable { openImagePicker.launch(arrayOf("image/*")) }
             )
 
             Spacer(Modifier.height(25.dp))
@@ -132,7 +162,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
                         text = stringResource(R.string.change_profile_picture),
                         icon = Icons.Outlined.PhotoCamera,
                         contentColor = contentColor,
-                        onClick = {}
+                        onClick = { openImagePicker.launch(arrayOf("image/*")) }
                     )
                     Divider(color = dividerColor, thickness = 1.dp)
 
