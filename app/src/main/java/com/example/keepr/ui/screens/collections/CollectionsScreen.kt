@@ -37,15 +37,15 @@ fun CollectionsScreen(
     var query by rememberSaveable { mutableStateOf("") }
 
     val filteredCollections by remember(collections, query) {
-        val q = query.trim().lowercase()
-        mutableStateOf(
+        derivedStateOf {
+            val q = query.trim().lowercase()
             if (q.isEmpty()) collections
             else collections.filter { row ->
                 val title = row.collection.title.orEmpty().lowercase()
                 val count = row.itemCount.toString()
                 title.contains(q) || count.contains(q)
             }
-        )
+        }
     }
 
     var showCreateDialog by remember { mutableStateOf(false) }
@@ -77,7 +77,9 @@ fun CollectionsScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showCreateDialog = true },
-                modifier = Modifier.navigationBarsPadding(),
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .padding(bottom = 72.dp),
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
@@ -157,7 +159,10 @@ fun CollectionsScreen(
 
     if (showCreateDialog) {
         AlertDialog(
-            onDismissRequest = { showCreateDialog = false }, // Gir mulighet til å lukke dialogen
+            onDismissRequest = {
+                showCreateDialog = false
+                newCollectionName = TextFieldValue("")
+               },
             title = { Text("New Collection") },
             text = {
                 OutlinedTextField(
@@ -176,6 +181,7 @@ fun CollectionsScreen(
                                 is AddResult.Success -> {
                                     pendingNewCollectionTitle = title
                                     showCreateDialog = false
+                                    newCollectionName = TextFieldValue("")
                                 }
                                 AddResult.Duplicate -> {
                                     showCreateDialog = false
@@ -193,7 +199,10 @@ fun CollectionsScreen(
                 }) { Text("Add") }
             },
             dismissButton = {
-                TextButton(onClick = { showCreateDialog = false }) { Text("Cancel") }
+                TextButton(onClick = {
+                    showCreateDialog = false
+                    newCollectionName = TextFieldValue("")
+                }) { Text("Cancel") }
             }
         )
     }

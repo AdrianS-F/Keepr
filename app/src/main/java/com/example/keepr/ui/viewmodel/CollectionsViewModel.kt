@@ -46,6 +46,7 @@ class CollectionsViewModel(app: Application) : AndroidViewModel(app) {
 
     fun deleteCollection(collectionId: Long) {
         viewModelScope.launch { dao.deleteById(collectionId) }
+
     }
 
 }

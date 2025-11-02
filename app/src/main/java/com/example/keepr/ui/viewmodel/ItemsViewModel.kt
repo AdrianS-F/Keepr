@@ -52,4 +52,8 @@ class ItemsViewModel(app: Application, private val collectionId: Long) : Android
             .map { it ?: "Items" }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), "Items")
 
+    fun updateImage(itemId: Long, uri: String?) = viewModelScope.launch {
+        itemsDao.updateImage(itemId, uri)
+    }
+
 }

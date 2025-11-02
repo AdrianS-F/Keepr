@@ -22,7 +22,11 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class) // ?? Hva er dette, må fjernes
 @Composable
-fun AddScreen(padding: PaddingValues) {
+fun AddScreen(
+    padding: PaddingValues,
+    onSaved:(Long) ->Unit
+
+) {
     // ViewModel og UI-state (uendret)
     val vm: AddViewModel = viewModel()
     val collections by vm.collections.collectAsState()
@@ -168,7 +172,6 @@ fun AddScreen(padding: PaddingValues) {
                 // 💾 Lagre item (Button henter farger automatisk, så den er OK)
                 Button(
                     onClick = {
-                        // ... (din eksisterende logikk er uendret)
                         when {
                             itemName.text.isBlank() -> {
                                 scope.launch { snackbarHostState.showSnackbar("Please enter an item name.") }
@@ -177,15 +180,16 @@ fun AddScreen(padding: PaddingValues) {
                                 scope.launch { snackbarHostState.showSnackbar("Please select or create a collection.") }
                             }
                             else -> {
+                                val cid = selectedCollection!!.collectionId
                                 vm.addItem(
-                                    collectionId = selectedCollection!!.collectionId,
+                                    collectionId = cid,
                                     itemName = itemName.text,
                                     description = itemDescription.text,
                                     imgUri = null
                                 )
                                 itemName = TextFieldValue("")
                                 itemDescription = TextFieldValue("")
-                                scope.launch { snackbarHostState.showSnackbar("Saved in '${selectedCollection!!.title}': ${itemName.text.ifBlank { "New item" }}") }
+                                onSaved(cid)
                             }
                         }
                     },

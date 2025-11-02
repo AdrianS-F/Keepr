@@ -17,4 +17,7 @@ interface ItemsDao {
 
     @Query("UPDATE items SET item_name = :name, notes = :notes WHERE item_id = :itemId")
     suspend fun updateItemDetails(itemId: Long, name: String, notes: String?)
+
+    @Query("UPDATE items SET img_uri = :uri WHERE item_id = :itemId")
+    suspend fun updateImage(itemId: Long, uri: String?)
 }

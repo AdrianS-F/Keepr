@@ -1,6 +1,10 @@
 package com.example.keepr.ui.screens.items
 
-import androidx.compose.foundation.background
+
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,6 +33,16 @@ import com.example.keepr.data.ItemEntity
 import com.example.keepr.ui.navigation.NavRoute
 import com.example.keepr.ui.viewmodel.ItemsViewModel
 import com.example.keepr.ui.viewmodel.ItemsViewModelFactory
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+
 
 @Composable
 fun ItemsScreen(
@@ -40,12 +54,17 @@ fun ItemsScreen(
     val app = LocalContext.current.applicationContext as android.app.Application
     val vm: ItemsViewModel = viewModel(factory = ItemsViewModelFactory(app, collectionId))
     val items by vm.items.collectAsState()
+    val ctx = LocalContext.current
+    val liveTitle by vm.collectionTitle.collectAsState()
 
+    var isEditingTitle by remember { mutableStateOf(false) }
+    var titleDraft by remember(liveTitle) { mutableStateOf(liveTitle) }
+    var pendingImageItemId by remember { mutableStateOf<Long?>(null) }
     var query by rememberSaveable { mutableStateOf("") }
 
     val filteredItems by remember(items, query) {
-        val q = query.trim().lowercase()
-        mutableStateOf(
+        derivedStateOf {
+            val q = query.trim().lowercase()
             if (q.isEmpty()) items
             else items.filter { item ->
                 val name  = item.itemName.orEmpty().lowercase()
@@ -53,12 +72,27 @@ fun ItemsScreen(
                 val acquired = if (item.acquired) "acquired done true" else "not acquired false"
                 name.contains(q) || notes.contains(q) || acquired.contains(q)
             }
-        )
+        }
     }
 
-    val liveTitle by vm.collectionTitle.collectAsState()
-    var isEditingTitle by remember { mutableStateOf(false) }
-    var titleDraft by remember(liveTitle) { mutableStateOf(liveTitle) }
+    val openItemImagePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument(),
+        onResult = { uri ->
+            val id = pendingImageItemId
+            pendingImageItemId = null
+            if (id != null && uri != null) {
+                try {
+                    ctx.contentResolver.takePersistableUriPermission(
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
+                } catch (_: SecurityException) {}
+                vm.updateImage(id, uri.toString())
+            }
+        }
+    )
+
+
 
     // FIKS 1: Bruker en Surface med riktig bakgrunnsfarge fra temaet.
     Surface(
@@ -108,7 +142,7 @@ fun ItemsScreen(
                                 modifier = Modifier.weight(1f)
                             )
                             TextButton(onClick = {
-                                if (titleDraft.isNotBlank()) vm.renameCurrentCollection(titleDraft)
+                                if (titleDraft.isNotBlank()) vm.renameCurrentCollection(titleDraft.trim())
                                 isEditingTitle = false
                             }) { Text("Save") }
                             TextButton(onClick = {
@@ -138,6 +172,7 @@ fun ItemsScreen(
                         }
                     }
                 }
+
 
                 Spacer(Modifier.height(12.dp))
 
@@ -184,7 +219,11 @@ fun ItemsScreen(
                                 item = item,
                                 onToggle = { checked -> vm.toggleAcquired(item, checked) },
                                 onDelete = { vm.delete(item) },
-                                onEdit = { newName, newNotes -> vm.updateItem(item.itemId, newName, newNotes) }
+                                onEdit = { newName, newNotes -> vm.updateItem(item.itemId, newName, newNotes) },
+                                onChangeImage = {
+                                    pendingImageItemId = item.itemId
+                                    openItemImagePicker.launch(arrayOf("image/*"))
+                                }
                             )
                         }
                     }
@@ -195,8 +234,8 @@ fun ItemsScreen(
                 onClick = { navController.navigate(NavRoute.Add.route) },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .navigationBarsPadding() // Sikrer at den ikke havner bak systemlinjen
-                    .padding(end = 16.dp), // Legger til litt ekstra margin fra kanten
+                    .navigationBarsPadding()
+                    .padding(end = 16.dp, bottom = 72.dp),
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
@@ -215,7 +254,9 @@ private fun ItemRow(
     item: ItemEntity,
     onToggle: (Boolean) -> Unit,
     onDelete: () -> Unit,
-    onEdit: (String, String?) -> Unit
+    onEdit: (String, String?) -> Unit,
+    onChangeImage: () -> Unit
+
 ) {
     var showEdit by remember { mutableStateOf(false) }
 
@@ -232,29 +273,64 @@ private fun ItemRow(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Checkbox(checked = item.acquired, onCheckedChange = onToggle)
-                    Text(
-                        item.itemName,
-                        style = MaterialTheme.typography.titleMedium,
-                        // FIKS 7: Teksten må ha 'onSurface'-farge.
-                        color = MaterialTheme.colorScheme.onSurface
+                    val painter = if (item.imgUri.isNullOrBlank()) {
+                        painterResource(id = R.drawable.placeholder_profile) // reuse your placeholder
+                    } else {
+                        coil.compose.rememberAsyncImagePainter(model = item.imgUri)
+                    }
+                    Image(
+                        painter = painter,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(RoundedCornerShape(8.dp)),
+                        contentScale = ContentScale.Crop
                     )
+
+                    // Name + acquired
+                    Column {
+                        Text(
+                            item.itemName,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Checkbox(checked = item.acquired, onCheckedChange = onToggle)
+                            Text(
+                                if (item.acquired) "Acquired" else "Not acquired",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                            )
+                        }
+                    }
                 }
-                TextButton(onClick = onDelete) { Text(stringResource(R.string.delete)) }
+
+                // Actions
+                Row {
+                    TextButton(onClick = onDelete) { Text(stringResource(R.string.delete)) }
+                }
             }
 
+            // Notes
             item.notes?.takeIf { it.isNotBlank() }?.let {
                 Spacer(Modifier.height(4.dp))
                 Text(
                     it,
                     style = MaterialTheme.typography.bodySmall,
-                    // FIKS 8: Notat-teksten må også ha riktig farge.
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
+            }
+
+            // Change photo action (separate line to be easy to tap)
+            Spacer(Modifier.height(6.dp))
+
+            TextButton(onClick = onChangeImage) {
+                Text("Change photo")
             }
         }
     }

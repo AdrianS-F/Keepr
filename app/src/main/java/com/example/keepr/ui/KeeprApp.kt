@@ -113,7 +113,16 @@ fun KeeprApp(
             }
 
             composable(NavRoute.Add.route) {
-                AddScreen(paddingValues)
+                AddScreen(
+                    padding = paddingValues,
+                    onSaved = { cid ->
+                        navController.navigate(NavRoute.Items.makeRoute(cid)) {
+                            // Remove Add from back stack so it can’t “bounce” back
+                            popUpTo(NavRoute.Add.route) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    }
+                )
             }
 
             composable(NavRoute.Profile.route) {
