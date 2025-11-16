@@ -94,17 +94,17 @@ fun ItemsScreen(
 
 
 
-    // FIKS 1: Bruker en Surface med riktig bakgrunnsfarge fra temaet.
+
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .padding(padding), // Respekterer system-padding (status bar)
+            .padding(padding),
         color = MaterialTheme.colorScheme.background
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 16.dp) // Gir litt pusterom i bunnen
+                .padding(bottom = 16.dp)
         ) {
             Column(
                 Modifier
@@ -113,7 +113,7 @@ fun ItemsScreen(
             ) {
                 Spacer(Modifier.height(12.dp))
 
-                // Topplinje
+
                 Row(
                     Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Start,
@@ -123,7 +123,7 @@ fun ItemsScreen(
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            // FIKS 2: Ikoner rett på bakgrunnen må ha riktig farge.
+
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
@@ -165,7 +165,6 @@ fun ItemsScreen(
                                 Icon(
                                     imageVector = Icons.Default.Edit,
                                     contentDescription = "Rename items",
-                                    // FIKS 4: Også dette ikonet må fargelegges.
                                     tint = MaterialTheme.colorScheme.onBackground
                                 )
                             }
@@ -176,7 +175,7 @@ fun ItemsScreen(
 
                 Spacer(Modifier.height(12.dp))
 
-                // Søkefelt (er allerede OK, da OutlinedTextField henter farger fra temaet)
+
                 OutlinedTextField(
                     value = query,
                     onValueChange = { query = it },
@@ -204,7 +203,7 @@ fun ItemsScreen(
                         Text(
                             text = "No items match your search.",
                             style = MaterialTheme.typography.bodyMedium,
-                            // FIKS 5: Tekstfargen må passe på bakgrunnen.
+
                             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                         )
                     }
@@ -260,7 +259,6 @@ private fun ItemRow(
 ) {
     var showEdit by remember { mutableStateOf(false) }
 
-    // FIKS 6: Kortet må bruke 'surface'-fargen for å skille seg ut.
     Card(
         Modifier
             .fillMaxWidth()
@@ -279,7 +277,7 @@ private fun ItemRow(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     val painter = if (item.imgUri.isNullOrBlank()) {
-                        painterResource(id = R.drawable.placeholder_profile) // reuse your placeholder
+                        painterResource(id = R.drawable.placeholder_profile)
                     } else {
                         coil.compose.rememberAsyncImagePainter(model = item.imgUri)
                     }
@@ -292,7 +290,7 @@ private fun ItemRow(
                         contentScale = ContentScale.Crop
                     )
 
-                    // Name + acquired
+
                     Column {
                         Text(
                             item.itemName,
@@ -310,13 +308,13 @@ private fun ItemRow(
                     }
                 }
 
-                // Actions
+
                 Row {
                     TextButton(onClick = onDelete) { Text(stringResource(R.string.delete)) }
                 }
             }
 
-            // Notes
+
             item.notes?.takeIf { it.isNotBlank() }?.let {
                 Spacer(Modifier.height(4.dp))
                 Text(
@@ -324,13 +322,6 @@ private fun ItemRow(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
-            }
-
-            // Change photo action (separate line to be easy to tap)
-            Spacer(Modifier.height(6.dp))
-
-            TextButton(onClick = onChangeImage) {
-                Text("Change photo")
             }
         }
     }
@@ -343,18 +334,20 @@ private fun ItemRow(
             onSave = { newName, newNotes ->
                 onEdit(newName, newNotes)
                 showEdit = false
-            }
+            },
+            onChangeImage = onChangeImage
         )
     }
 }
 
-// EditItemDialog er OK, da AlertDialog henter farger fra temaet.
+
 @Composable
 private fun EditItemDialog(
     initialName: String,
     initialNotes: String,
     onDismiss: () -> Unit,
-    onSave: (String, String?) -> Unit
+    onSave: (String, String?) -> Unit,
+    onChangeImage: () -> Unit
 ) {
     var name by remember { mutableStateOf(initialName) }
     var notes by remember { mutableStateOf(initialNotes) }
@@ -378,6 +371,9 @@ private fun EditItemDialog(
                     modifier = Modifier.fillMaxWidth(),
                     minLines = 3
                 )
+                TextButton(onClick = onChangeImage) {
+                    Text("Change photo")
+                }
             }
         },
         confirmButton = {
@@ -386,5 +382,6 @@ private fun EditItemDialog(
             }) { Text("Save") }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } }
+
     )
 }

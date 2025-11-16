@@ -34,18 +34,17 @@ fun KeeprApp(
     val navController = rememberNavController()
     val scope = rememberCoroutineScope()
 
-    // Observe logged-in user (from DataStore in SessionManager)
+
     val userId by session.loggedInUserId.collectAsState(initial = null)
     val isLoggedIn = userId != null
 
-    // current route (for bottom-bar visibility)
+
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     val showBottomBar =
         currentRoute == NavRoute.Collections.route ||
         currentRoute == NavRoute.Add.route ||
         currentRoute == NavRoute.Profile.route
-        // If you want to show the bar on Items too, you can add:
-        // || currentRoute?.startsWith("items/") == true
+
 
     val appSnackbarHostState = remember { SnackbarHostState() }
 
@@ -60,7 +59,8 @@ fun KeeprApp(
                 )
             }
         },
-        bottomBar = { if (showBottomBar) KeeprBottomBar(navController, navController.currentDestination) }
+        bottomBar = { if (showBottomBar) { KeeprBottomBar(navController) } }
+
     ) { paddingValues ->
 
         NavHost(

@@ -7,18 +7,16 @@ import androidx.compose.material.icons.filled.Collections
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.NavHostController
 import com.example.keepr.R
 import com.example.keepr.ui.navigation.NavRoute
 
 @Composable
 fun KeeprBottomBar(
-    navController: NavHostController,
-    currentDestination: NavDestination?
+    navController: NavHostController
 ) {
     val tabs = listOf(
         NavRoute.Collections,
@@ -26,18 +24,20 @@ fun KeeprBottomBar(
         NavRoute.Profile
     )
 
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.surface,
     ) {
         tabs.forEach { dest ->
-            val selected = currentDestination?.hierarchy?.any { it.route == dest.route } == true
+            val selected = currentRoute == dest.route
 
             val icon = when (dest) {
                 NavRoute.Collections -> Icons.Filled.Collections
                 NavRoute.Add         -> Icons.Filled.AddCircleOutline
                 NavRoute.Profile     -> Icons.Filled.Person
-                // 'else' for å tilfredsstille en forvirret kompilator.
-                else -> Icons.Filled.Collections
+                else                 -> Icons.Filled.Collections
             }
 
             NavigationBarItem(
@@ -46,11 +46,10 @@ fun KeeprBottomBar(
                     if (!selected) {
                         Log.d("BottomBar", "Tapped: ${dest.route}")
                         navController.navigate(dest.route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
+                            popUpTo(NavRoute.Collections.route) {
+                                inclusive = false
                             }
                             launchSingleTop = true
-                            restoreState = true
                         }
                     }
                 },
@@ -65,8 +64,7 @@ fun KeeprBottomBar(
                         NavRoute.Collections -> stringResource(R.string.nav_collections)
                         NavRoute.Add         -> stringResource(R.string.nav_add)
                         NavRoute.Profile     -> stringResource(R.string.nav_profile)
-                        // 'else' for å tilfredsstille en forvirret kompilator.
-                        else -> dest.label
+                        else                 -> dest.label
                     }
                     Text(text = labelText)
                 },
