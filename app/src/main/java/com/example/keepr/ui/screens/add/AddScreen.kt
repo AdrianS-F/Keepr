@@ -18,16 +18,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.keepr.R
 import com.example.keepr.data.CollectionEntity
 import com.example.keepr.ui.viewmodel.AddViewModel
+import com.example.keepr.ui.viewmodel.AddItemResult
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class) // ?? Hva er dette, må fjernes
 @Composable
 fun AddScreen(
     padding: PaddingValues,
-    onSaved:(Long) ->Unit
+    onSaved:(Long) ->Unit,
+    initialCollectionId: Long?
 
 ) {
-    // ViewModel og UI-state (uendret)
+    // ViewModel og UI-state
     val vm: AddViewModel = viewModel()
     val collections by vm.collections.collectAsState()
     var selectedImage by remember { mutableStateOf<Int?>(R.drawable.ic_launcher_foreground) }
@@ -39,10 +41,10 @@ fun AddScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    // LaunchedEffects (uendret)
-    LaunchedEffect(collections) {
-        if (selectedCollection == null && collections.isNotEmpty()) {
-            selectedCollection = collections.first()
+    // LaunchedEffects
+    LaunchedEffect(collections, initialCollectionId) {
+        if (selectedCollection == null && initialCollectionId != null) {
+            selectedCollection = collections.find { it.collectionId == initialCollectionId }
         }
     }
     var pendingNewCollectionTitle by remember { mutableStateOf<String?>(null) }
@@ -169,27 +171,41 @@ fun AddScreen(
 
                 Spacer(Modifier.height(30.dp))
 
-                // 💾 Lagre item (Button henter farger automatisk, så den er OK)
                 Button(
                     onClick = {
                         when {
                             itemName.text.isBlank() -> {
-                                scope.launch { snackbarHostState.showSnackbar("Please enter an item name.") }
+                                scope.launch {
+                                    snackbarHostState.showSnackbar("Please enter an item name.")
+                                }
                             }
                             selectedCollection == null -> {
-                                scope.launch { snackbarHostState.showSnackbar("Please select or create a collection.") }
+                                scope.launch {
+                                    snackbarHostState.showSnackbar("Please select or create a collection.")
+                                }
                             }
                             else -> {
                                 val cid = selectedCollection!!.collectionId
-                                vm.addItem(
-                                    collectionId = cid,
-                                    itemName = itemName.text,
-                                    description = itemDescription.text,
-                                    imgUri = null
-                                )
-                                itemName = TextFieldValue("")
-                                itemDescription = TextFieldValue("")
-                                onSaved(cid)
+                                scope.launch {
+                                    when (val res = vm.addItem(
+                                        collectionId = cid,
+                                        itemName = itemName.text,
+                                        description = itemDescription.text,
+                                        imgUri = null
+                                    )) {
+                                        is AddItemResult.Success -> {
+                                            itemName = TextFieldValue("")
+                                            itemDescription = TextFieldValue("")
+                                            snackbarHostState.showSnackbar("Item saved.")
+                                            onSaved(cid)
+                                        }
+                                        AddItemResult.Duplicate -> {
+                                            snackbarHostState.showSnackbar(
+                                                "An item named \"${itemName.text.trim()}\" already exists in this collection."
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
                     },
@@ -198,6 +214,7 @@ fun AddScreen(
                 ) {
                     Text("Save item")
                 }
+
             }
         }
     )

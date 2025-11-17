@@ -31,7 +31,15 @@ fun KeeprBottomBar(
         containerColor = MaterialTheme.colorScheme.surface,
     ) {
         tabs.forEach { dest ->
-            val selected = currentRoute == dest.route
+            val selected = when (dest) {
+                NavRoute.Collections ->
+                    currentRoute?.startsWith(NavRoute.Collections.route) == true
+                NavRoute.Add ->
+                    currentRoute?.startsWith(NavRoute.Add.route) == true
+                NavRoute.Profile ->
+                    currentRoute?.startsWith(NavRoute.Profile.route) == true
+                else -> false
+            }
 
             val icon = when (dest) {
                 NavRoute.Collections -> Icons.Filled.Collections
@@ -44,7 +52,6 @@ fun KeeprBottomBar(
                 selected = selected,
                 onClick = {
                     if (!selected) {
-                        Log.d("BottomBar", "Tapped: ${dest.route}")
                         navController.navigate(dest.route) {
                             popUpTo(NavRoute.Collections.route) {
                                 inclusive = false
@@ -53,12 +60,7 @@ fun KeeprBottomBar(
                         }
                     }
                 },
-                icon = {
-                    Icon(
-                        icon,
-                        contentDescription = dest.label
-                    )
-                },
+                icon = { Icon(icon, contentDescription = dest.label) },
                 label = {
                     val labelText = when (dest) {
                         NavRoute.Collections -> stringResource(R.string.nav_collections)
@@ -79,3 +81,4 @@ fun KeeprBottomBar(
         }
     }
 }
+

@@ -230,7 +230,7 @@ fun ItemsScreen(
             }
 
             FloatingActionButton(
-                onClick = { navController.navigate(NavRoute.Add.route) },
+                onClick = { navController.navigate(NavRoute.Add.forCollection(collectionId)) },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .navigationBarsPadding()

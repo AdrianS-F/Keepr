@@ -39,11 +39,14 @@ fun KeeprApp(
     val isLoggedIn = userId != null
 
 
-    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = backStackEntry?.destination?.route
+
     val showBottomBar =
-        currentRoute == NavRoute.Collections.route ||
-        currentRoute == NavRoute.Add.route ||
-        currentRoute == NavRoute.Profile.route
+        currentRoute?.startsWith(NavRoute.Collections.route) == true ||
+                currentRoute?.startsWith(NavRoute.Add.route) == true ||
+                currentRoute?.startsWith(NavRoute.Profile.route) == true
+
 
 
     val appSnackbarHostState = remember { SnackbarHostState() }
@@ -59,6 +62,7 @@ fun KeeprApp(
                 )
             }
         },
+
         bottomBar = { if (showBottomBar) { KeeprBottomBar(navController) } }
 
     ) { paddingValues ->
@@ -67,12 +71,11 @@ fun KeeprApp(
             navController = navController,
             startDestination = if (isLoggedIn) NavRoute.Collections.route else ROUTE_SIGNUP
         ) {
-            // ---------- AUTH ----------
+
             composable(ROUTE_SIGNUP) {
                 com.example.keepr.ui.screens.auth.SignUpScreen(
                     vm = authVm,
                     onGoToSignIn = {
-                        // FIKS: resetState() er flyttet til selve skjermene.
                         navController.navigate(ROUTE_SIGNIN) { launchSingleTop = true }
                     },
                     onSignedIn = {
@@ -88,7 +91,6 @@ fun KeeprApp(
                 com.example.keepr.ui.screens.auth.SignInScreen(
                     vm = authVm,
                     onGoToSignUp = {
-                        // FIKS: resetState() er flyttet til selve skjermene.
                         navController.navigate(ROUTE_SIGNUP) { launchSingleTop = true }
                     },
                     onSignedIn = {
@@ -112,16 +114,22 @@ fun KeeprApp(
                 )
             }
 
-            composable(NavRoute.Add.route) {
+            composable(
+                route = "add?collectionId={collectionId}",
+                arguments = listOf(
+                    navArgument("collectionId") {
+                        type = NavType.LongType
+                        defaultValue = -1L   // means "no preselected collection"
+                    }
+                )
+            ) { entry ->
+                val rawId = entry.arguments?.getLong("collectionId") ?: -1L
+                val initialCollectionId = if (rawId == -1L) null else rawId
+
                 AddScreen(
                     padding = paddingValues,
-                    onSaved = { cid ->
-                        navController.navigate(NavRoute.Items.makeRoute(cid)) {
-                            // Remove Add from back stack so it can’t “bounce” back
-                            popUpTo(NavRoute.Add.route) { inclusive = true }
-                            launchSingleTop = true
-                        }
-                    }
+                    onSaved = { cid -> navController.popBackStack() },
+                    initialCollectionId = initialCollectionId
                 )
             }
 

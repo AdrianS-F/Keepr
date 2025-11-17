@@ -60,42 +60,15 @@ fun CollectionsScreen(
         }
     }
 
-    // FIKS 1: Bruker Scaffold for å få riktig bakgrunnsfarge og plassering av knapper.
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState) { data ->
-                Snackbar(
-                    snackbarData = data,
-                    // Bruker 'surface' og 'onSurface' for et rent utseende som matcher temaet.
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface,
-                    actionColor = MaterialTheme.colorScheme.primary
-                )
-            }
-        },
-        containerColor = MaterialTheme.colorScheme.background,
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { showCreateDialog = true },
-                modifier = Modifier
-                    .navigationBarsPadding()
-                    .padding(bottom = 72.dp),
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Add,
-                    contentDescription = "Add collection",
-                    modifier = Modifier.size(28.dp)
-                )
-            }
-        }
-    ) { innerPadding ->
+
+    Box(
+        modifier = Modifier
+            .padding(padding)
+            .fillMaxSize()
+    ) {
         Column(
             Modifier
-                .padding(padding)
-                .padding(innerPadding)
-                .fillMaxWidth()
+                .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
             Spacer(Modifier.height(16.dp))
@@ -155,7 +128,24 @@ fun CollectionsScreen(
                 }
             }
         }
+
+        FloatingActionButton(
+            onClick = { showCreateDialog = true },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .navigationBarsPadding()
+                .padding(bottom = 72.dp, end = 16.dp),
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.Add,
+                contentDescription = "Add collection",
+                modifier = Modifier.size(28.dp)
+            )
+        }
     }
+
 
     if (showCreateDialog) {
         AlertDialog(

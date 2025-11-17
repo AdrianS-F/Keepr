@@ -12,22 +12,25 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+// 👇 Result type, same pattern as collections
+sealed class AddItemResult {
+    data class Success(val id: Long) : AddItemResult()
+    object Duplicate : AddItemResult()
+}
+
 class AddViewModel(application: Application) : AndroidViewModel(application) {
 
-    // Henter database og DAO-er
-    private val db = KeeprDatabase.Companion.get(application)
+    private val db = KeeprDatabase.get(application)
     private val collectionsDao = db.collectionsDao()
     private val itemsDao = db.itemsDao()
     private val sessionManager = SessionManager(application)
 
-    // Bruker Flow for å observere collections
     private val _collections = MutableStateFlow<List<CollectionEntity>>(emptyList())
     val collections: StateFlow<List<CollectionEntity>> = _collections.asStateFlow()
 
     private val _userId = MutableStateFlow<Long?>(null)
 
     init {
-        // Starter å lytte etter endringer i databasen (collections)
         viewModelScope.launch {
             sessionManager.loggedInUserId.collect { userId ->
                 if (userId != null) {
@@ -40,7 +43,6 @@ class AddViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // 👉 Legger til en ny collection i databasen
     fun addCollection(title: String, description: String = "") {
         viewModelScope.launch {
             _userId.value?.let { userId ->
@@ -53,16 +55,38 @@ class AddViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // 👉 Legger til et nytt item i databasen
-    fun addItem(collectionId: Long, itemName: String, description: String? = null, imgUri: String? = null) {
-        viewModelScope.launch {
-            val newItem = ItemEntity(
+    // suspend + return AddItemResult
+    suspend fun addItem(
+        collectionId: Long,
+        itemName: String,
+        description: String? = null,
+        imgUri: String? = null
+    ): AddItemResult {
+        val trimmedName = itemName.trim()
+        if (trimmedName.isEmpty()) {
+            // UI already validates this, but just in case:
+            return AddItemResult.Duplicate
+        }
+
+        // 1) Pre-check for duplicate in same collection (case-insensitive)
+        if (itemsDao.existsNameInCollection(collectionId, trimmedName)) {
+            return AddItemResult.Duplicate
+        }
+
+        // 2) Try insert. OnConflictStrategy.IGNORE will return -1L if duplicate by DB constraint
+        val id = itemsDao.insert(
+            ItemEntity(
                 collectionId = collectionId,
-                itemName = itemName,
+                itemName = trimmedName,
                 notes = description,
                 imgUri = imgUri
             )
-            itemsDao.insert(newItem)
+        )
+
+        return if (id == -1L) {
+            AddItemResult.Duplicate
+        } else {
+            AddItemResult.Success(id)
         }
     }
 }
