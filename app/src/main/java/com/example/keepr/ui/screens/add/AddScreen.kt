@@ -20,6 +20,15 @@ import com.example.keepr.data.CollectionEntity
 import com.example.keepr.ui.viewmodel.AddViewModel
 import com.example.keepr.ui.viewmodel.AddItemResult
 import kotlinx.coroutines.launch
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.platform.LocalContext
+import coil.compose.rememberAsyncImagePainter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.draw.clip
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AddAPhoto
 
 @OptIn(ExperimentalMaterial3Api::class) // ?? Hva er dette, må fjernes
 @Composable
@@ -32,7 +41,24 @@ fun AddScreen(
     // ViewModel og UI-state
     val vm: AddViewModel = viewModel()
     val collections by vm.collections.collectAsState()
-    var selectedImage by remember { mutableStateOf<Int?>(R.drawable.ic_launcher_foreground) }
+    val ctx = LocalContext.current
+    var selectedImageUri by remember { mutableStateOf<String?>(null) }
+    val openImagePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument(),
+        onResult = { uri ->
+            uri?.let {
+                try {
+                    ctx.contentResolver.takePersistableUriPermission(
+                        it,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
+                } catch (_: SecurityException) { }
+
+                selectedImageUri = it.toString()
+            }
+        }
+    )
+
     var itemName by remember { mutableStateOf(TextFieldValue("")) }
     var itemDescription by remember { mutableStateOf(TextFieldValue("")) }
     var selectedCollection by remember { mutableStateOf<CollectionEntity?>(null) }
@@ -82,25 +108,36 @@ fun AddScreen(
                     .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // 📸 Bilde
+                //  Bilde
                 Box(
                     modifier = Modifier
                         .size(150.dp)
-                        // FIKS 3: Bilde-placeholder bruker nå 'surface'-fargen for å matche kortene
                         .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp))
-                        .clickable { /* TODO */ },
+                        .clickable { openImagePicker.launch(arrayOf("image/*")) },
                     contentAlignment = Alignment.Center
                 ) {
-                    Image(
-                        painter = painterResource(id = selectedImage ?: R.drawable.ic_launcher_foreground),
-                        contentDescription = "Selected Image",
-                        modifier = Modifier.size(100.dp)
-                    )
+                    if (selectedImageUri == null) {
+                        Icon(
+                            imageVector = Icons.Outlined.AddAPhoto,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                            modifier = Modifier.size(48.dp)
+                        )
+                    } else {
+                        Image(
+                            painter = rememberAsyncImagePainter(selectedImageUri),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .size(150.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                        )
+                    }
                 }
 
                 Spacer(Modifier.height(20.dp))
 
-                // 🏷️ Navn & ✍️ Beskrivelse (OutlinedTextField henter farger automatisk fra temaet, så de er OK)
+                // Navn & Beskrivelse (OutlinedTextField henter farger automatisk fra temaet, så de er OK)
                 OutlinedTextField(
                     value = itemName,
                     onValueChange = { itemName = it },
@@ -191,7 +228,7 @@ fun AddScreen(
                                         collectionId = cid,
                                         itemName = itemName.text,
                                         description = itemDescription.text,
-                                        imgUri = null
+                                        imgUri = selectedImageUri
                                     )) {
                                         is AddItemResult.Success -> {
                                             itemName = TextFieldValue("")

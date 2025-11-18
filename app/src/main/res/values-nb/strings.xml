@@ -16,6 +16,9 @@
     <string name="language_title">Velg språk</string>
     <string name="english">English</string>
     <string name="norwegian_bokmaal">Norsk bokmål</string>
+    <string name="spanish">Español</string>
+    <string name="swedish">Svenska</string>
+    <string name="chinese">中文</string>
     <string name="save">Lagre</string>
     <string name="cancel">Avbryt</string>
     <string name="restart_to_apply">Språket endres når appen startes på nytt</string>
@@ -58,12 +61,30 @@
     <!-- THIS IS FOR THE COLLECTION PAGE -->
     <string name="collections_title">Dine samlinger</string>
     <string name="collections_items">%1$d gjendstand(er)</string>
+    <string name="search_collections">Søk i samlinger</string>
+    <string name="no_collections_found">Ingen samlinger samsvarer med søket ditt.</string>
+    <string name="new_collection_title">Ny samling</string>
+    <string name="collection_name_label">Navn på samling</string>
+    <string name="add_button">Legg til</string>
+    <string name="cancel_button">Avbryt</string>
+    <string name="delete_collection_title">Slette samling?</string>
+    <string name="delete_collection_warning">Dette vil slette samlingen og alle gjenstandene i den.</string>
+    <string name="delete_button">Slett</string>
+
+
 
     <!-- THIS IS FOR THE ITEM PAGE -->
     <string name="items_title">Gjenstander</string>
     <string name="items_add_placeholder">Legg til gjenstand</string>
     <string name="add">Legg til</string>
     <string name="delete">Slett</string>
+    <string name="save_button">Save</string>
+    <string name="search_items_label">Søk etter gjendstand</string>
+    <string name="no_items_found">Ingen gjenstander samsvarer med søket ditt</string>
+    <string name="item_acquired">Anskaffet</string>
+    <string name="item_not_acquired">Ikke anskaffet</string>
+    <string name="save_buttoon">Save</string>
+
 
     <!-- THIS IS FOR THE DELETE OPTIONS -->
     <string name="delete_user_title">Slett bruker</string>

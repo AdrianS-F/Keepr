@@ -42,6 +42,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+
 
 
 @Composable
@@ -145,11 +147,11 @@ fun ItemsScreen(
                             TextButton(onClick = {
                                 if (titleDraft.isNotBlank()) vm.renameCurrentCollection(titleDraft.trim())
                                 isEditingTitle = false
-                            }) { Text("Save") }
+                            }) { Text(stringResource(R.string.save_button)) }
                             TextButton(onClick = {
                                 titleDraft = liveTitle
                                 isEditingTitle = false
-                            }) { Text("Cancel") }
+                            }) { Text(stringResource(R.string.cancel_button)) }
                         } else {
                             Text(
                                 liveTitle,
@@ -177,7 +179,7 @@ fun ItemsScreen(
                     onValueChange = { query = it },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
-                    label = { Text("Search items") },
+                    label = { Text(stringResource(R.string.search_items_label)) },
                     leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                     trailingIcon = {
                         if (query.isNotEmpty()) {
@@ -197,7 +199,7 @@ fun ItemsScreen(
                         contentAlignment = Alignment.TopCenter
                     ) {
                         Text(
-                            text = "No items match your search.",
+                            text = stringResource(R.string.no_items_found),
                             style = MaterialTheme.typography.bodyMedium,
 
                             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
@@ -318,7 +320,10 @@ private fun ItemRow(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Checkbox(checked = item.acquired, onCheckedChange = onToggle)
                             Text(
-                                if (item.acquired) "Acquired" else "Not acquired",
+                                text = stringResource(
+                                    if (item.acquired) R.string.item_acquired
+                                    else R.string.item_not_acquired
+                                ),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                             )
@@ -397,7 +402,7 @@ private fun EditItemDialog(
         confirmButton = {
             TextButton(onClick = {
                 if (name.isNotBlank()) onSave(name, notes.ifBlank { null }) else onDismiss()
-            }) { Text("Save") }
+            }) { Text(stringResource(R.string.save_buttoon))}
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } }
 

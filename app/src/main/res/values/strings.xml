@@ -16,6 +16,9 @@
     <string name="language_title">Choose language</string>
     <string name="english">English</string>
     <string name="norwegian_bokmaal">Norsk bokmål</string>
+    <string name="spanish">Español</string>
+    <string name="swedish">Svenska</string>
+    <string name="chinese">中文</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     <string name="restart_to_apply">Language will change when the app is restarted</string>
@@ -58,12 +61,33 @@
     <!-- THIS IS FOR THE COLLECTION PAGE -->
     <string name="collections_title">Your collections</string>
     <string name="collections_items">%1$d item(s)</string>
+    <string name="search_collections">Search collections</string>
+    <string name="no_collections_found">No collections match your search.</string>
+    <string name="new_collection_title">New Collection</string>
+    <string name="collection_name_label">Collection name</string>
+    <string name="add_button">Add</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="delete_collection_title">Delete collection?</string>
+    <string name="delete_collection_warning">This will delete the collection and its items.</string>
+    <string name="delete_button">Delete</string>
+
+
+
 
     <!-- THIS IS FOR THE ITEM PAGE -->
     <string name="items_title">Items</string>
     <string name="items_add_placeholder">Add item</string>
     <string name="add">Add</string>
     <string name="delete">Delete</string>
+    <string name="save_button">Save</string>
+    <string name="search_items_label">Search items</string>
+    <string name="no_items_found">No items match your search.</string>
+    <string name="item_acquired">Acquired</string>
+    <string name="item_not_acquired">Not acquired</string>
+    <string name="save_buttoon">Save</string>
+
+
+
 
     <!-- THIS IS FOR THE DELETE OPTIONS -->
     <string name="delete_user_title">Delete user</string>
@@ -71,6 +95,9 @@
     <string name="password">Password</string>
     <string name="user_deleted">User is successfully deleted</string>
     <string name="err_wrong_password">Wrong password</string>
+
+
+
 
 
 </resources>

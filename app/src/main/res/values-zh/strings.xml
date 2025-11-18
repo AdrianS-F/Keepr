@@ -1,0 +1,89 @@
+<resources>
+    <string name="app_name">Keepr</string>
+    <string name="profile_title">个人资料</string>
+    <string name="collections_count">%1$d 个收藏</string>
+
+    <string name="change_profile_picture">更换头像</string>
+    <string name="change_name">修改名字</string>
+    <string name="change_name_title">修改名字</string>
+    <string name="toast_name_changed">你的名字已更新</string>
+    <string name="toast_fill_both">请填写所有字段</string>
+    <string name="change_language">更改语言</string>
+    <string name="log_out">退出登录</string>
+    <string name="delete_user">删除用户</string>
+
+    <!-- LANGUAGE OPTIONS -->
+    <string name="language_title">选择语言</string>
+    <string name="english">English</string>
+    <string name="norwegian_bokmaal">Norsk bokmål</string>
+    <string name="spanish">Español</string>
+    <string name="swedish">Svenska</string>
+    <string name="chinese">中文</string>
+    <string name="save">保存</string>
+    <string name="cancel">取消</string>
+    <string name="restart_to_apply">重新启动应用后语言将生效</string>
+
+    <!-- BOTTOM BAR -->
+    <string name="nav_collections">收藏</string>
+    <string name="nav_add">添加</string>
+    <string name="nav_profile">个人资料</string>
+
+    <!-- SIGN IN -->
+    <string name="login_title">登录</string>
+    <string name="email_label">电子邮箱</string>
+    <string name="email_placeholder">电子邮箱</string>
+    <string name="password_label">密码</string>
+    <string name="password_placeholder">密码</string>
+    <string name="login_button">登录</string>
+    <string name="please_wait">请稍候…</string>
+    <string name="login_no_account">没有账号？注册</string>
+
+    <string name="err_wrong_credentials">邮箱或密码错误</string>
+    <string name="err_passwords_mismatch">两次输入的密码不一致</string>
+    <string name="err_generic">发生错误</string>
+
+    <!-- SIGN UP -->
+    <string name="signup_title">注册</string>
+    <string name="first_name_label">名字</string>
+    <string name="first_name_placeholder">名字</string>
+    <string name="last_name_label">姓氏</string>
+    <string name="last_name_placeholder">姓氏</string>
+    <string name="repeat_password_label">重复密码</string>
+    <string name="repeat_password_placeholder">重复密码</string>
+    <string name="password_requirements">至少 6 个字符，包含大写字母和数字。</string>
+    <string name="signup_button">创建账号</string>
+    <string name="signup_have_account">已经有账号？登录</string>
+
+    <string name="err_password_strength">密码不符合要求</string>
+
+    <!-- COLLECTION PAGE -->
+    <string name="collections_title">你的收藏</string>
+    <string name="collections_items">%1$d 个项目</string>
+    <string name="search_collections">搜索收藏</string>
+    <string name="no_collections_found">没有符合搜索条件的收藏。</string>
+    <string name="new_collection_title">新建收藏</string>
+    <string name="collection_name_label">收藏名称</string>
+    <string name="add_button">添加</string>
+    <string name="cancel_button">取消</string>
+    <string name="delete_collection_title">删除收藏？</string>
+    <string name="delete_collection_warning">此操作将删除收藏及其所有项目。</string>
+    <string name="delete_button">删除</string>
+
+    <!-- ITEM PAGE -->
+    <string name="items_title">项目</string>
+    <string name="items_add_placeholder">添加项目</string>
+    <string name="add">添加</string>
+    <string name="delete">删除</string>
+    <string name="save_button">保存</string>
+    <string name="search_items_label">搜索项目</string>
+    <string name="no_items_found">没有符合搜索条件的项目。</string>
+    <string name="item_acquired">已获取</string>
+    <string name="item_not_acquired">未获取</string>
+
+    <!-- DELETE USER -->
+    <string name="delete_user_title">删除用户</string>
+    <string name="delete_user_warning">此操作不可撤销</string>
+    <string name="password">密码</string>
+    <string name="user_deleted">用户已成功删除</string>
+    <string name="err_wrong_password">密码错误</string>
+</resources>

@@ -24,9 +24,21 @@ fun ChangeLanguageDialog(onDismiss: () -> Unit) {
         text = {
             Column(Modifier.fillMaxWidth()) {
                 LanguageRow(
+                    label = stringResource(R.string.chinese),
+                    selected = selected == "zh",
+                    onClick = { selected = "zh" }
+                )
+                Spacer(Modifier.height(8.dp))
+                LanguageRow(
                     label = stringResource(R.string.english),
                     selected = selected == "en",
                     onClick = { selected = "en" }
+                )
+                Spacer(Modifier.height(8.dp))
+                LanguageRow(
+                    label = stringResource(R.string.spanish),
+                    selected = selected == "es",
+                    onClick = { selected = "es" }
                 )
                 Spacer(Modifier.height(8.dp))
                 LanguageRow(
@@ -34,6 +46,13 @@ fun ChangeLanguageDialog(onDismiss: () -> Unit) {
                     selected = selected == "nb",
                     onClick = { selected = "nb" }
                 )
+                Spacer(Modifier.height(8.dp))
+                LanguageRow(
+                    label = stringResource(R.string.swedish),
+                    selected = selected == "sv",
+                    onClick = { selected = "sv" }
+                )
+
             }
         },
         confirmButton = {

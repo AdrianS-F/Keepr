@@ -1,0 +1,89 @@
+<resources>
+    <string name="app_name">Keepr</string>
+    <string name="profile_title">Perfil</string>
+    <string name="collections_count">%1$d colecciones</string>
+
+    <string name="change_profile_picture">Cambiar foto de perfil</string>
+    <string name="change_name">Cambiar nombre</string>
+    <string name="change_name_title">Cambiar nombre</string>
+    <string name="toast_name_changed">Tu nombre ha sido actualizado</string>
+    <string name="toast_fill_both">Por favor, completa ambos campos</string>
+    <string name="change_language">Cambiar idioma</string>
+    <string name="log_out">Cerrar sesión</string>
+    <string name="delete_user">Eliminar usuario</string>
+
+    <!-- LANGUAGE OPTIONS -->
+    <string name="language_title">Elige idioma</string>
+    <string name="english">English</string>
+    <string name="norwegian_bokmaal">Norsk bokmål</string>
+    <string name="spanish">Español</string>
+    <string name="swedish">Svensk</string>
+    <string name="chinese">中文</string>
+    <string name="save">Guardar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="restart_to_apply">El idioma cambiará al reiniciar la aplicación</string>
+
+    <!-- BOTTOM BAR -->
+    <string name="nav_collections">Colecciones</string>
+    <string name="nav_add">Añadir</string>
+    <string name="nav_profile">Perfil</string>
+
+    <!-- SIGN IN -->
+    <string name="login_title">Iniciar sesión</string>
+    <string name="email_label">Correo electrónico</string>
+    <string name="email_placeholder">Correo electrónico</string>
+    <string name="password_label">Contraseña</string>
+    <string name="password_placeholder">Contraseña</string>
+    <string name="login_button">Iniciar sesión</string>
+    <string name="please_wait">Por favor espera…</string>
+    <string name="login_no_account">¿No tienes cuenta? Regístrate</string>
+
+    <string name="err_wrong_credentials">Correo o contraseña incorrectos</string>
+    <string name="err_passwords_mismatch">Las contraseñas no coinciden</string>
+    <string name="err_generic">Algo salió mal</string>
+
+    <!-- SIGN UP -->
+    <string name="signup_title">Crear cuenta</string>
+    <string name="first_name_label">Nombre</string>
+    <string name="first_name_placeholder">Nombre</string>
+    <string name="last_name_label">Apellido</string>
+    <string name="last_name_placeholder">Apellido</string>
+    <string name="repeat_password_label">Repetir contraseña</string>
+    <string name="repeat_password_placeholder">Repetir contraseña</string>
+    <string name="password_requirements">Mínimo 6 caracteres, una mayúscula y un número.</string>
+    <string name="signup_button">Crear cuenta</string>
+    <string name="signup_have_account">¿Ya tienes una cuenta? Inicia sesión</string>
+
+    <string name="err_password_strength">La contraseña no cumple los requisitos</string>
+
+    <!-- COLLECTION PAGE -->
+    <string name="collections_title">Tus colecciones</string>
+    <string name="collections_items">%1$d elemento(s)</string>
+    <string name="search_collections">Buscar colecciones</string>
+    <string name="no_collections_found">No hay colecciones que coincidan con tu búsqueda.</string>
+    <string name="new_collection_title">Nueva colección</string>
+    <string name="collection_name_label">Nombre de la colección</string>
+    <string name="add_button">Añadir</string>
+    <string name="cancel_button">Cancelar</string>
+    <string name="delete_collection_title">¿Eliminar colección?</string>
+    <string name="delete_collection_warning">Esto eliminará la colección y sus elementos.</string>
+    <string name="delete_button">Eliminar</string>
+
+    <!-- ITEM PAGE -->
+    <string name="items_title">Elementos</string>
+    <string name="items_add_placeholder">Añadir elemento</string>
+    <string name="add">Añadir</string>
+    <string name="delete">Eliminar</string>
+    <string name="save_button">Guardar</string>
+    <string name="search_items_label">Buscar elementos</string>
+    <string name="no_items_found">No hay elementos que coincidan con tu búsqueda.</string>
+    <string name="item_acquired">Obtenido</string>
+    <string name="item_not_acquired">No obtenido</string>
+
+    <!-- DELETE USER -->
+    <string name="delete_user_title">Eliminar usuario</string>
+    <string name="delete_user_warning">No podrás deshacer esta acción</string>
+    <string name="password">Contraseña</string>
+    <string name="user_deleted">Usuario eliminado correctamente</string>
+    <string name="err_wrong_password">Contraseña incorrecta</string>
+</resources>
