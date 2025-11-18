@@ -59,6 +59,7 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    implementation("io.coil-kt:coil-compose:2.6.0")
 
     // Compose BOM (safe to include even if template already has it)
     implementation(platform("androidx.compose:compose-bom:2024.10.01"))

@@ -27,7 +27,30 @@ interface CollectionsDao {
     @Query("SELECT * FROM collections WHERE collection_id = :collectionId")
     fun observeWithItems(collectionId: Long): Flow<CollectionWithItems?>
 
-    @Insert suspend fun insert(collection: CollectionEntity): Long
     @Update suspend fun update(collection: CollectionEntity)
     @Delete suspend fun delete(collection: CollectionEntity)
+
+    @Query("DELETE FROM collections WHERE collection_id = :id")
+    suspend fun deleteById(id: Long)
+
+    @Query("DELETE FROM collections WHERE user_id = :userId")
+    suspend fun deleteByUser(userId: Long)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(collection: CollectionEntity): Long
+
+    @Query("""
+        SELECT EXISTS(
+            SELECT 1 FROM collections
+            WHERE user_id = :userId AND LOWER(title) = LOWER(:title)
+        )
+    """)
+    suspend fun existsTitleForUser(userId: Long, title: String): Boolean
+
+    @Query("UPDATE collections SET title = :newTitle WHERE collection_id = :collectionId")
+    suspend fun renameCollection(collectionId: Long, newTitle: String)
+
+    @Query("SELECT title FROM collections WHERE collection_id = :collectionId")
+    fun observeTitle(collectionId: Long): Flow<String?>
+
 }

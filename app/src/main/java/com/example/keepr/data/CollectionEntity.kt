@@ -18,6 +18,5 @@ data class CollectionEntity(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "collection_id") val collectionId: Long = 0,
     @ColumnInfo(name = "user_id") val userId: Long,
     val title: String,
-    @ColumnInfo(name = "description") val description: String? = null,
     @ColumnInfo(name = "created_at") val createdAt: Long = System.currentTimeMillis()
 )

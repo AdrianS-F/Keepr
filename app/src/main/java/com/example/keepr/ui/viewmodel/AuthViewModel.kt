@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+
 data class AuthUiState(
     val email: String = "",
     val password: String = "",
@@ -33,12 +34,25 @@ class AuthViewModel(
     fun updateFirst(v: String) { _state.value = _state.value.copy(firstName = v) }
     fun updateLast(v: String) { _state.value = _state.value.copy(lastName = v) }
 
+    fun resetState() {
+        _state.value = AuthUiState()
+    }
+
     fun signUp(onSuccess: () -> Unit) = viewModelScope.launch {
         val s = _state.value
         if (s.password != s.repeatPassword) {
-            _state.value = s.copy(error = "Passordene er ikke like.")
+            _state.value = s.copy(error = "PASSWORDS_MISMATCH")
             return@launch
         }
+
+        // FIKS 1: Sjekker om passordet inneholder minst én stor bokstav og ett tall.
+        val hasUppercase = s.password.any { it.isUpperCase() }
+        val hasDigit = s.password.any { it.isDigit() }
+        if (!hasUppercase || !hasDigit) {
+            _state.value = s.copy(error = "PASSWORD_WEAK")
+            return@launch
+        }
+
         _state.value = s.copy(loading = true, error = null)
         val res = repo.signUp(s.email, s.firstName, s.lastName, s.password)
         _state.value = _state.value.copy(loading = false)
@@ -46,7 +60,7 @@ class AuthViewModel(
             session.setLoggedIn(userId)   // 🔗 KOBLINGEN: marker innlogget
             onSuccess()
         }.onFailure { e ->
-            _state.value = _state.value.copy(error = e.message ?: "Noe gikk galt.")
+            _state.value = _state.value.copy(error = "GENERIC_ERROR")
         }
     }
 
@@ -59,7 +73,7 @@ class AuthViewModel(
             session.setLoggedIn(user.userId) // 🔗 KOBLINGEN
             onSuccess()
         }.onFailure { e ->
-            _state.value = _state.value.copy(error = e.message ?: "Feil e-post eller passord.")
+            _state.value = _state.value.copy(error = "WRONG_CREDENTIALS")
         }
     }
 }
