@@ -24,6 +24,10 @@ import com.example.keepr.data.CollectionWithCount
 import com.example.keepr.ui.viewmodel.AddResult
 import com.example.keepr.ui.viewmodel.CollectionsViewModel
 import kotlinx.coroutines.launch
+import androidx.compose.ui.res.stringResource
+import com.example.keepr.R
+
+
 
 @Composable
 fun CollectionsScreen(
@@ -73,7 +77,7 @@ fun CollectionsScreen(
         ) {
             Spacer(Modifier.height(16.dp))
             Text(
-                "Your Collections",
+                text = stringResource(R.string.collections_title),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onBackground
@@ -85,7 +89,11 @@ fun CollectionsScreen(
                 onValueChange = { query = it },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                label = { Text("Search collections") },
+                label = {
+                    Text(
+                        text = stringResource(R.string.search_collections)
+                    )
+                },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 trailingIcon = {
                     if (query.isNotEmpty()) {
@@ -105,7 +113,7 @@ fun CollectionsScreen(
                     contentAlignment = Alignment.TopCenter
                 ) {
                     Text(
-                        text = "No collections match your search.",
+                        text = stringResource(R.string.no_collections_found),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                     )
@@ -153,12 +161,12 @@ fun CollectionsScreen(
                 showCreateDialog = false
                 newCollectionName = TextFieldValue("")
                },
-            title = { Text("New Collection") },
+            title = { Text(text = stringResource(R.string.new_collection_title)) },
             text = {
                 OutlinedTextField(
                     value = newCollectionName,
                     onValueChange = { newCollectionName = it },
-                    label = { Text("Collection name") },
+                    label = { Text(stringResource(R.string.collection_name_label)) },
                     singleLine = true
                 )
             },
@@ -186,13 +194,13 @@ fun CollectionsScreen(
                             }
                         }
                     }
-                }) { Text("Add") }
+                }) { Text(stringResource(R.string.add_button)) }
             },
             dismissButton = {
                 TextButton(onClick = {
                     showCreateDialog = false
                     newCollectionName = TextFieldValue("")
-                }) { Text("Cancel") }
+                }) { Text(stringResource(R.string.cancel_button)) }
             }
         )
     }
@@ -200,16 +208,16 @@ fun CollectionsScreen(
     pendingDeleteId?.let { id ->
         AlertDialog(
             onDismissRequest = { pendingDeleteId = null },
-            title = { Text("Delete collection?") },
-            text = { Text("This will delete the collection and its items.") },
+            title = { Text(stringResource(R.string.delete_collection_title)) },
+            text = { Text(stringResource(R.string.delete_collection_warning)) },
             confirmButton = {
                 TextButton(onClick = {
                     vm.deleteCollection(id)
                     pendingDeleteId = null
-                }) { Text("Delete") }
+                }) { Text(stringResource(R.string.delete_button)) }
             },
             dismissButton = {
-                TextButton(onClick = { pendingDeleteId = null }) { Text("Cancel") }
+                TextButton(onClick = { pendingDeleteId = null }) { Text(stringResource(R.string.cancel_button)) }
             }
         )
     }
@@ -247,7 +255,7 @@ private fun CollectionCard(
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    "${row.itemCount} item(s)",
+                    text = stringResource(R.string.collections_items, row.itemCount),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
@@ -268,7 +276,7 @@ private fun CollectionCard(
                     onDismissRequest = { menuExpanded = false }
                 ) {
                     DropdownMenuItem(
-                        text = { Text("Delete") },
+                        text = { Text(stringResource(R.string.delete_button)) },
                         onClick = {
                             menuExpanded = false
                             onDelete()

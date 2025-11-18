@@ -35,6 +35,9 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import coil.compose.rememberAsyncImagePainter
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+
 
 
 @Composable
@@ -90,7 +93,8 @@ fun ProfileScreen(onLogout: () -> Unit) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 60.dp) // Justert padding
+                .padding(top = 60.dp, bottom = 120.dp) // Justert padding
+                .verticalScroll(rememberScrollState())
                 .align(Alignment.TopCenter),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
