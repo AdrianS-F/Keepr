@@ -69,7 +69,6 @@ class MainActivity : ComponentActivity() {
         // Edge-to-edge
         enableEdgeToEdge()
 
-        // ---- Init av avhengigheter (enkelt, uten DI-rammeverk) ----
         val db = Room.databaseBuilder(
             applicationContext,
             KeeprDatabase::class.java,
@@ -80,10 +79,8 @@ class MainActivity : ComponentActivity() {
         val session = SessionManager(applicationContext)
         val authVm = AuthViewModel(repo, session)
 
-        // ---- UI ----
         setContent {
             KeeprTheme {
-                // Pass videre til appen din (oppdater signaturen til KeeprApp under)
                 com.example.keepr.ui.KeeprApp(
                     authVm = authVm,
                     session = session
