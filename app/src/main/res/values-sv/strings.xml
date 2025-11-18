@@ -1,0 +1,89 @@
+<resources>
+    <string name="app_name">Keepr</string>
+    <string name="profile_title">Profil</string>
+    <string name="collections_count">%1$d samlingar</string>
+
+    <string name="change_profile_picture">Byt profilbild</string>
+    <string name="change_name">Ändra namn</string>
+    <string name="change_name_title">Ändra namn</string>
+    <string name="toast_name_changed">Ditt namn har uppdaterats</string>
+    <string name="toast_fill_both">Fyll i båda fälten</string>
+    <string name="change_language">Byt språk</string>
+    <string name="log_out">Logga ut</string>
+    <string name="delete_user">Radera användare</string>
+
+    <!-- LANGUAGE OPTIONS -->
+    <string name="language_title">Välj språk</string>
+    <string name="english">English</string>
+    <string name="norwegian_bokmaal">Norsk bokmål</string>
+    <string name="spanish">Español</string>
+    <string name="swedish">Svenska</string>
+    <string name="chinese">中文</string>
+    <string name="save">Spara</string>
+    <string name="cancel">Avbryt</string>
+    <string name="restart_to_apply">Språket ändras när appen startas om</string>
+
+    <!-- BOTTOM BAR -->
+    <string name="nav_collections">Samlingar</string>
+    <string name="nav_add">Lägg till</string>
+    <string name="nav_profile">Profil</string>
+
+    <!-- SIGN IN PAGE -->
+    <string name="login_title">Logga in</string>
+    <string name="email_label">E-post</string>
+    <string name="email_placeholder">E-post</string>
+    <string name="password_label">Lösenord</string>
+    <string name="password_placeholder">Lösenord</string>
+    <string name="login_button">Logga in</string>
+    <string name="please_wait">Vänta…</string>
+    <string name="login_no_account">Har du inget konto? Registrera dig</string>
+
+    <string name="err_wrong_credentials">Fel e-post eller lösenord</string>
+    <string name="err_passwords_mismatch">Lösenorden matchar inte</string>
+    <string name="err_generic">Något gick fel</string>
+
+    <!-- SIGN UP PAGE -->
+    <string name="signup_title">Registrera dig</string>
+    <string name="first_name_label">Förnamn</string>
+    <string name="first_name_placeholder">Förnamn</string>
+    <string name="last_name_label">Efternamn</string>
+    <string name="last_name_placeholder">Efternamn</string>
+    <string name="repeat_password_label">Upprepa lösenord</string>
+    <string name="repeat_password_placeholder">Upprepa lösenord</string>
+    <string name="password_requirements">Minst 6 tecken, en versal och en siffra.</string>
+    <string name="signup_button">Skapa konto</string>
+    <string name="signup_have_account">Har du ett konto? Logga in</string>
+
+    <string name="err_password_strength">Lösenordet uppfyller inte kraven</string>
+
+    <!-- COLLECTION PAGE -->
+    <string name="collections_title">Dina samlingar</string>
+    <string name="collections_items">%1$d objekt</string>
+    <string name="search_collections">Sök samlingar</string>
+    <string name="no_collections_found">Inga samlingar matchar din sökning.</string>
+    <string name="new_collection_title">Ny samling</string>
+    <string name="collection_name_label">Samlingsnamn</string>
+    <string name="add_button">Lägg till</string>
+    <string name="cancel_button">Avbryt</string>
+    <string name="delete_collection_title">Radera samling?</string>
+    <string name="delete_collection_warning">Detta raderar samlingen och dess objekt.</string>
+    <string name="delete_button">Radera</string>
+
+    <!-- ITEM PAGE -->
+    <string name="items_title">Objekt</string>
+    <string name="items_add_placeholder">Lägg till objekt</string>
+    <string name="add">Lägg till</string>
+    <string name="delete">Radera</string>
+    <string name="save_button">Spara</string>
+    <string name="search_items_label">Sök objekt</string>
+    <string name="no_items_found">Inga objekt matchar din sökning.</string>
+    <string name="item_acquired">Införskaffad</string>
+    <string name="item_not_acquired">Ej införskaffad</string>
+
+    <!-- DELETE USER -->
+    <string name="delete_user_title">Radera användare</string>
+    <string name="delete_user_warning">Du kan inte ångra detta</string>
+    <string name="password">Lösenord</string>
+    <string name="user_deleted">Användaren har raderats</string>
+    <string name="err_wrong_password">Fel lösenord</string>
+</resources>

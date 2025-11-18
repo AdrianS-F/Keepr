@@ -7,12 +7,15 @@ import com.example.keepr.data.ItemEntity
 import com.example.keepr.data.KeeprDatabase
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class ItemsViewModel(app: Application, private val collectionId: Long) : AndroidViewModel(app) {
     private val db = KeeprDatabase.get(app)
     private val itemsDao = db.itemsDao()
+
+    private val collectionsDao = db.collectionsDao()
 
     val items: StateFlow<List<ItemEntity>> =
         itemsDao.observeForCollection(collectionId)
@@ -31,4 +34,26 @@ class ItemsViewModel(app: Application, private val collectionId: Long) : Android
     fun delete(item: ItemEntity) = viewModelScope.launch {
         itemsDao.delete(item)
     }
+
+    fun renameCurrentCollection(newTitle: String) {
+        viewModelScope.launch {
+            collectionsDao.renameCollection(collectionId, newTitle.trim())
+        }
+    }
+
+    fun updateItem(itemId: Long, name: String, notes: String?) {
+        viewModelScope.launch {
+            itemsDao.updateItemDetails(itemId, name.trim(), notes?.trim())
+        }
+    }
+
+    val collectionTitle: StateFlow<String> =
+        collectionsDao.observeTitle(collectionId)
+            .map { it ?: "Items" }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), "Items")
+
+    fun updateImage(itemId: Long, uri: String?) = viewModelScope.launch {
+        itemsDao.updateImage(itemId, uri)
+    }
+
 }

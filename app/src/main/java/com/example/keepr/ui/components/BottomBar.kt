@@ -2,67 +2,83 @@ package com.example.keepr.ui.components
 
 import android.util.Log
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.Collections
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.QueryStats
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.NavHostController
+import com.example.keepr.R
 import com.example.keepr.ui.navigation.NavRoute
 
 @Composable
 fun KeeprBottomBar(
-    navController: NavHostController,
-    currentDestination: NavDestination?
+    navController: NavHostController
 ) {
-    // Hardkodet, ikke-null liste: kun hovedruter
-    val tabs: List<NavRoute> = listOf(
+    val tabs = listOf(
         NavRoute.Collections,
         NavRoute.Add,
         NavRoute.Profile
     )
 
-    NavigationBar {
-        tabs.forEach { dest ->
-            // ekstra belt-and-suspenders guard (skulle aldri skje nÃ¥):
-            if (dest == null) return@forEach
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
-            val selected = currentDestination?.hierarchy?.any { it.route == dest.route } == true
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.surface,
+    ) {
+        tabs.forEach { dest ->
+            val selected = when (dest) {
+                NavRoute.Collections ->
+                    currentRoute?.startsWith(NavRoute.Collections.route) == true
+                NavRoute.Add ->
+                    currentRoute?.startsWith(NavRoute.Add.route) == true
+                NavRoute.Profile ->
+                    currentRoute?.startsWith(NavRoute.Profile.route) == true
+                else -> false
+            }
 
             val icon = when (dest) {
                 NavRoute.Collections -> Icons.Filled.Collections
-                NavRoute.Add         -> Icons.Filled.FavoriteBorder
-                NavRoute.Profile     -> Icons.Filled.QueryStats
-                NavRoute.Items -> TODO()
+                NavRoute.Add         -> Icons.Filled.AddCircleOutline
+                NavRoute.Profile     -> Icons.Filled.Person
                 else                 -> Icons.Filled.Collections
-
             }
 
             NavigationBarItem(
                 selected = selected,
-
                 onClick = {
-                    if (!selected) {                           // don't re-navigate to the same tab
-                        Log.d("BottomBar", "Tapped: ${dest.route}")
+                    if (!selected) {
                         navController.navigate(dest.route) {
-                            //  canonical bottom-nav pattern
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = false              // keep OFF until your nav is stable
+                            popUpTo(NavRoute.Collections.route) {
+                                inclusive = false
                             }
                             launchSingleTop = true
-                            restoreState = false               // keep OFF to avoid restore loops
                         }
                     }
                 },
                 icon = { Icon(icon, contentDescription = dest.label) },
-                label = { Text(dest.label) }
+                label = {
+                    val labelText = when (dest) {
+                        NavRoute.Collections -> stringResource(R.string.nav_collections)
+                        NavRoute.Add         -> stringResource(R.string.nav_add)
+                        NavRoute.Profile     -> stringResource(R.string.nav_profile)
+                        else                 -> dest.label
+                    }
+                    Text(text = labelText)
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                    indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                )
             )
         }
     }
 }
+

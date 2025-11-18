@@ -1,287 +1,290 @@
-package com.example.keepr.ui.screens.profile // screen for profile
+package com.example.keepr.ui.screens.profile
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.keepr.R
-import com.example.keepr.ui.theme.KeeprOnPrimary
-import com.example.keepr.ui.theme.KeeprPrimary
-import com.example.keepr.ui.theme.KeeprMedium
-import androidx.compose.foundation.clickable
-import androidx.compose.ui.Alignment
-import androidx.compose.material3.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.PhotoCamera
-import androidx.compose.material.icons.outlined.Badge
-import androidx.compose.material.icons.outlined.Translate
-import androidx.compose.material.icons.outlined.Logout
-import androidx.compose.material3.Divider
+import com.example.keepr.ui.components.ChangeLanguageDialog
+import com.example.keepr.ui.components.ChangeNameDialog
+import com.example.keepr.ui.components.DeleteUserDialog
+import com.example.keepr.ui.viewmodel.ProfileViewModel
+import android.content.Intent
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import coil.compose.rememberAsyncImagePainter
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 
 
 
 @Composable
-fun ProfileScreen(onLogout: () -> Unit){
+fun ProfileScreen(onLogout: () -> Unit) {
+    var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
+    var showNameDialog by rememberSaveable { mutableStateOf(false) }
+    var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
+    var wrongPass by remember { mutableStateOf(false) }
+    val ctx = LocalContext.current
 
-    // We make a hardcoded name for now.
-    val name = "Sharu" // Name of the profile
-    val collectionsCount = 2 // hardcoded for now
 
-    // We make the main container for the page, this is the green background with two tone
+    val vm: ProfileViewModel = viewModel()
+    val state by vm.state.collectAsState()
+    val user = state.user
+
+    val openImagePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument(),
+        onResult = { uri: Uri? ->
+            uri?.let {
+                try{
+                    ctx.contentResolver.takePersistableUriPermission(
+                        it,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
+                } catch (_: SecurityException) { }
+
+                vm.updatePhoto(it.toString())
+            }
+
+        }
+    )
+
+    // FIKS: Gjeninnfører den todelte bakgrunnen med korrekte temafarger
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        // Bottom layer with the main green color
+        // Nederste lag: Hovedbakgrunnen for appen
         Box(
             modifier = Modifier
-            .fillMaxSize()
-            .background(KeeprPrimary)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
         )
 
-        // Top layer with a darker color
-        val splitHeight = 180.dp // to split the line
+        // Øverste lag: En dekorativ boks med en dusere farge
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(splitHeight)
-                .background(KeeprMedium.copy(alpha = 0.6f)) // slightly darker shade
+                .height(180.dp)
+                // Bruker en svak, gjennomsiktig versjon av hovedfargen for en fin effekt
+                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
         )
 
-        // We make the column for the profile
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 40.dp) // gives the padding
-                .align(Alignment.TopCenter), // placement
-            horizontalAlignment = Alignment.CenterHorizontally // placement
+                .padding(top = 60.dp, bottom = 120.dp) // Justert padding
+                .verticalScroll(rememberScrollState())
+                .align(Alignment.TopCenter),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             // The actual title for the page "profile"
             Text(
-                text = "Profile", // tittle
-                color = KeeprOnPrimary, // prdefined color
-                fontSize = 20.sp, // font color
-                fontWeight = FontWeight.SemiBold // make it bold
+                text = stringResource(R.string.profile_title),
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.SemiBold
             )
 
-            Spacer(Modifier.height(25.dp)) // gives space between image anf title
+            Spacer(Modifier.height(25.dp))
 
-            // This is the profile picture part
+            val avatarUri = state.avatarUri
+
             Image(
-                painter = painterResource(id = R.drawable.sharu), // image hardcoded for now
-                contentDescription = "Profile picture", // tells that this is a profile picture for accebility
+                painter = if (avatarUri.isNullOrBlank())
+                    painterResource(id = R.drawable.placeholder_profile)
+                else
+                    rememberAsyncImagePainter(model = avatarUri),
+                contentDescription = stringResource(R.string.change_profile_picture),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(175.dp) // image size
-                    .clip(RoundedCornerShape(16.dp)) // rounded edges
+                    .size(175.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .clickable { openImagePicker.launch(arrayOf("image/*")) }
             )
 
-            Spacer(Modifier.height(25.dp)) // Gives us new space
+            Spacer(Modifier.height(25.dp))
 
-            // The name text
+            // Teksten bruker nå riktig farge for bakgrunnen
             Text(
-                text = name, // the name we made earlier
-                color = KeeprOnPrimary, // white text
-                fontSize = 28.sp, // gives the size of the name
-                fontWeight = FontWeight.Bold // gives the name bold text
+                text = user?.let { "${it.firstName} ${it.lastName}" } ?: "",
+                color = MaterialTheme.colorScheme.onBackground,
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold
             )
 
             Spacer(Modifier.height(6.dp))
             Text(
-                text = "$collectionsCount Collections", // shows the collction
-                color = KeeprOnPrimary.copy(alpha = 0.8f), // lighter white color
-                fontSize =  18.sp // Smaller size on the font
+                stringResource(R.string.collections_count, state.collectionCount),
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+                fontSize = 18.sp
             )
 
-            Spacer(Modifier.height(24.dp)) // space before the card
+            Spacer(Modifier.height(24.dp))
 
-            Card( // this is the backgorund card
-                shape = RoundedCornerShape(22.dp), // rounded corners
+            // Kortet får nå korrekt `surface`-farge
+            Card(
+                shape = RoundedCornerShape(22.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = KeeprMedium.copy(alpha = 0.35f) // this gives it a tint
+                    containerColor = MaterialTheme.colorScheme.surface
                 ),
                 modifier = Modifier
-                    .fillMaxWidth() // this wil fill the screen
-                    .padding(horizontal = 10.dp) // gives space on the edges
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp)
             ) {
-                // For now it's empty, but we'll fill it in the next step
                 Column(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
                 ) {
-                    Text(
-                        text = "Profile",
-                        color = KeeprOnPrimary,
-                        fontWeight = FontWeight.SemiBold
+
+                    Spacer(Modifier.height(8.dp))
+
+                    val contentColor = MaterialTheme.colorScheme.onSurface
+                    val dividerColor = contentColor.copy(alpha = 0.2f)
+
+                    // Bruker den gjenbrukbare ProfileRow for renere kode
+                    ProfileRow(
+                        text = stringResource(R.string.change_profile_picture),
+                        icon = Icons.Outlined.PhotoCamera,
+                        contentColor = contentColor,
+                        onClick = { openImagePicker.launch(arrayOf("image/*")) }
+                    )
+                    Divider(color = dividerColor, thickness = 1.dp)
+
+                    ProfileRow(
+                        text = stringResource(R.string.change_name),
+                        icon = Icons.Outlined.Badge,
+                        contentColor = contentColor,
+                        onClick = { showNameDialog = true }
+                    )
+                    Divider(color = dividerColor, thickness = 1.dp)
+
+                    ProfileRow(
+                        text = stringResource(R.string.change_language),
+                        icon = Icons.Outlined.Translate,
+                        contentColor = contentColor,
+                        onClick = { showLanguageDialog = true }
+                    )
+                    Divider(color = dividerColor, thickness = 1.dp)
+
+                    ProfileRow(
+                        text = stringResource(R.string.log_out),
+                        icon = Icons.Outlined.Logout,
+                        contentColor = contentColor,
+                        onClick = onLogout
                     )
 
-                    Spacer(Modifier.height(8.dp)) // gives space above and under
-
-                    //The diffrent buttons we have on top of the box
-
-                    // change profile picture row and icon
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 14.dp)
-                            .clickable {}, // have to code
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Change profile picture",
-                            color = KeeprOnPrimary,
-                            style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.weight(1f)
-                        )
-
-                        //Icon for profile picture
-                        Icon(
-                            imageVector = Icons.Outlined.PhotoCamera,
-                            contentDescription = "Profile icon",
-                            tint = KeeprOnPrimary,
-                            modifier = Modifier.size(22.dp)
-                        )
+                    if (showLanguageDialog) {
+                        ChangeLanguageDialog(onDismiss = { showLanguageDialog = false })
                     }
 
-                    Divider(color = KeeprOnPrimary.copy(alpha = 0.2f), thickness = 1.dp) // line between the buttons
-
-                    // Change name row and icon
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 14.dp)
-                            .clickable {}, // have to code
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Change name",
-                            color = KeeprOnPrimary,
-                            style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.weight(1f)
-                        )
-
-                        //Icon for change name
-                        Icon(
-                            imageVector = Icons.Outlined.Badge,
-                            contentDescription = "Name icon",
-                            tint = KeeprOnPrimary,
-                            modifier = Modifier.size(22.dp)
-                        )
-                    }
-
-                    Divider(color = KeeprOnPrimary.copy(alpha = 0.2f), thickness = 1.dp) // line between the buttons
-
-                    // Change language row and icon
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 14.dp)
-                            .clickable {}, // have to code
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Change language",
-                            color = KeeprOnPrimary,
-                            style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.weight(1f)
-                        )
-
-                        Icon(
-                            imageVector = Icons.Outlined.Translate,
-                            contentDescription = "Language icon",
-                            tint = KeeprOnPrimary,
-                            modifier = Modifier.size(22.dp)
-                        )
-                    }
-
-                    Divider(color = KeeprOnPrimary.copy(alpha = 0.2f), thickness = 1.dp)
-
-                    // Log out row and icon
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 14.dp)
-                            .clickable { onLogout() }, // calls the logout function
-                        verticalAlignment = Alignment.CenterVertically
-                        
-                    ){
-                        Text(
-                            text = "Log out",
-                            color = KeeprOnPrimary,
-                            style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.weight(1f)
-                        )
-
-                        Icon(
-                            imageVector = Icons.Outlined.Logout,
-                            contentDescription = "Logout icon",
-                            tint = KeeprOnPrimary,
-                            modifier = Modifier.size(22.dp)
+                    if (showNameDialog && user != null) {
+                        ChangeNameDialog(
+                            firstInit = user.firstName,
+                            lastInit = user.lastName,
+                            onSave = { f, l ->
+                                vm.updateName(f, l)
+                                showNameDialog = false
+                            },
+                            onDismiss = { showNameDialog = false }
                         )
                     }
                 }
             }
 
-            Spacer(Modifier.height(40.dp)) // gives us space over and under
+            Spacer(Modifier.height(40.dp))
 
+            // Slett-knappen bruker nå korrekte farger fra temaet
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp)
                     .clip(RoundedCornerShape(18.dp))
-                    .background(KeeprMedium.copy(alpha = 0.25f))
-                    .clickable {}
+                    .background(MaterialTheme.colorScheme.surface)
+                    .clickable { showDeleteDialog = true }
                     .padding(horizontal = 18.dp, vertical = 16.dp)
             ) {
-                // The text for the delete button
                 Text(
-                    text = "Delete user",
-                    color = androidx.compose.ui.graphics.Color(0xFFFF6B6B),
+                    text = stringResource(R.string.delete_user),
+                    color = MaterialTheme.colorScheme.error,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold
+                )
+            }
+
+            if (showDeleteDialog) {
+                DeleteUserDialog(
+                    onDelete = { pass ->
+                        vm.deleteUser(pass) { ok ->
+                            if (ok) {
+                                Toast.makeText(
+                                    ctx,
+                                    ctx.getString(R.string.user_deleted),
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                showDeleteDialog = false
+                                onLogout()
+                            } else {
+                                wrongPass = true
+                            }
+                        }
+                    },
+                    onDismiss = { showDeleteDialog = false; wrongPass = false },
+                    wrongPassword = wrongPass
                 )
             }
         }
     }
 }
-/*
+
+/**
+ * Gjenbrukbar hjelpefunksjon for å unngå kodeduplisering.
+ */
 @Composable
-private fun CardRow( // Function for the card
-    text: String, // we tell that it is a string
-    onClick: () -> Unit = {} // this is a onclick
+private fun ProfileRow(
+    text: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    contentColor: Color,
+    onClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 14.dp)
-            .clickable { onClick()},
-        verticalAlignment = Alignment.CenterVertically // tells that is is going verticaly
+            .clickable(onClick = onClick),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = text, // tells that it is a text
-            color = KeeprOnPrimary, // keeps the color to match
-            style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
+            text = text,
+            color = contentColor,
+            style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.weight(1f)
         )
+        Icon(
+            imageVector = icon,
+            contentDescription = text,
+            tint = contentColor,
+            modifier = Modifier.size(22.dp)
+        )
     }
-
-    // This gives us the lines between the buttons
-    androidx.compose.material3.Divider( // gives us the divider
-        color = KeeprOnPrimary.copy(alpha = 0.2f), // changes the color
-        thickness = 1.dp // the height on the line
-    )
-
-    Spacer(Modifier.height(4.dp)) // gives us new space for above and under
 }
 
-*/ // denne brukte jeg før jeg hadde ikoner, vet ikke helt ennå om jeg skal fjerne 

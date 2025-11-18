@@ -1,6 +1,10 @@
 package com.example.keepr.ui
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -30,28 +34,45 @@ fun KeeprApp(
     val navController = rememberNavController()
     val scope = rememberCoroutineScope()
 
-    // Observe logged-in user (from DataStore in SessionManager)
+
     val userId by session.loggedInUserId.collectAsState(initial = null)
     val isLoggedIn = userId != null
 
-    // current route (for bottom-bar visibility)
-    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = backStackEntry?.destination?.route
+
     val showBottomBar =
-        currentRoute == NavRoute.Collections.route ||
-        currentRoute == NavRoute.Add.route ||
-        currentRoute == NavRoute.Profile.route
-        // If you want to show the bar on Items too, you can add:
-        // || currentRoute?.startsWith("items/") == true
+        currentRoute?.startsWith(NavRoute.Collections.route) == true ||
+                currentRoute?.startsWith(NavRoute.Add.route) == true ||
+                currentRoute?.startsWith(NavRoute.Profile.route) == true ||
+                currentRoute?.startsWith("items/") == true
+
+
+
+    val appSnackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
-        bottomBar = { if (showBottomBar) KeeprBottomBar(navController, navController.currentDestination) }
+        snackbarHost = {
+            SnackbarHost(hostState = appSnackbarHostState) { data ->
+                Snackbar(
+                    snackbarData = data,
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor   = MaterialTheme.colorScheme.onSurfaceVariant,
+                    actionColor    = MaterialTheme.colorScheme.primary
+                )
+            }
+        },
+
+        bottomBar = { if (showBottomBar) { KeeprBottomBar(navController) } }
+
     ) { paddingValues ->
 
         NavHost(
             navController = navController,
             startDestination = if (isLoggedIn) NavRoute.Collections.route else ROUTE_SIGNUP
         ) {
-            // ---------- AUTH ----------
+
             composable(ROUTE_SIGNUP) {
                 com.example.keepr.ui.screens.auth.SignUpScreen(
                     vm = authVm,
@@ -70,6 +91,9 @@ fun KeeprApp(
             composable(ROUTE_SIGNIN) {
                 com.example.keepr.ui.screens.auth.SignInScreen(
                     vm = authVm,
+                    onGoToSignUp = {
+                        navController.navigate(ROUTE_SIGNUP) { launchSingleTop = true }
+                    },
                     onSignedIn = {
                         navController.navigate(NavRoute.Collections.route) {
                             popUpTo(ROUTE_SIGNIN) { inclusive = true }
@@ -85,12 +109,29 @@ fun KeeprApp(
                     padding = paddingValues,
                     onOpen = { collectionId ->
                         navController.navigate(NavRoute.Items.makeRoute(collectionId))
-                    }
+                    },
+                    snackbarHostState = appSnackbarHostState
+
                 )
             }
 
-            composable(NavRoute.Add.route) {
-                AddScreen(paddingValues)
+            composable(
+                route = "add?collectionId={collectionId}",
+                arguments = listOf(
+                    navArgument("collectionId") {
+                        type = NavType.LongType
+                        defaultValue = -1L   // means "no preselected collection"
+                    }
+                )
+            ) { entry ->
+                val rawId = entry.arguments?.getLong("collectionId") ?: -1L
+                val initialCollectionId = if (rawId == -1L) null else rawId
+
+                AddScreen(
+                    padding = paddingValues,
+                    onSaved = { cid -> navController.popBackStack() },
+                    initialCollectionId = initialCollectionId
+                )
             }
 
             composable(NavRoute.Profile.route) {
