@@ -60,6 +60,7 @@ fun ItemsScreen(
     var isEditingTitle by remember { mutableStateOf(false) }
     var titleDraft by remember(liveTitle) { mutableStateOf(liveTitle) }
     var pendingImageItemId by remember { mutableStateOf<Long?>(null) }
+    var pendingDeleteItem by remember { mutableStateOf<ItemEntity?>(null) }
     var query by rememberSaveable { mutableStateOf("") }
 
     val filteredItems by remember(items, query) {
@@ -217,7 +218,7 @@ fun ItemsScreen(
                             ItemRow(
                                 item = item,
                                 onToggle = { checked -> vm.toggleAcquired(item, checked) },
-                                onDelete = { vm.delete(item) },
+                                onDelete = { pendingDeleteItem = item },
                                 onEdit = { newName, newNotes -> vm.updateItem(item.itemId, newName, newNotes) },
                                 onChangeImage = {
                                     pendingImageItemId = item.itemId
@@ -229,12 +230,34 @@ fun ItemsScreen(
                 }
             }
 
+            pendingDeleteItem?.let { itemToDelete ->
+                AlertDialog(
+                    onDismissRequest = { pendingDeleteItem = null },
+                    title = { Text("Delete item?") },
+                    text  = { Text("This will remove \"${itemToDelete.itemName}\" from this collection.") },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            vm.delete(itemToDelete)
+                            pendingDeleteItem = null
+                        }) {
+                            Text("Delete")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { pendingDeleteItem = null }) {
+                            Text("Cancel")
+                        }
+                    }
+                )
+            }
+
+
             FloatingActionButton(
                 onClick = { navController.navigate(NavRoute.Add.forCollection(collectionId)) },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .navigationBarsPadding()
-                    .padding(end = 16.dp, bottom = 72.dp),
+                    .padding(end = 16.dp, bottom = 30.dp),
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ) {

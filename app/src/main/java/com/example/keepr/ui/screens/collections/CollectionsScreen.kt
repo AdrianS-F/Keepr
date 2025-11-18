@@ -134,7 +134,7 @@ fun CollectionsScreen(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .navigationBarsPadding()
-                .padding(bottom = 72.dp, end = 16.dp),
+                .padding(bottom = 40.dp, end = 16.dp),
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary
         ) {

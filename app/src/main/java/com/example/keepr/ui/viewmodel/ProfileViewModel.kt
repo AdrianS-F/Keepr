@@ -61,28 +61,34 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
             if (f.isEmpty() || l.isEmpty()) return@launch
 
             usersDao.updateName(userId, f, l)
+            profileDao.updateProfileName(userId, f, l)
         }
     }
+
+
 
     fun updatePhoto(uri: String) {
         viewModelScope.launch {
             val userId = sessionManager.loggedInUserId.firstOrNull() ?: return@launch
 
-            // Finn profil-rad hvis den finnes fra før
             val existing = profileDao.getOnce(userId)
             if (existing == null) {
+                val user = usersDao.getById(userId) ?: return@launch
                 profileDao.upsert(
                     ProfileEntity(
-                        userId = userId,
+                        userId    = userId,
+                        firstName = user.firstName,
+                        lastName  = user.lastName,
                         avatarUri = uri
                     )
                 )
             } else {
-                // U i CRUD – vanlig oppdatering
                 profileDao.updateAvatar(userId, uri)
             }
         }
     }
+
+
 
     fun deleteUser(password: String, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {

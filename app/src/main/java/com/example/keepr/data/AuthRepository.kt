@@ -14,7 +14,7 @@ class AuthRepository(private val db: KeeprDatabase) {
         lastName: String,
         rawPassword: String
     ): Result<Long> {
-        val e = email.trim().lowercase()
+        val e  = email.trim().lowercase()
         val fn = firstName.trim()
         val ln = lastName.trim()
 
@@ -23,14 +23,26 @@ class AuthRepository(private val db: KeeprDatabase) {
         }
 
         val hash = BCrypt.withDefaults().hashToString(12, rawPassword.toCharArray())
+
+
         val userId = usersDao.insert(
             UserEntity(
-                email = e,
-                firstName = fn,
-                lastName = ln,
+                email        = e,
+                firstName    = fn,
+                lastName     = ln,
                 passwordHash = hash
             )
         )
+
+        profileDao.upsert(
+            ProfileEntity(
+                userId    = userId,
+                firstName = fn,
+                lastName  = ln,
+                avatarUri = null
+            )
+        )
+
         return Result.success(userId)
     }
 
@@ -50,7 +62,7 @@ class AuthRepository(private val db: KeeprDatabase) {
     suspend fun checkPassword(email: String, rawPassword: String): Boolean {
         val e = email.trim().lowercase()
         val user = usersDao.getByEmail(e) ?: return false
-        return at.favre.lib.crypto.bcrypt.BCrypt.verifyer()
+        return BCrypt.verifyer()
             .verify(rawPassword.toCharArray(), user.passwordHash).verified
     }
 
