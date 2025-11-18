@@ -156,7 +156,6 @@ fun ItemsScreen(
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.SemiBold,
                                 modifier = Modifier.weight(1f),
-                                // FIKS 3: Tittelen må ha riktig farge.
                                 color = MaterialTheme.colorScheme.onBackground
                             )
                             IconButton(onClick = {
@@ -172,10 +171,6 @@ fun ItemsScreen(
                         }
                     }
                 }
-
-
-                Spacer(Modifier.height(12.dp))
-
 
                 OutlinedTextField(
                     value = query,
@@ -257,7 +252,7 @@ fun ItemsScreen(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .navigationBarsPadding()
-                    .padding(end = 16.dp, bottom = 30.dp),
+                    .padding(end = 16.dp),
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ) {

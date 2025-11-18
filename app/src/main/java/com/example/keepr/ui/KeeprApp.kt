@@ -45,7 +45,8 @@ fun KeeprApp(
     val showBottomBar =
         currentRoute?.startsWith(NavRoute.Collections.route) == true ||
                 currentRoute?.startsWith(NavRoute.Add.route) == true ||
-                currentRoute?.startsWith(NavRoute.Profile.route) == true
+                currentRoute?.startsWith(NavRoute.Profile.route) == true ||
+                currentRoute?.startsWith("items/") == true
 
 
 
