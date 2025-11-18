@@ -8,14 +8,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.keepr.R
 
-// 1️⃣ Definer DM Sans fontfamilien
 val DMSans = FontFamily(
     Font(R.font.dm_sans_regular, FontWeight.Normal),
     Font(R.font.dm_sans_medium, FontWeight.Medium),
     Font(R.font.dm_sans_bold, FontWeight.Bold)
 )
 
-// 2️⃣ Sett opp Keepr sin typografi basert på DM Sans
 val Typography = Typography(
     bodyLarge = TextStyle(
         fontFamily = DMSans,

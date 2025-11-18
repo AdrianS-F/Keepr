@@ -39,6 +39,7 @@
     <string name="err_wrong_credentials">Wrong e-mail or password</string>
     <string name="err_passwords_mismatch">Passwords do not match</string>
     <string name="err_generic">Something went wrong</string>
+    <string name="err_invalid_email">Invalid email format</string>
 
     <!-- THIS IS FOR THE SIGN UP PAGE -->
     <string name="signup_title">Sign up</string>

@@ -39,6 +39,7 @@
     <string name="err_wrong_credentials">Feil e-post eller passord</string>
     <string name="err_passwords_mismatch">Passordene er ikke like</string>
     <string name="err_generic">Noe gikk galt</string>
+    <string name="err_invalid_email">Ugyldig e-postformat</string>
 
     <!-- THIS IS FOR THE SIGN UP PAGE -->
     <string name="signup_title">Registrer deg</string>

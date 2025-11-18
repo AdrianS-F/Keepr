@@ -1,5 +1,6 @@
 package com.example.keepr.ui.screens.auth
 
+import android.util.Patterns
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,10 +25,12 @@ fun SignUpScreen(
 ) {
     val s by vm.state.collectAsState()
 
-    // FIKS: Bytter til LaunchedEffect for å nullstille state når skjermen lastes, ikke når den forlates.
     LaunchedEffect(Unit) {
         vm.resetState()
     }
+
+    val isEmailValid = Patterns.EMAIL_ADDRESS.matcher(s.email).matches()
+    val passwordsMatch = s.password == s.repeatPassword
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -38,7 +41,6 @@ fun SignUpScreen(
                 .fillMaxSize()
                 .padding(horizontal = 24.dp, vertical = 36.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            // Sentrerer alt vertikalt for å unngå at det presses mot toppen eller bunnen
             verticalArrangement = Arrangement.Center
         ) {
             //Tittel
@@ -57,11 +59,35 @@ fun SignUpScreen(
             Spacer(Modifier.height(32.dp))
 
             //Inputfelt
+            Spacer(Modifier.height(5.dp))
+            OutlinedTextField(
+                value = s.firstName,
+                onValueChange = vm::updateFirst,
+                label = { Text(stringResource(R.string.first_name_label)) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp)
+            )
+
+            Spacer(Modifier.height(12.dp))
+            OutlinedTextField(
+                value = s.lastName,
+                onValueChange = vm::updateLast,
+                label = { Text(stringResource(R.string.last_name_label)) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp)
+            )
+
+            Spacer(Modifier.height(12.dp))
             OutlinedTextField(
                 value = s.email,
                 onValueChange = vm::updateEmail,
                 label = { Text(stringResource(R.string.email_label)) },
                 singleLine = true,
+                isError = !isEmailValid && s.email.isNotBlank(),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Next
@@ -69,6 +95,15 @@ fun SignUpScreen(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp)
             )
+            if (!isEmailValid && s.email.isNotBlank()) {
+                Text(
+                    text = stringResource(R.string.err_invalid_email),
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+                )
+            }
+
             Spacer(Modifier.height(12.dp))
             OutlinedTextField(
                 value = s.password,
@@ -90,6 +125,7 @@ fun SignUpScreen(
                 label = { Text(stringResource(R.string.repeat_password_label)) },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
+                isError = !passwordsMatch,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Next
@@ -97,35 +133,21 @@ fun SignUpScreen(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp)
             )
-            
+            if (!passwordsMatch) {
+                Text(
+                    text = stringResource(R.string.err_passwords_mismatch),
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+                )
+            }
+
             Spacer(Modifier.height(5.dp))
             Text(
                 text = stringResource(R.string.password_requirements),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.fillMaxWidth()
-            )
-
-
-            Spacer(Modifier.height(5.dp))
-            OutlinedTextField(
-                value = s.firstName,
-                onValueChange = vm::updateFirst,
-                label = { Text(stringResource(R.string.first_name_label)) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp)
-            )
-            Spacer(Modifier.height(12.dp))
-            OutlinedTextField(
-                value = s.lastName,
-                onValueChange = vm::updateLast,
-                label = { Text(stringResource(R.string.last_name_label)) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp)
             )
 
             Spacer(Modifier.height(24.dp))
@@ -151,9 +173,11 @@ fun SignUpScreen(
                 onClick = { vm.signUp(onSignedIn) },
                 enabled = !s.loading &&
                         s.email.isNotBlank() &&
+                        isEmailValid &&
                         s.password.length >= 6 &&
-                        s.password == s.repeatPassword &&
-                        s.firstName.isNotBlank(),
+                        passwordsMatch &&
+                        s.firstName.isNotBlank() &&
+                        s.lastName.isNotBlank(),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(54.dp),

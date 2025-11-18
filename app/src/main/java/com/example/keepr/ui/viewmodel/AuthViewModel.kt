@@ -45,7 +45,6 @@ class AuthViewModel(
             return@launch
         }
 
-        // FIKS 1: Sjekker om passordet inneholder minst én stor bokstav og ett tall.
         val hasUppercase = s.password.any { it.isUpperCase() }
         val hasDigit = s.password.any { it.isDigit() }
         if (!hasUppercase || !hasDigit) {

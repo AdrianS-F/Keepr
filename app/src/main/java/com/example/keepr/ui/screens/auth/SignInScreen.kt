@@ -25,7 +25,6 @@ fun SignInScreen(
 ) {
     val s by vm.state.collectAsState()
 
-    // FIKS: Bytter til LaunchedEffect for å nullstille state når skjermen lastes, ikke når den forlates.
     LaunchedEffect(Unit) {
         vm.resetState()
     }
@@ -46,7 +45,6 @@ fun SignInScreen(
             Text(
                 "Keepr",
                 style = MaterialTheme.typography.headlineLarge,
-                // FIKS 3: Justerer tekstfargen for å matche temaet.
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold
             )

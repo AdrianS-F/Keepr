@@ -50,7 +50,7 @@ fun KeeprTheme(
         else -> KeeprLightColorScheme
     }
 
-    // Kode for å fargelegge system-navbaren (hvis bruker har den gamle akrivert)
+    // Kode for å fargelegge system-navbaren
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
