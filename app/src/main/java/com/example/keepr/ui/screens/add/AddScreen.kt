@@ -23,6 +23,8 @@ import kotlinx.coroutines.launch
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.rememberAsyncImagePainter
 import androidx.compose.ui.layout.ContentScale
@@ -67,6 +69,7 @@ fun AddScreen(
     var newCollectionName by remember { mutableStateOf(TextFieldValue("")) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val scrollState = rememberScrollState()
 
     // LaunchedEffects
     LaunchedEffect(collections, initialCollectionId) {
@@ -106,7 +109,8 @@ fun AddScreen(
                     .padding(padding)
                     .padding(innerPadding)
                     .padding(16.dp)
-                    .fillMaxSize(),
+                    .verticalScroll(scrollState)   // 👈 SCROLL ENABLED
+                    .fillMaxWidth(),               // 👈 do NOT fill height
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 //  Bilde
@@ -143,15 +147,24 @@ fun AddScreen(
                     value = itemName,
                     onValueChange = { itemName = it },
                     label = { Text(stringResource(R.string.item_name_label)) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 100.dp, max = 200.dp)
+                        .verticalScroll(rememberScrollState()),
+                    maxLines = 8
                 )
                 Spacer(Modifier.height(12.dp))
                 OutlinedTextField(
                     value = itemDescription,
                     onValueChange = { itemDescription = it },
                     label = { Text(stringResource(R.string.item_description_label)) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 100.dp, max = 200.dp)
+                        .verticalScroll(rememberScrollState()),
+                    maxLines = 8
                 )
+
 
                 Spacer(Modifier.height(12.dp))
 

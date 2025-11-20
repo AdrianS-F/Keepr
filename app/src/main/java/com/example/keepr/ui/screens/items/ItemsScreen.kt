@@ -42,11 +42,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.outlined.Image
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-
+import coil.compose.rememberAsyncImagePainter
 
 
 @Composable
@@ -299,20 +299,29 @@ private fun ItemRow(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val painter = if (item.imgUri.isNullOrBlank()) {
-                        painterResource(id = R.drawable.placeholder_profile)
+                    if (item.imgUri.isNullOrBlank()) {
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(RoundedCornerShape(8.dp)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Image,
+                                contentDescription = "Item image placeholder",
+                                modifier = Modifier.size(26.dp)
+                            )
+                        }
                     } else {
-                        coil.compose.rememberAsyncImagePainter(model = item.imgUri)
+                        Image(
+                            painter = rememberAsyncImagePainter(model = item.imgUri),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(RoundedCornerShape(8.dp)),
+                            contentScale = ContentScale.Crop
+                        )
                     }
-                    Image(
-                        painter = painter,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(RoundedCornerShape(8.dp)),
-                        contentScale = ContentScale.Crop
-                    )
-
 
                     Column {
                         Text(
@@ -348,10 +357,6 @@ private fun ItemRow(
                     modifier = Modifier
                         .fillMaxWidth()
                         .heightIn(min = 48.dp, max = 120.dp)
-                        .background(
-                            MaterialTheme.colorScheme.surfaceVariant,
-                            RoundedCornerShape(8.dp)
-                        )
                         .padding(8.dp)
                         .verticalScroll(rememberScrollState())
                 ) {
