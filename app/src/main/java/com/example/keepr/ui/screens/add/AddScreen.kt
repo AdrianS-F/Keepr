@@ -90,7 +90,7 @@ fun AddScreen(
     }
 
     Scaffold(
-        // FIKS 1: Topplinjen får nå riktige farger fra temaet
+        // Topplinjen får riktige farger fra temaet
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(R.string.add_item_title)) },
@@ -101,7 +101,6 @@ fun AddScreen(
             )
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        // FIKS 2: Hovedbakgrunnen bruker nå fargen fra temaet
         containerColor = MaterialTheme.colorScheme.background,
         content = { innerPadding ->
             Column(
@@ -147,13 +146,11 @@ fun AddScreen(
                     value = itemName,
                     onValueChange = { itemName = it },
                     label = { Text(stringResource(R.string.item_name_label)) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = 100.dp, max = 200.dp)
-                        .verticalScroll(rememberScrollState()),
-                    maxLines = 8
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
                 )
                 Spacer(Modifier.height(12.dp))
+
                 OutlinedTextField(
                     value = itemDescription,
                     onValueChange = { itemDescription = it },
@@ -164,6 +161,7 @@ fun AddScreen(
                         .verticalScroll(rememberScrollState()),
                     maxLines = 8
                 )
+
 
 
                 Spacer(Modifier.height(12.dp))
@@ -208,7 +206,9 @@ fun AddScreen(
                                     }
                                 )
                             }
-                            Divider()
+
+                            HorizontalDivider()
+
                             DropdownMenuItem(
                                 text = { Text("+ New collection") },
                                 onClick = {
@@ -247,7 +247,6 @@ fun AddScreen(
                                         is AddItemResult.Success -> {
                                             itemName = TextFieldValue("")
                                             itemDescription = TextFieldValue("")
-                                            snackbarHostState.showSnackbar("Item saved.")
                                             onSaved(cid)
                                         }
                                         AddItemResult.Duplicate -> {
@@ -266,11 +265,11 @@ fun AddScreen(
                     Text(stringResource(R.string.item_save_item))
                 }
 
+
             }
         }
     )
 
-    // Dialog (AlertDialog henter farger automatisk, så den er OK)
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },

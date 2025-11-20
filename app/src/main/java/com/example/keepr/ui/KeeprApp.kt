@@ -43,9 +43,9 @@ fun KeeprApp(
     val currentRoute = backStackEntry?.destination?.route
 
     val showBottomBar =
-        currentRoute?.startsWith(NavRoute.Collections.route) == true ||
-                currentRoute?.startsWith(NavRoute.Add.route) == true ||
-                currentRoute?.startsWith(NavRoute.Profile.route) == true||
+        currentRoute?.startsWith("collections") == true ||
+                currentRoute?.startsWith("add") == true ||
+                currentRoute?.startsWith("profile") == true ||
                 currentRoute?.startsWith("items/") == true
 
 
@@ -120,7 +120,7 @@ fun KeeprApp(
                 arguments = listOf(
                     navArgument("collectionId") {
                         type = NavType.LongType
-                        defaultValue = -1L   // means "no preselected collection"
+                        defaultValue = -1L
                     }
                 )
             ) { entry ->
@@ -129,10 +129,21 @@ fun KeeprApp(
 
                 AddScreen(
                     padding = paddingValues,
-                    onSaved = { cid -> navController.popBackStack() },
-                    initialCollectionId = initialCollectionId
+                    initialCollectionId = initialCollectionId,
+                    onSaved = { cid ->
+                        // 1) Remove AddScreen from back stack
+                        navController.popBackStack()
+
+                        // 2) Go to the correct ItemsScreen for the selected collection
+                        navController.navigate(NavRoute.Items.makeRoute(cid)) {
+                            launchSingleTop = true
+                        }
+                    }
                 )
             }
+
+
+
 
             composable(NavRoute.Profile.route) {
                 // If your ProfileScreen expects 'padding' too, use:
