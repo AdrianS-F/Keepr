@@ -1,11 +1,17 @@
 package com.example.keepr.ui
 
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -51,6 +57,8 @@ fun KeeprApp(
 
 
     val appSnackbarHostState = remember { SnackbarHostState() }
+    //Horizontal scrolling (Landscape mode)
+    val horizontalScrollState = rememberScrollState()
 
     Scaffold(
         snackbarHost = {
@@ -68,6 +76,12 @@ fun KeeprApp(
 
     ) { paddingValues ->
 
+        Box(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+                .horizontalScroll(horizontalScrollState)
+        ){
         NavHost(
             navController = navController,
             startDestination = if (isLoggedIn) NavRoute.Collections.route else ROUTE_SIGNUP
@@ -161,6 +175,7 @@ fun KeeprApp(
                 )
             }
         }
+      }
     }
 
     // tiny logger to verify navigation
