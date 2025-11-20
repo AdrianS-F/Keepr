@@ -29,6 +29,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.draw.clip
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddAPhoto
+import androidx.compose.ui.res.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class) // ?? Hva er dette, må fjernes
 @Composable
@@ -89,7 +90,7 @@ fun AddScreen(
         // FIKS 1: Topplinjen får nå riktige farger fra temaet
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Add Item") },
+                title = { Text(stringResource(R.string.add_item_title)) },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface,
                     titleContentColor = MaterialTheme.colorScheme.onSurface
@@ -141,14 +142,14 @@ fun AddScreen(
                 OutlinedTextField(
                     value = itemName,
                     onValueChange = { itemName = it },
-                    label = { Text("Item name") },
+                    label = { Text(stringResource(R.string.item_name_label)) },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(Modifier.height(12.dp))
                 OutlinedTextField(
                     value = itemDescription,
                     onValueChange = { itemDescription = it },
-                    label = { Text("Description") },
+                    label = { Text(stringResource(R.string.item_description_label)) },
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -156,7 +157,7 @@ fun AddScreen(
 
                 // 📂 Collection dropdown
                 Text(
-                    text = "Collection:",
+                    text = stringResource(R.string.item_collection_label),
                     style = MaterialTheme.typography.labelLarge,
                     // FIKS 4: Teksten må få riktig farge for bakgrunnen
                     color = MaterialTheme.colorScheme.onBackground
@@ -169,7 +170,7 @@ fun AddScreen(
                         onClick = { showDialog = true },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("➕ Add new collection")
+                        Text(stringResource(R.string.item_add_new_collection))
                     }
                 } else {
                     var expanded by remember { mutableStateOf(false) }
@@ -249,7 +250,7 @@ fun AddScreen(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp)
                 ) {
-                    Text("Save item")
+                    Text(stringResource(R.string.item_save_item))
                 }
 
             }

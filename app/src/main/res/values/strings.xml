@@ -36,7 +36,7 @@
     <string name="password_placeholder">Password</string>
     <string name="login_button">Sign in</string>
     <string name="please_wait">Please wait…</string>
-    <string name="login_no_account">Don\'t have an account? Sign up</string>
+    <string name="login_no_account">Dont have an account? Sign up</string>
 
 
     <string name="err_wrong_credentials">Wrong e-mail or password</string>
@@ -71,7 +71,19 @@
     <string name="delete_collection_warning">This will delete the collection and its items.</string>
     <string name="delete_button">Delete</string>
 
+    <!-- this is for the main add item page -->
+    <string name="add_item_title">Add Item</string>
+    <string name="item_name_label">Item name</string>
+    <string name="item_description_label">Description</string>
+    <string name="item_collection_label">Collection:</string>
+    <string name="item_add_new_collection">Add new collection</string>
+    <string name="item_save_item">Save item</string>
 
+    <!-- this is for the notificatoion -->
+    <string name="notification_inactivity_title">Come back to Keepr!</string>
+    <string name="notification_inactivity_text">You havent visited the app in 3 days.</string>
+    <string name="notification_channel_name">Keepr Reminders</string>
+    <string name="notification_channel_description">Notifications to remind you about your collections</string>
 
 
     <!-- THIS IS FOR THE ITEM PAGE -->
@@ -86,6 +98,13 @@
     <string name="item_not_acquired">Not acquired</string>
     <string name="save_buttoon">Save</string>
 
+    <!-- this is for the item edit page -->
+    <string name="delete_item_title">Delete item?</string>
+    <string name="delete_item_warning">This will remove "%1$s" from this collection.</string>
+    <string name="delete_item_confirm">Delete</string>
+    <string name="cancel_item_action">Cancel</string>
+
+
 
 
 
@@ -95,9 +114,4 @@
     <string name="password">Password</string>
     <string name="user_deleted">User is successfully deleted</string>
     <string name="err_wrong_password">Wrong password</string>
-
-
-
-
-
 </resources>

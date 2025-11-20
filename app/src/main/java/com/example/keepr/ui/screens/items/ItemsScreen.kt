@@ -230,19 +230,19 @@ fun ItemsScreen(
             pendingDeleteItem?.let { itemToDelete ->
                 AlertDialog(
                     onDismissRequest = { pendingDeleteItem = null },
-                    title = { Text("Delete item?") },
-                    text  = { Text("This will remove \"${itemToDelete.itemName}\" from this collection.") },
+                    title = { Text(text = stringResource(R.string.delete_item_title)) },
+                    text = { Text(stringResource(R.string.delete_item_warning, itemToDelete.itemName)) },
                     confirmButton = {
                         TextButton(onClick = {
                             vm.delete(itemToDelete)
                             pendingDeleteItem = null
                         }) {
-                            Text("Delete")
+                            Text(stringResource(R.string.delete_item_confirm))
                         }
                     },
                     dismissButton = {
                         TextButton(onClick = { pendingDeleteItem = null }) {
-                            Text("Cancel")
+                            Text(stringResource(R.string.cancel_item_action))
                         }
                     }
                 )

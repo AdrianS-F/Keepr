@@ -33,8 +33,8 @@ class InactivityWorker(
     private fun sendNotification() {
         val notification = NotificationCompat.Builder(context, NotificationHelper.CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle("Come back to Keepr!")
-            .setContentText("You haven't visited the app in 3 days.")
+            .setContentTitle(context.getString(R.string.notification_inactivity_title))
+            .setContentText(context.getString(R.string.notification_inactivity_text))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
 

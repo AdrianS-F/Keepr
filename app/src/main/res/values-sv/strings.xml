@@ -69,6 +69,21 @@
     <string name="delete_collection_warning">Detta raderar samlingen och dess objekt.</string>
     <string name="delete_button">Radera</string>
 
+    <!-- this is for the main add item page -->
+    <string name="add_item_title">Lägg till objekt</string>
+    <string name="item_name_label">Objektnamn</string>
+    <string name="item_description_label">Beskrivning</string>
+    <string name="item_collection_label">Samling:</string>
+    <string name="item_add_new_collection">Ny samling</string>
+    <string name="item_save_item">Spara objekt</string>
+
+    <!-- this is for the notificatoion -->
+    <string name="notification_inactivity_title">Kom tillbaka till Keepr!</string>
+    <string name="notification_inactivity_text">Du har inte öppnat appen på 3 dagar.</string>
+    <string name="notification_channel_name">Keepr Påminnelser</string>
+    <string name="notification_channel_description">Aviseringar som påminner dig om dina samlingar</string>
+
+
     <!-- ITEM PAGE -->
     <string name="items_title">Objekt</string>
     <string name="items_add_placeholder">Lägg till objekt</string>
@@ -79,6 +94,14 @@
     <string name="no_items_found">Inga objekt matchar din sökning.</string>
     <string name="item_acquired">Införskaffad</string>
     <string name="item_not_acquired">Ej införskaffad</string>
+
+    <!-- this is for the item edit page -->
+    <string name="delete_item_title">Slette gjenstand?</string>
+    <string name="delete_item_warning">Detta kommer att ta bort "%1$s" från denna samling.</string>
+    <string name="delete_item_confirm">Radera</string>
+    <string name="cancel_item_action">Avbryt</string>
+
+
 
     <!-- DELETE USER -->
     <string name="delete_user_title">Radera användare</string>

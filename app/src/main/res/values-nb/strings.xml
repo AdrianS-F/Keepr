@@ -71,6 +71,19 @@
     <string name="delete_collection_warning">Dette vil slette samlingen og alle gjenstandene i den.</string>
     <string name="delete_button">Slett</string>
 
+    <!-- this is for the main add item page -->
+    <string name="add_item_title">Legg til gjenstand</string>
+    <string name="item_name_label">Gjenstandsnavn</string>
+    <string name="item_description_label">Beskrivelse</string>
+    <string name="item_collection_label">Samling:</string>
+    <string name="item_add_new_collection">Ny samling</string>
+    <string name="item_save_item">Lagre gjenstand</string>
+
+    <!-- this is for the notificatoion -->
+    <string name="notification_inactivity_title">Kom tilbake til Keepr!</string>
+    <string name="notification_inactivity_text">Du har ikke brukt appen på 3 dager.</string>
+    <string name="notification_channel_name">Keepr Varsler</string>
+    <string name="notification_channel_description">Varsler som minner deg på samlingene dine</string>
 
 
     <!-- THIS IS FOR THE ITEM PAGE -->
@@ -85,6 +98,12 @@
     <string name="item_not_acquired">Ikke anskaffet</string>
     <string name="save_buttoon">Save</string>
 
+    <!-- this is for the item edit page -->
+    <string name="delete_item_title">Slette gjenstand?</string>
+    <string name="delete_item_warning">Dette vil fjerne "%1$s" fra denne samlingen.</string>
+    <string name="delete_item_confirm">Slett</string>
+    <string name="cancel_item_action">Avbryt</string>
+
 
     <!-- THIS IS FOR THE DELETE OPTIONS -->
     <string name="delete_user_title">Slett bruker</string>
@@ -92,5 +111,4 @@
     <string name="password">Passord</string>
     <string name="user_deleted">Bruker ble slettet</string>
     <string name="err_wrong_password">Feil passord</string>
-
 </resources>

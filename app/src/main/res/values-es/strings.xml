@@ -17,7 +17,7 @@
     <string name="english">English</string>
     <string name="norwegian_bokmaal">Norsk bokmål</string>
     <string name="spanish">Español</string>
-    <string name="swedish">Svensk</string>
+    <string name="swedish">Svenska</string>
     <string name="chinese">中文</string>
     <string name="save">Guardar</string>
     <string name="cancel">Cancelar</string>
@@ -69,6 +69,21 @@
     <string name="delete_collection_warning">Esto eliminará la colección y sus elementos.</string>
     <string name="delete_button">Eliminar</string>
 
+    <!-- this is for the main add item page -->
+    <string name="add_item_title">Añadir artículo</string>
+    <string name="item_name_label">Nombre del elemento</string>
+    <string name="item_description_label">Descripción</string>
+    <string name="item_collection_label">Colección:</string>
+    <string name="item_add_new_collection">Nueva colección</string>
+    <string name="item_save_item">Guardar elemento</string>
+
+    <!-- this is for the notificatoion -->
+    <string name="notification_inactivity_title">¡Vuelve a Keepr!</string>
+    <string name="notification_inactivity_text">No has abierto la app en 3 días.</string>
+    <string name="notification_channel_name">Recordatorios de Keepr</string>
+    <string name="notification_channel_description">Notificaciones para recordarte tus colecciones</string>
+
+
     <!-- ITEM PAGE -->
     <string name="items_title">Elementos</string>
     <string name="items_add_placeholder">Añadir elemento</string>
@@ -79,6 +94,13 @@
     <string name="no_items_found">No hay elementos que coincidan con tu búsqueda.</string>
     <string name="item_acquired">Obtenido</string>
     <string name="item_not_acquired">No obtenido</string>
+
+    <!-- this is for the item edit page -->
+    <string name="delete_item_title">¿Eliminar elemento?</string>
+    <string name="delete_item_warning">Esto eliminará "%1$s" de esta colección.</string>
+    <string name="delete_item_confirm">Eliminar</string>
+    <string name="cancel_item_action">Cancelar</string>
+
 
     <!-- DELETE USER -->
     <string name="delete_user_title">Eliminar usuario</string>
