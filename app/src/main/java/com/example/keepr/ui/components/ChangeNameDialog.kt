@@ -15,7 +15,7 @@ import com.example.keepr.R
 fun ChangeNameDialog (
     firstInit: String,
     lastInit: String,
-    onSave: (String, String) -> Unit,
+    onSave: (String, String) -> Boolean,
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
@@ -48,12 +48,18 @@ fun ChangeNameDialog (
             TextButton(
                 onClick = {
                     if (first.isNotBlank() && last.isNotBlank()) {
-                        onSave(first.trim(), last.trim())
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.toast_name_changed),
-                            Toast.LENGTH_SHORT
-                        ).show()
+
+                        val saved = onSave(first.trim(), last.trim())
+
+                        if (saved) {
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.toast_name_changed),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            onDismiss()
+                        }
+
                     } else {
                         Toast.makeText(
                             context,

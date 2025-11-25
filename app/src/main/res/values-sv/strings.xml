@@ -6,6 +6,7 @@
     <string name="change_profile_picture">Byt profilbild</string>
     <string name="change_name">Ändra namn</string>
     <string name="change_name_title">Ändra namn</string>
+    <string name="name_too_long">Namnet är för långt, försök med något kortare</string>
     <string name="toast_name_changed">Ditt namn har uppdaterats</string>
     <string name="toast_fill_both">Fyll i båda fälten</string>
     <string name="change_language">Byt språk</string>

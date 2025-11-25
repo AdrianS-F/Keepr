@@ -6,6 +6,7 @@
     <string name="change_profile_picture">Cambiar foto de perfil</string>
     <string name="change_name">Cambiar nombre</string>
     <string name="change_name_title">Cambiar nombre</string>
+    <string name="name_too_long">El nombre es demasiado largo, intenta con uno más corto</string>
     <string name="toast_name_changed">Tu nombre ha sido actualizado</string>
     <string name="toast_fill_both">Por favor, completa ambos campos</string>
     <string name="change_language">Cambiar idioma</string>

@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
@@ -119,7 +120,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(175.dp)
-                    .clip(RoundedCornerShape(16.dp))
+                    .clip(CircleShape)
                     .clickable { openImagePicker.launch(arrayOf("image/*")) }
             )
 
@@ -202,8 +203,20 @@ fun ProfileScreen(onLogout: () -> Unit) {
                             firstInit = user.firstName,
                             lastInit = user.lastName,
                             onSave = { f, l ->
-                                vm.updateName(f, l)
-                                showNameDialog = false
+                                val fullName = "${f.trim()} ${l.trim()}".trim()
+
+                                if (fullName.length > 35) {
+                                    Toast.makeText(
+                                        ctx,
+                                        ctx.getString(R.string.name_too_long),
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                    false
+                                } else {
+                                    vm.updateName(f, l)
+                                    showNameDialog = false
+                                    true
+                                }
                             },
                             onDismiss = { showNameDialog = false }
                         )
@@ -256,9 +269,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
     }
 }
 
-/**
- * Gjenbrukbar hjelpefunksjon for å unngå kodeduplisering.
- */
+
 @Composable
 private fun ProfileRow(
     text: String,
