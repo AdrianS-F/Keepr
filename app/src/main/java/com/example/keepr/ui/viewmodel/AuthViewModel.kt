@@ -56,7 +56,7 @@ class AuthViewModel(
         val res = repo.signUp(s.email, s.firstName, s.lastName, s.password)
         _state.value = _state.value.copy(loading = false)
         res.onSuccess { userId ->
-            session.setLoggedIn(userId)   // 🔗 KOBLINGEN: marker innlogget
+            session.setLoggedIn(userId)
             onSuccess()
         }.onFailure { e ->
             _state.value = _state.value.copy(error = "GENERIC_ERROR")
@@ -69,7 +69,7 @@ class AuthViewModel(
         val res = repo.signIn(s.email, s.password)
         _state.value = _state.value.copy(loading = false)
         res.onSuccess { user ->
-            session.setLoggedIn(user.userId) // 🔗 KOBLINGEN
+            session.setLoggedIn(user.userId)
             onSuccess()
         }.onFailure { e ->
             _state.value = _state.value.copy(error = "WRONG_CREDENTIALS")

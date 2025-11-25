@@ -16,7 +16,6 @@ interface UsersDao {
     @Query("SELECT * FROM `user` WHERE user_id = :id LIMIT 1")
     suspend fun getById(id: Long): UserEntity?
 
-    // Live-observasjon
     @Query("SELECT * FROM `user` WHERE user_id = :id LIMIT 1")
     fun observeById(id: Long): Flow<UserEntity?>
 
@@ -28,7 +27,6 @@ interface UsersDao {
 
     @Query("UPDATE `user` SET first_name = :first, last_name = :last WHERE user_id = :userId")
     suspend fun updateName(userId: Long, first: String, last: String)
-
 
     @Delete
     suspend fun delete(user: UserEntity)

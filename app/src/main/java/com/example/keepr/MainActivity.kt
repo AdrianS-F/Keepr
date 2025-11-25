@@ -40,7 +40,6 @@ class MainActivity : ComponentActivity() {
         // Vis splash før innhold
         installSplashScreen()
 
-        // Opprett notification-kanal
         NotificationHelper.createChannel(this)
         if (android.os.Build.VERSION.SDK_INT >= 33) {
             val granted = ContextCompat.checkSelfPermission(
@@ -66,7 +65,6 @@ class MainActivity : ComponentActivity() {
             workRequest
         )
 
-        // Edge-to-edge
         enableEdgeToEdge()
 
         val db = Room.databaseBuilder(

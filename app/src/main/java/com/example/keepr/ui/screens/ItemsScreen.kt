@@ -1,11 +1,11 @@
-package com.example.keepr.ui.screens.items
+package com.example.keepr.ui.screens
 
 
+import android.app.Application
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -45,7 +45,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import coil.compose.rememberAsyncImagePainter
 
 
@@ -56,7 +55,7 @@ fun ItemsScreen(
     onBack: () -> Unit,
     navController: NavHostController
 ) {
-    val app = LocalContext.current.applicationContext as android.app.Application
+    val app = LocalContext.current.applicationContext as Application
     val vm: ItemsViewModel = viewModel(factory = ItemsViewModelFactory(app, collectionId))
     val items by vm.items.collectAsState()
     val ctx = LocalContext.current

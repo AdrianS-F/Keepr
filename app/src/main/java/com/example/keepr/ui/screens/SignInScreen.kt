@@ -1,4 +1,4 @@
-package com.example.keepr.ui.screens.auth
+package com.example.keepr.ui.screens
 
 
 import androidx.compose.foundation.layout.*

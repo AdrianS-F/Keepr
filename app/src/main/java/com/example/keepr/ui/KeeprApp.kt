@@ -15,10 +15,12 @@ import androidx.navigation.navArgument
 import com.example.keepr.data.SessionManager
 import com.example.keepr.ui.components.KeeprBottomBar
 import com.example.keepr.ui.navigation.NavRoute
-import com.example.keepr.ui.screens.add.AddScreen
-import com.example.keepr.ui.screens.collections.CollectionsScreen
-import com.example.keepr.ui.screens.items.ItemsScreen
-import com.example.keepr.ui.screens.profile.ProfileScreen
+import com.example.keepr.ui.screens.AddScreen
+import com.example.keepr.ui.screens.SignInScreen
+import com.example.keepr.ui.screens.SignUpScreen
+import com.example.keepr.ui.screens.CollectionsScreen
+import com.example.keepr.ui.screens.ItemsScreen
+import com.example.keepr.ui.screens.ProfileScreen
 import com.example.keepr.ui.viewmodel.AuthViewModel
 import kotlinx.coroutines.launch
 
@@ -74,7 +76,7 @@ fun KeeprApp(
         ) {
 
             composable(ROUTE_SIGNUP) {
-                com.example.keepr.ui.screens.auth.SignUpScreen(
+                SignUpScreen(
                     vm = authVm,
                     onGoToSignIn = {
                         navController.navigate(ROUTE_SIGNIN) { launchSingleTop = true }
@@ -89,7 +91,7 @@ fun KeeprApp(
             }
 
             composable(ROUTE_SIGNIN) {
-                com.example.keepr.ui.screens.auth.SignInScreen(
+                SignInScreen(
                     vm = authVm,
                     onGoToSignUp = {
                         navController.navigate(ROUTE_SIGNUP) { launchSingleTop = true }
@@ -103,7 +105,7 @@ fun KeeprApp(
                 )
             }
 
-            // ---------- MAIN ----------
+
             composable(NavRoute.Collections.route) {
                 CollectionsScreen(
                     padding = paddingValues,
@@ -131,10 +133,8 @@ fun KeeprApp(
                     padding = paddingValues,
                     initialCollectionId = initialCollectionId,
                     onSaved = { cid ->
-                        // 1) Remove AddScreen from back stack
                         navController.popBackStack()
 
-                        // 2) Go to the correct ItemsScreen for the selected collection
                         navController.navigate(NavRoute.Items.makeRoute(cid)) {
                             launchSingleTop = true
                         }
@@ -146,13 +146,11 @@ fun KeeprApp(
 
 
             composable(NavRoute.Profile.route) {
-                // If your ProfileScreen expects 'padding' too, use:
-                // ProfileScreen(paddingValues, onLogout = { ... })
                 ProfileScreen(
                     onLogout = {
                         scope.launch { session.clear() }
                         navController.navigate(ROUTE_SIGNIN) {
-                            popUpTo(0) { inclusive = true } // clear entire back stack
+                            popUpTo(0) { inclusive = true }
                             launchSingleTop = true
                         }
                     }
@@ -168,13 +166,13 @@ fun KeeprApp(
                     padding = paddingValues,
                     collectionId = cid,
                     onBack = { navController.popBackStack() },
-                    navController = navController // <-- lets ItemsScreen navigate to Add
+                    navController = navController
                 )
             }
         }
     }
 
-    // tiny logger to verify navigation
+
     LaunchedEffect(navController) {
         navController.addOnDestinationChangedListener { _, dest, _ ->
             android.util.Log.d("Nav", "Now at route: ${dest.route}")

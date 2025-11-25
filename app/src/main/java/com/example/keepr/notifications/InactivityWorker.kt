@@ -35,12 +35,10 @@ class InactivityWorker(
 
     @SuppressLint("MissingPermission")
     private fun sendNotification() {
-        // Intent som åpner appen (MainActivity)
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
 
-        // Lag PendingIntent med backstack
         val pendingIntent = TaskStackBuilder.create(context).run {
             addNextIntentWithParentStack(intent)
             getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)

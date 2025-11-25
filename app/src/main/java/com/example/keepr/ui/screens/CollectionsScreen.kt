@@ -1,4 +1,4 @@
-package com.example.keepr.ui.screens.collections
+package com.example.keepr.ui.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -270,7 +270,6 @@ private fun CollectionCard(
                     Icon(
                         imageVector = Icons.Default.MoreVert,
                         contentDescription = "More options",
-                        // FIKS 7: Ikonfargen må også passe på 'surface'.
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }

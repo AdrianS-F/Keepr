@@ -1,4 +1,4 @@
-package com.example.keepr.ui.screens.add
+package com.example.keepr.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,7 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -32,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddAPhoto
 import androidx.compose.ui.res.stringResource
+import com.example.keepr.ui.viewmodel.AddResult
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,7 +41,6 @@ fun AddScreen(
     initialCollectionId: Long?
 
 ) {
-    // ViewModel og UI-state
     val context = LocalContext.current
     val vm: AddViewModel = viewModel()
     val collections by vm.collections.collectAsState()
@@ -72,7 +71,6 @@ fun AddScreen(
     val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
 
-    // LaunchedEffects
     LaunchedEffect(collections, initialCollectionId) {
         if (selectedCollection == null && initialCollectionId != null) {
             selectedCollection = collections.find { it.collectionId == initialCollectionId }
@@ -115,16 +113,16 @@ fun AddScreen(
                             scope.launch {
                                 when (val result = vm.addCollection(title)) {
 
-                                    is com.example.keepr.ui.viewmodel.AddResult.Success -> {
+                                    is AddResult.Success -> {
                                     }
 
-                                    is com.example.keepr.ui.viewmodel.AddResult.Duplicate -> {
+                                    is AddResult.Duplicate -> {
                                         snackbarHostState.showSnackbar(
                                             "A collection named \"$title\" already exists."
                                         )
                                     }
 
-                                    is com.example.keepr.ui.viewmodel.AddResult.NoUser -> {
+                                    is AddResult.NoUser -> {
                                         snackbarHostState.showSnackbar(
                                             "No user is signed in."
                                         )
@@ -149,7 +147,6 @@ fun AddScreen(
     }
 
     Scaffold(
-        // Topplinjen får riktige farger fra temaet
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(R.string.add_item_title)) },
@@ -199,8 +196,6 @@ fun AddScreen(
                 }
 
                 Spacer(Modifier.height(20.dp))
-
-                // Navn & Beskrivelse (OutlinedTextField henter farger automatisk fra temaet, så de er OK)
                 OutlinedTextField(
                     value = itemName,
                     onValueChange = { itemName = it },
@@ -228,13 +223,11 @@ fun AddScreen(
                 Text(
                     text = stringResource(R.string.item_collection_label),
                     style = MaterialTheme.typography.labelLarge,
-                    // FIKS 4: Teksten må få riktig farge for bakgrunnen
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Spacer(Modifier.height(4.dp))
 
                 if (collections.isEmpty()) {
-                    // OutlinedButton henter farger automatisk, så den er OK
                     OutlinedButton(
                         onClick = { showDialog = true },
                         modifier = Modifier.fillMaxWidth()

@@ -1,15 +1,15 @@
-package com.example.keepr.data // Tells us what package it is from
+package com.example.keepr.data
 
-// Gets us needed android classes
-import android.content.Context // gives us access to saving, files
-import android.content.Context.MODE_PRIVATE // Saving is only for this app and this app only
 
-class SettingsManager (context: Context) { // making a class named SettingsManager. Also allows saving
-    private val prefs = context.getSharedPreferences("keepr_settings", MODE_PRIVATE) // making a sharedprefrance file called keepr_settings
+import android.content.Context
+import android.content.Context.MODE_PRIVATE
 
-    fun setLanguage(lang: String){ // our save function when a user presses save
+class SettingsManager (context: Context) {
+    private val prefs = context.getSharedPreferences("keepr_settings", MODE_PRIVATE)
+
+    fun setLanguage(lang: String){
         prefs.edit().putString("app_lang", lang).apply()
     }
 
-    fun getLanguage(): String = prefs.getString("app_lang", "en") ?: "en" // making english the standard
+    fun getLanguage(): String = prefs.getString("app_lang", "en") ?: "en"
 }

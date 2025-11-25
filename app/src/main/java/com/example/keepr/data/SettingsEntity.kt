@@ -6,5 +6,5 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "settings")
 data class SettingsEntity(
     @PrimaryKey val id: Int = 1,
-    val languageCode: String = "nb" //this is the language test.
+    val languageCode: String = "nb" //Test for språk
 )

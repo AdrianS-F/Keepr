@@ -52,11 +52,11 @@ class AuthRepository(private val db: KeeprDatabase) {
     ): Result<UserEntity> {
         val e = email.trim().lowercase()
         val user = usersDao.getByEmail(e)
-            ?: return Result.failure(IllegalArgumentException("Feil e-post eller passord."))
+            ?: return Result.failure(IllegalArgumentException("")) //Teksten overstyres i sign in page
 
         val ok = BCrypt.verifyer().verify(rawPassword.toCharArray(), user.passwordHash).verified
         return if (ok) Result.success(user)
-        else Result.failure(IllegalArgumentException("Feil e-post eller passord."))
+        else Result.failure(IllegalArgumentException("")) //Teksten overstyres i sign in page
     }
 
     suspend fun checkPassword(email: String, rawPassword: String): Boolean {

@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-// 👇 Result type, same pattern as collections
+
 sealed class AddItemResult {
     data class Success(val id: Long) : AddItemResult()
     object Duplicate : AddItemResult()
@@ -55,7 +55,6 @@ class AddViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // suspend + return AddItemResult
     suspend fun addItem(
         collectionId: Long,
         itemName: String,
@@ -64,16 +63,13 @@ class AddViewModel(application: Application) : AndroidViewModel(application) {
     ): AddItemResult {
         val trimmedName = itemName.trim()
         if (trimmedName.isEmpty()) {
-            // UI already validates this, but just in case:
             return AddItemResult.Duplicate
         }
 
-        // 1) Pre-check for duplicate in same collection (case-insensitive)
         if (itemsDao.existsNameInCollection(collectionId, trimmedName)) {
             return AddItemResult.Duplicate
         }
 
-        // 2) Try insert. OnConflictStrategy.IGNORE will return -1L if duplicate by DB constraint
         val id = itemsDao.insert(
             ItemEntity(
                 collectionId = collectionId,
