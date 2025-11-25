@@ -33,7 +33,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddAPhoto
 import androidx.compose.ui.res.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class) // ?? Hva er dette, må fjernes
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddScreen(
     padding: PaddingValues,
@@ -166,8 +166,8 @@ fun AddScreen(
                     .padding(padding)
                     .padding(innerPadding)
                     .padding(16.dp)
-                    .verticalScroll(scrollState)   // 👈 SCROLL ENABLED
-                    .fillMaxWidth(),               // 👈 do NOT fill height
+                    .verticalScroll(scrollState)   // SCROLL ENABLED
+                    .fillMaxWidth(),               // do NOT fill height
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 //  Bilde
@@ -224,7 +224,7 @@ fun AddScreen(
 
                 Spacer(Modifier.height(12.dp))
 
-                // 📂 Collection dropdown
+                //Collection dropdown
                 Text(
                     text = stringResource(R.string.item_collection_label),
                     style = MaterialTheme.typography.labelLarge,

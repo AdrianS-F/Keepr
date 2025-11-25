@@ -8,6 +8,10 @@ import androidx.work.WorkerParameters
 import com.example.keepr.R
 import java.util.concurrent.TimeUnit
 import android.annotation.SuppressLint
+import android.app.PendingIntent
+import android.content.Intent
+import androidx.core.app.TaskStackBuilder
+import com.example.keepr.MainActivity
 
 class InactivityWorker(
     private val context: Context,
@@ -31,17 +35,26 @@ class InactivityWorker(
 
     @SuppressLint("MissingPermission")
     private fun sendNotification() {
+        // Intent som åpner appen (MainActivity)
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+
+        // Lag PendingIntent med backstack
+        val pendingIntent = TaskStackBuilder.create(context).run {
+            addNextIntentWithParentStack(intent)
+            getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        }
+
         val notification = NotificationCompat.Builder(context, NotificationHelper.CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle(context.getString(R.string.notification_inactivity_title))
-            .setContentText(context.getString(R.string.notification_inactivity_text))
+            .setContentTitle("Come back to Keepr!")
+            .setContentText("You haven't visited the app in 3 days.")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
             .build()
 
-        try {
-            NotificationManagerCompat.from(context).notify(999, notification)
-        } catch (e: SecurityException) {
-            // Hvis brukeren har blokkert notifications, gjør vi bare ingenting
-        }
+        NotificationManagerCompat.from(context).notify(999, notification)
     }
 }
