@@ -23,6 +23,8 @@ import kotlinx.coroutines.launch
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.rememberAsyncImagePainter
 import androidx.compose.ui.layout.ContentScale
@@ -67,6 +69,7 @@ fun AddScreen(
     var newCollectionName by remember { mutableStateOf(TextFieldValue("")) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val scrollState = rememberScrollState()
 
     // LaunchedEffects
     LaunchedEffect(collections, initialCollectionId) {
@@ -85,9 +88,67 @@ fun AddScreen(
             }
         }
     }
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showDialog = false
+                newCollectionName = TextFieldValue("")
+            },
+            title = { Text(stringResource(R.string.new_collection_title)) },
+            text = {
+                OutlinedTextField(
+                    value = newCollectionName,
+                    onValueChange = { newCollectionName = it },
+                    label = { Text(stringResource(R.string.collection_name_label)) },
+                    singleLine = true
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val title = newCollectionName.text.trim()
+                        if (title.isNotEmpty()) {
+                            showDialog = false
+                            newCollectionName = TextFieldValue("")
+                            pendingNewCollectionTitle = title
+                            scope.launch {
+                                when (val result = vm.addCollection(title)) {
+
+                                    is com.example.keepr.ui.viewmodel.AddResult.Success -> {
+                                    }
+
+                                    is com.example.keepr.ui.viewmodel.AddResult.Duplicate -> {
+                                        snackbarHostState.showSnackbar(
+                                            "A collection named \"$title\" already exists."
+                                        )
+                                    }
+
+                                    is com.example.keepr.ui.viewmodel.AddResult.NoUser -> {
+                                        snackbarHostState.showSnackbar(
+                                            "No user is signed in."
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ) {
+                    Text(stringResource(R.string.add_button))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showDialog = false
+                    newCollectionName = TextFieldValue("")
+                }) {
+                    Text(stringResource(R.string.cancel_button))
+                }
+            }
+        )
+    }
 
     Scaffold(
-        // FIKS 1: Topplinjen får nå riktige farger fra temaet
+        // Topplinjen får riktige farger fra temaet
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(R.string.add_item_title)) },
@@ -98,7 +159,6 @@ fun AddScreen(
             )
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        // FIKS 2: Hovedbakgrunnen bruker nå fargen fra temaet
         containerColor = MaterialTheme.colorScheme.background,
         content = { innerPadding ->
             Column(
@@ -106,7 +166,8 @@ fun AddScreen(
                     .padding(padding)
                     .padding(innerPadding)
                     .padding(16.dp)
-                    .fillMaxSize(),
+                    .verticalScroll(scrollState)   // 👈 SCROLL ENABLED
+                    .fillMaxWidth(),               // 👈 do NOT fill height
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 //  Bilde
@@ -143,15 +204,23 @@ fun AddScreen(
                     value = itemName,
                     onValueChange = { itemName = it },
                     label = { Text(stringResource(R.string.item_name_label)) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
                 )
                 Spacer(Modifier.height(12.dp))
+
                 OutlinedTextField(
                     value = itemDescription,
                     onValueChange = { itemDescription = it },
                     label = { Text(stringResource(R.string.item_description_label)) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 100.dp, max = 200.dp)
+                        .verticalScroll(rememberScrollState()),
+                    maxLines = 8
                 )
+
+
 
                 Spacer(Modifier.height(12.dp))
 
@@ -195,7 +264,9 @@ fun AddScreen(
                                     }
                                 )
                             }
-                            Divider()
+
+                            HorizontalDivider()
+
                             DropdownMenuItem(
                                 text = { Text("+ New collection") },
                                 onClick = {
@@ -234,7 +305,6 @@ fun AddScreen(
                                         is AddItemResult.Success -> {
                                             itemName = TextFieldValue("")
                                             itemDescription = TextFieldValue("")
-                                            snackbarHostState.showSnackbar("Item saved.")
                                             onSaved(cid)
                                         }
                                         AddItemResult.Duplicate -> {
@@ -253,18 +323,8 @@ fun AddScreen(
                     Text(stringResource(R.string.item_save_item))
                 }
 
+
             }
         }
     )
-
-    // Dialog (AlertDialog henter farger automatisk, så den er OK)
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = { Text("New Collection") },
-            text = { /* ... */ },
-            confirmButton = { /* ... */ },
-            dismissButton = { /* ... */ }
-        )
-    }
 }
