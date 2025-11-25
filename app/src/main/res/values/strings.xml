@@ -60,6 +60,7 @@
 
     <!-- THIS IS FOR THE COLLECTION PAGE -->
     <string name="collections_title">Your collections</string>
+    <string name="collection_exists">A collection named "%1$s" already exists.</string>
     <string name="collections_items">%1$d item(s)</string>
     <string name="search_collections">Search collections</string>
     <string name="no_collections_found">No collections match your search.</string>
@@ -77,6 +78,11 @@
     <string name="item_description_label">Description</string>
     <string name="item_collection_label">Collection:</string>
     <string name="item_add_new_collection">Add new collection</string>
+    <string name="select_collection">Select a collection</string>
+    <string name="new_collection_button">+ New collection</string>
+    <string name="enter_item_name">Please enter an item name.</string>
+    <string name="select_or_create_collection">Please select or create a collection.</string>
+    <string name="item_exists">An item named "%1$s" already exists in this collection.</string>
     <string name="item_save_item">Save item</string>
 
     <!-- this is for the notificatoion -->

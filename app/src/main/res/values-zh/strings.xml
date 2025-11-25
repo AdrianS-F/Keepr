@@ -51,7 +51,7 @@
     <string name="last_name_placeholder">姓氏</string>
     <string name="repeat_password_label">重复密码</string>
     <string name="repeat_password_placeholder">重复密码</string>
-    <string name="password_requirements">至少 6 个字符，包含大写字母和数字。</string>
+    <string name="password_requirements">至少 6 个字符，包含大写字母和数字</string>
     <string name="signup_button">创建账号</string>
     <string name="signup_have_account">已经有账号？登录</string>
 
@@ -60,14 +60,15 @@
     <!-- COLLECTION PAGE -->
     <string name="collections_title">你的收藏</string>
     <string name="collections_items">%1$d 个项目</string>
+    <string name="collection_exists">名为“%1$s”的收藏已存在</string>
     <string name="search_collections">搜索收藏</string>
-    <string name="no_collections_found">没有符合搜索条件的收藏。</string>
+    <string name="no_collections_found">没有符合搜索条件的收藏</string>
     <string name="new_collection_title">新建收藏</string>
     <string name="collection_name_label">收藏名称</string>
     <string name="add_button">添加</string>
     <string name="cancel_button">取消</string>
     <string name="delete_collection_title">删除收藏？</string>
-    <string name="delete_collection_warning">此操作将删除收藏及其所有项目。</string>
+    <string name="delete_collection_warning">此操作将删除收藏及其所有项目</string>
     <string name="delete_button">删除</string>
 
     <!-- this is for the main add item page -->
@@ -76,6 +77,11 @@
     <string name="item_description_label">描述</string>
     <string name="item_collection_label">收藏：</string>
     <string name="item_add_new_collection">新建收藏</string>
+    <string name="select_collection">选择一个收藏</string>
+    <string name="new_collection_button">+ 新建收藏</string>
+    <string name="enter_item_name">请输入项目名称</string>
+    <string name="select_or_create_collection">请选择或创建一个收藏。</string>
+    <string name="item_exists">名为“%1$s”的项目已存在于此收藏中</string>
     <string name="item_save_item">保存项目</string>
 
     <!-- this is for the notificatoion -->
@@ -84,7 +90,6 @@
     <string name="notification_channel_name">Keepr 提醒</string>
     <string name="notification_channel_description">用于提醒你查看收藏的通知</string>
 
-
     <!-- ITEM PAGE -->
     <string name="items_title">项目</string>
     <string name="items_add_placeholder">添加项目</string>
@@ -92,17 +97,15 @@
     <string name="delete">删除</string>
     <string name="save_button">保存</string>
     <string name="search_items_label">搜索项目</string>
-    <string name="no_items_found">没有符合搜索条件的项目。</string>
+    <string name="no_items_found">没有符合搜索条件的项目</string>
     <string name="item_acquired">已获取</string>
     <string name="item_not_acquired">未获取</string>
 
     <!-- this is for the item edit page -->
     <string name="delete_item_title">删除项目？</string>
-    <string name="delete_item_warning">这将从该收藏中移除“%1$s”。</string>
+    <string name="delete_item_warning">这将从该收藏中移除“%1$s”</string>
     <string name="delete_item_confirm">删除</string>
     <string name="cancel_item_action">取消</string>
-
-
 
     <!-- DELETE USER -->
     <string name="delete_user_title">删除用户</string>

@@ -60,6 +60,7 @@
     <!-- COLLECTION PAGE -->
     <string name="collections_title">Dina samlingar</string>
     <string name="collections_items">%1$d objekt</string>
+    <string name="collection_exists">En samling med namnet "%1$s" finns redan.</string>
     <string name="search_collections">Sök samlingar</string>
     <string name="no_collections_found">Inga samlingar matchar din sökning.</string>
     <string name="new_collection_title">Ny samling</string>
@@ -76,6 +77,11 @@
     <string name="item_description_label">Beskrivning</string>
     <string name="item_collection_label">Samling:</string>
     <string name="item_add_new_collection">Ny samling</string>
+    <string name="select_collection">Välj en samling</string>
+    <string name="new_collection_button">+ Ny samling</string>
+    <string name="enter_item_name">Vänligen ange ett objektnamn.</string>
+    <string name="select_or_create_collection">Vänligen välj eller skapa en samling.</string>
+    <string name="item_exists">Ett objekt med namnet "%1$s" finns redan i denna samling.</string>
     <string name="item_save_item">Spara objekt</string>
 
     <!-- this is for the notificatoion -->
@@ -83,7 +89,6 @@
     <string name="notification_inactivity_text">Du har inte öppnat appen på 3 dagar.</string>
     <string name="notification_channel_name">Keepr Påminnelser</string>
     <string name="notification_channel_description">Aviseringar som påminner dig om dina samlingar</string>
-
 
     <!-- ITEM PAGE -->
     <string name="items_title">Objekt</string>
