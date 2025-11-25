@@ -1,5 +1,6 @@
 package com.example.keepr.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -39,13 +40,13 @@ fun AddScreen(
     padding: PaddingValues,
     onSaved:(Long) ->Unit,
     initialCollectionId: Long?
-
 ) {
     val context = LocalContext.current
     val vm: AddViewModel = viewModel()
     val collections by vm.collections.collectAsState()
     val ctx = LocalContext.current
     var selectedImageUri by remember { mutableStateOf<String?>(null) }
+
     val openImagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
         onResult = { uri ->
@@ -67,7 +68,6 @@ fun AddScreen(
     var selectedCollection by remember { mutableStateOf<CollectionEntity?>(null) }
     var showDialog by remember { mutableStateOf(false) }
     var newCollectionName by remember { mutableStateOf(TextFieldValue("")) }
-    val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
 
@@ -76,6 +76,7 @@ fun AddScreen(
             selectedCollection = collections.find { it.collectionId == initialCollectionId }
         }
     }
+
     var pendingNewCollectionTitle by remember { mutableStateOf<String?>(null) }
     LaunchedEffect(collections, pendingNewCollectionTitle) {
         val wanted = pendingNewCollectionTitle
@@ -87,6 +88,7 @@ fun AddScreen(
             }
         }
     }
+
     if (showDialog) {
         AlertDialog(
             onDismissRequest = {
@@ -113,19 +115,22 @@ fun AddScreen(
                             scope.launch {
                                 when (val result = vm.addCollection(title)) {
 
-                                    is AddResult.Success -> {
-                                    }
+                                    is AddResult.Success -> Unit
 
                                     is AddResult.Duplicate -> {
-                                        snackbarHostState.showSnackbar(
-                                            "A collection named \"$title\" already exists."
-                                        )
+                                        Toast.makeText(
+                                            context,
+                                            "A collection named \"$title\" already exists.",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
 
                                     is AddResult.NoUser -> {
-                                        snackbarHostState.showSnackbar(
-                                            "No user is signed in."
-                                        )
+                                        Toast.makeText(
+                                            context,
+                                            "No user is signed in.",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                 }
                             }
@@ -156,7 +161,6 @@ fun AddScreen(
                 )
             )
         },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.background,
         content = { innerPadding ->
             Column(
@@ -164,11 +168,12 @@ fun AddScreen(
                     .padding(padding)
                     .padding(innerPadding)
                     .padding(16.dp)
-                    .verticalScroll(scrollState)   // SCROLL ENABLED
-                    .fillMaxWidth(),               // do NOT fill height
+                    .verticalScroll(scrollState)
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                //  Bilde
+
+                // Image picker
                 Box(
                     modifier = Modifier
                         .size(150.dp)
@@ -196,6 +201,7 @@ fun AddScreen(
                 }
 
                 Spacer(Modifier.height(20.dp))
+
                 OutlinedTextField(
                     value = itemName,
                     onValueChange = { itemName = it },
@@ -203,6 +209,7 @@ fun AddScreen(
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
+
                 Spacer(Modifier.height(12.dp))
 
                 OutlinedTextField(
@@ -216,10 +223,9 @@ fun AddScreen(
                     maxLines = 8
                 )
 
-
                 Spacer(Modifier.height(12.dp))
 
-                //Collection dropdown
+                // Collection selector
                 Text(
                     text = stringResource(R.string.item_collection_label),
                     style = MaterialTheme.typography.labelLarge,
@@ -277,14 +283,18 @@ fun AddScreen(
                     onClick = {
                         when {
                             itemName.text.isBlank() -> {
-                                scope.launch {
-                                    snackbarHostState.showSnackbar(message = context.getString(R.string.enter_item_name))
-                                }
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.enter_item_name),
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                             selectedCollection == null -> {
-                                scope.launch {
-                                    snackbarHostState.showSnackbar(message = context.getString(R.string.select_or_create_collection))
-                                }
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.select_or_create_collection),
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                             else -> {
                                 val cid = selectedCollection!!.collectionId
@@ -301,12 +311,14 @@ fun AddScreen(
                                             onSaved(cid)
                                         }
                                         AddItemResult.Duplicate -> {
-                                            snackbarHostState.showSnackbar(
-                                                message = context.getString(
+                                            Toast.makeText(
+                                                context,
+                                                context.getString(
                                                     R.string.item_exists,
                                                     itemName.text.trim()
-                                                )
-                                            )
+                                                ),
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                         }
                                     }
                                 }
@@ -318,8 +330,6 @@ fun AddScreen(
                 ) {
                     Text(stringResource(R.string.item_save_item))
                 }
-
-
             }
         }
     )
