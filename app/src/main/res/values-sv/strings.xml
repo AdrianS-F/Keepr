@@ -82,6 +82,10 @@
     <string name="enter_item_name">Vänligen ange ett objektnamn.</string>
     <string name="select_or_create_collection">Vänligen välj eller skapa en samling.</string>
     <string name="item_exists">Ett objekt med namnet "%1$s" finns redan i denna samling.</string>
+    <string name="edit_item_title">Redigera objekt</string>
+    <string name="item_name_label_short">Namn</string>
+    <string name="item_description_label_short">Beskrivning</string>
+    <string name="change_photo">Byt bild</string>
     <string name="item_save_item">Spara objekt</string>
 
     <!-- this is for the notificatoion -->

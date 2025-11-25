@@ -98,8 +98,6 @@ fun ItemsScreen(
     )
 
 
-
-
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -398,20 +396,20 @@ private fun EditItemDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Edit item") },
+        title = { Text(stringResource(R.string.edit_item_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Name") },
+                    label = { Text(stringResource(R.string.item_name_label_short)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                         value = notes,
                 onValueChange = { notes = it },
-                label = { Text("Description") },
+                label = { Text(stringResource(R.string.item_description_label_short)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 100.dp, max = 200.dp),
@@ -419,16 +417,17 @@ private fun EditItemDialog(
                 )
 
                 TextButton(onClick = onChangeImage) {
-                    Text("Change photo")
+                    Text(stringResource(R.string.change_photo))
                 }
             }
         },
         confirmButton = {
             TextButton(onClick = {
                 if (name.isNotBlank()) onSave(name, notes.ifBlank { null }) else onDismiss()
-            }) { Text(stringResource(R.string.save_buttoon))}
+            }) { Text(stringResource(R.string.save_button))}
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } }
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel_button)) } }
+
 
     )
 }

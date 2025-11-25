@@ -82,6 +82,10 @@
     <string name="enter_item_name">Por favor ingresa un nombre de ítem.</string>
     <string name="select_or_create_collection">Por favor selecciona o crea una colección.</string>
     <string name="item_exists">Ya existe un ítem llamado "%1$s" en esta colección.</string>
+    <string name="edit_item_title">Editar elemento</string>
+    <string name="item_name_label_short">Nombre</string>
+    <string name="item_description_label_short">Descripción</string>
+    <string name="change_photo">Cambiar foto</string>
     <string name="item_save_item">Guardar elemento</string>
 
     <!-- this is for the notificatoion -->
