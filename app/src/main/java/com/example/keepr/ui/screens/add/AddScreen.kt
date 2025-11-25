@@ -88,6 +88,64 @@ fun AddScreen(
             }
         }
     }
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showDialog = false
+                newCollectionName = TextFieldValue("")
+            },
+            title = { Text(stringResource(R.string.new_collection_title)) },
+            text = {
+                OutlinedTextField(
+                    value = newCollectionName,
+                    onValueChange = { newCollectionName = it },
+                    label = { Text(stringResource(R.string.collection_name_label)) },
+                    singleLine = true
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val title = newCollectionName.text.trim()
+                        if (title.isNotEmpty()) {
+                            showDialog = false
+                            newCollectionName = TextFieldValue("")
+                            pendingNewCollectionTitle = title
+                            scope.launch {
+                                when (val result = vm.addCollection(title)) {
+
+                                    is com.example.keepr.ui.viewmodel.AddResult.Success -> {
+                                    }
+
+                                    is com.example.keepr.ui.viewmodel.AddResult.Duplicate -> {
+                                        snackbarHostState.showSnackbar(
+                                            "A collection named \"$title\" already exists."
+                                        )
+                                    }
+
+                                    is com.example.keepr.ui.viewmodel.AddResult.NoUser -> {
+                                        snackbarHostState.showSnackbar(
+                                            "No user is signed in."
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ) {
+                    Text(stringResource(R.string.add_button))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showDialog = false
+                    newCollectionName = TextFieldValue("")
+                }) {
+                    Text(stringResource(R.string.cancel_button))
+                }
+            }
+        )
+    }
 
     Scaffold(
         // Topplinjen får riktige farger fra temaet
@@ -269,14 +327,4 @@ fun AddScreen(
             }
         }
     )
-
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = { Text("New Collection") },
-            text = { /* ... */ },
-            confirmButton = { /* ... */ },
-            dismissButton = { /* ... */ }
-        )
-    }
 }
