@@ -62,6 +62,7 @@
     <!-- THIS IS FOR THE COLLECTION PAGE -->
     <string name="collections_title">Dine samlinger</string>
     <string name="collections_items">%1$d gjendstand(er)</string>
+    <string name="collection_exists">En samling med navnet "%1$s" finnes allerede.</string>
     <string name="search_collections">Søk i samlinger</string>
     <string name="no_collections_found">Ingen samlinger samsvarer med søket ditt.</string>
     <string name="new_collection_title">Ny samling</string>
@@ -78,6 +79,11 @@
     <string name="item_description_label">Beskrivelse</string>
     <string name="item_collection_label">Samling:</string>
     <string name="item_add_new_collection">Ny samling</string>
+    <string name="select_collection">Velg en samling</string>
+    <string name="new_collection_button">+ Ny samling</string>
+    <string name="enter_item_name">Vennligst skriv inn et varenavn.</string>
+    <string name="select_or_create_collection">Vennligst velg eller opprett en samling.</string>
+    <string name="item_exists">Et element med navnet "%1$s" finnes allerede i denne samlingen.</string>
     <string name="item_save_item">Lagre gjenstand</string>
 
     <!-- this is for the notificatoion -->

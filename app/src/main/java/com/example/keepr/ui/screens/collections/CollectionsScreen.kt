@@ -16,6 +16,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -35,6 +36,7 @@ fun CollectionsScreen(
     onOpen: (Long) -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
+    val context = LocalContext.current
     val vm: CollectionsViewModel = viewModel()
     val collections by vm.collections.collectAsState()
 
@@ -184,7 +186,9 @@ fun CollectionsScreen(
                                 AddResult.Duplicate -> {
                                     showCreateDialog = false
                                     newCollectionName = TextFieldValue("")
-                                    snackbarHostState.showSnackbar("A collection named \"$title\" already exists.")
+                                    snackbarHostState.showSnackbar(
+                                        message = context.getString(R.string.collection_exists, title)
+                                    )
                                 }
                                 AddResult.NoUser -> {
                                     showCreateDialog = false

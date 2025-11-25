@@ -42,6 +42,7 @@ fun AddScreen(
 
 ) {
     // ViewModel og UI-state
+    val context = LocalContext.current
     val vm: AddViewModel = viewModel()
     val collections by vm.collections.collectAsState()
     val ctx = LocalContext.current
@@ -221,7 +222,6 @@ fun AddScreen(
                 )
 
 
-
                 Spacer(Modifier.height(12.dp))
 
                 // 📂 Collection dropdown
@@ -248,7 +248,7 @@ fun AddScreen(
                             onClick = { expanded = true },
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(selectedCollection?.title ?: "Select a collection")
+                            Text(selectedCollection?.title ?: stringResource(R.string.item_add_new_collection))
                         }
                         DropdownMenu(
                             expanded = expanded,
@@ -268,7 +268,7 @@ fun AddScreen(
                             HorizontalDivider()
 
                             DropdownMenuItem(
-                                text = { Text("+ New collection") },
+                                text = { Text(stringResource(R.string.new_collection_button)) },
                                 onClick = {
                                     expanded = false
                                     showDialog = true
@@ -285,12 +285,12 @@ fun AddScreen(
                         when {
                             itemName.text.isBlank() -> {
                                 scope.launch {
-                                    snackbarHostState.showSnackbar("Please enter an item name.")
+                                    snackbarHostState.showSnackbar(message = context.getString(R.string.enter_item_name))
                                 }
                             }
                             selectedCollection == null -> {
                                 scope.launch {
-                                    snackbarHostState.showSnackbar("Please select or create a collection.")
+                                    snackbarHostState.showSnackbar(message = context.getString(R.string.select_or_create_collection))
                                 }
                             }
                             else -> {
@@ -309,7 +309,10 @@ fun AddScreen(
                                         }
                                         AddItemResult.Duplicate -> {
                                             snackbarHostState.showSnackbar(
-                                                "An item named \"${itemName.text.trim()}\" already exists in this collection."
+                                                message = context.getString(
+                                                    R.string.item_exists,
+                                                    itemName.text.trim()
+                                                )
                                             )
                                         }
                                     }
