@@ -104,7 +104,8 @@ fun ProfileScreen(onLogout: () -> Unit) {
             Text(
                 text = stringResource(R.string.profile_title),
                 color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 28.sp
             )
 
             Spacer(Modifier.height(25.dp))
