@@ -18,7 +18,7 @@ import com.example.keepr.ui.navigation.NavRoute
 import com.example.keepr.ui.screens.AddScreen
 import com.example.keepr.ui.screens.SignInScreen
 import com.example.keepr.ui.screens.SignUpScreen
-import com.example.keepr.ui.screens.CollectionsScreen
+import com.example.keepr.ui.screens.collections.CollectionsScreen
 import com.example.keepr.ui.screens.ItemsScreen
 import com.example.keepr.ui.screens.ProfileScreen
 import com.example.keepr.ui.viewmodel.AuthViewModel
@@ -112,7 +112,6 @@ fun KeeprApp(
                     onOpen = { collectionId ->
                         navController.navigate(NavRoute.Items.makeRoute(collectionId))
                     },
-                    snackbarHostState = appSnackbarHostState
 
                 )
             }
@@ -135,12 +134,11 @@ fun KeeprApp(
                     onSaved = { cid ->
                         navController.popBackStack()
 
-                        navController.navigate(NavRoute.Items.makeRoute(cid)) {
-                            launchSingleTop = true
-                        }
+                        navController.navigate(NavRoute.Items.makeRoute(cid))
                     }
                 )
             }
+
 
 
 
