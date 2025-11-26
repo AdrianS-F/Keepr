@@ -83,6 +83,10 @@
     <string name="enter_item_name">Please enter an item name.</string>
     <string name="select_or_create_collection">Please select or create a collection.</string>
     <string name="item_exists">An item named "%1$s" already exists in this collection.</string>
+    <string name="edit_item_title">Edit item</string>
+    <string name="item_name_label_short">Name</string>
+    <string name="item_description_label_short">Description</string>
+    <string name="change_photo">Change photo</string>
     <string name="item_save_item">Save item</string>
 
     <!-- this is for the notificatoion -->

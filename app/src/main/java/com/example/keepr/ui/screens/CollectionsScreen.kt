@@ -1,5 +1,6 @@
 package com.example.keepr.ui.screens.collections
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,28 +18,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.keepr.R
 import com.example.keepr.data.CollectionWithCount
 import com.example.keepr.ui.viewmodel.AddResult
 import com.example.keepr.ui.viewmodel.CollectionsViewModel
 import kotlinx.coroutines.launch
-import androidx.compose.ui.res.stringResource
-import com.example.keepr.R
-
-
 
 @Composable
 fun CollectionsScreen(
     padding: PaddingValues,
-    onOpen: (Long) -> Unit,
-    snackbarHostState: SnackbarHostState
+    onOpen: (Long) -> Unit
 ) {
-    val context = LocalContext.current
     val vm: CollectionsViewModel = viewModel()
     val collections by vm.collections.collectAsState()
+
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     var query by rememberSaveable { mutableStateOf("") }
 
@@ -58,14 +58,12 @@ fun CollectionsScreen(
     var newCollectionName by remember { mutableStateOf(TextFieldValue("")) }
     var pendingDeleteId by remember { mutableStateOf<Long?>(null) }
     var pendingNewCollectionTitle by remember { mutableStateOf<String?>(null) }
-    val scope = rememberCoroutineScope()
 
     LaunchedEffect(collections, pendingNewCollectionTitle) {
         if (pendingNewCollectionTitle != null) {
             pendingNewCollectionTitle = null
         }
     }
-
 
     Box(
         modifier = Modifier
@@ -92,9 +90,7 @@ fun CollectionsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 label = {
-                    Text(
-                        text = stringResource(R.string.search_collections)
-                    )
+                    Text(text = stringResource(R.string.search_collections))
                 },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 trailingIcon = {
@@ -156,13 +152,13 @@ fun CollectionsScreen(
         }
     }
 
-
+    // Create collection dialog
     if (showCreateDialog) {
         AlertDialog(
             onDismissRequest = {
                 showCreateDialog = false
                 newCollectionName = TextFieldValue("")
-               },
+            },
             title = { Text(text = stringResource(R.string.new_collection_title)) },
             text = {
                 OutlinedTextField(
@@ -186,14 +182,20 @@ fun CollectionsScreen(
                                 AddResult.Duplicate -> {
                                     showCreateDialog = false
                                     newCollectionName = TextFieldValue("")
-                                    snackbarHostState.showSnackbar(
-                                        message = context.getString(R.string.collection_exists, title)
-                                    )
+                                    Toast.makeText(
+                                        context,
+                                        "A collection named \"$title\" already exists.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                                 AddResult.NoUser -> {
                                     showCreateDialog = false
                                     newCollectionName = TextFieldValue("")
-                                    snackbarHostState.showSnackbar("No user is signed in.")
+                                    Toast.makeText(
+                                        context,
+                                        "No user is signed in.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                         }
@@ -209,6 +211,7 @@ fun CollectionsScreen(
         )
     }
 
+    // Delete collection confirm dialog
     pendingDeleteId?.let { id ->
         AlertDialog(
             onDismissRequest = { pendingDeleteId = null },
@@ -221,7 +224,9 @@ fun CollectionsScreen(
                 }) { Text(stringResource(R.string.delete_button)) }
             },
             dismissButton = {
-                TextButton(onClick = { pendingDeleteId = null }) { Text(stringResource(R.string.cancel_button)) }
+                TextButton(onClick = { pendingDeleteId = null }) {
+                    Text(stringResource(R.string.cancel_button))
+                }
             }
         )
     }
@@ -270,7 +275,6 @@ private fun CollectionCard(
                     Icon(
                         imageVector = Icons.Default.MoreVert,
                         contentDescription = "More options",
-                        // FIKS 7: Ikonfargen må også passe på 'surface'.
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }

@@ -1,4 +1,4 @@
-package com.example.keepr.ui.screens.profile
+package com.example.keepr.ui.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -38,7 +38,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import coil.compose.rememberAsyncImagePainter
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-
+import androidx.compose.ui.graphics.vector.ImageVector
 
 
 @Composable
@@ -71,40 +71,35 @@ fun ProfileScreen(onLogout: () -> Unit) {
         }
     )
 
-    // FIKS: Gjeninnfører den todelte bakgrunnen med korrekte temafarger
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        // Nederste lag: Hovedbakgrunnen for appen
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         )
 
-        // Øverste lag: En dekorativ boks med en dusere farge
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(180.dp)
-                // Bruker en svak, gjennomsiktig versjon av hovedfargen for en fin effekt
                 .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
         )
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 60.dp, bottom = 120.dp) // Justert padding
+                .padding(top = 60.dp, bottom = 120.dp)
                 .verticalScroll(rememberScrollState())
                 .align(Alignment.TopCenter),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            // The actual title for the page "profile"
             Text(
                 text = stringResource(R.string.profile_title),
                 color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 28.sp
             )
 
             Spacer(Modifier.height(25.dp))
@@ -126,7 +121,6 @@ fun ProfileScreen(onLogout: () -> Unit) {
 
             Spacer(Modifier.height(25.dp))
 
-            // Teksten bruker nå riktig farge for bakgrunnen
             Text(
                 text = user?.let { "${it.firstName} ${it.lastName}" } ?: "",
                 color = MaterialTheme.colorScheme.onBackground,
@@ -143,7 +137,6 @@ fun ProfileScreen(onLogout: () -> Unit) {
 
             Spacer(Modifier.height(24.dp))
 
-            // Kortet får nå korrekt `surface`-farge
             Card(
                 shape = RoundedCornerShape(22.dp),
                 colors = CardDefaults.cardColors(
@@ -162,7 +155,6 @@ fun ProfileScreen(onLogout: () -> Unit) {
                     val contentColor = MaterialTheme.colorScheme.onSurface
                     val dividerColor = contentColor.copy(alpha = 0.2f)
 
-                    // Bruker den gjenbrukbare ProfileRow for renere kode
                     ProfileRow(
                         text = stringResource(R.string.change_profile_picture),
                         icon = Icons.Outlined.PhotoCamera,
@@ -226,7 +218,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
 
             Spacer(Modifier.height(40.dp))
 
-            // Slett-knappen bruker nå korrekte farger fra temaet
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -273,7 +265,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
 @Composable
 private fun ProfileRow(
     text: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     contentColor: Color,
     onClick: () -> Unit
 ) {

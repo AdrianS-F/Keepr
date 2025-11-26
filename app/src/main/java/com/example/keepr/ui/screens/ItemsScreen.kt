@@ -1,11 +1,11 @@
-package com.example.keepr.ui.screens.items
+package com.example.keepr.ui.screens
 
 
+import android.app.Application
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -45,7 +45,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import coil.compose.rememberAsyncImagePainter
 
 
@@ -56,7 +55,7 @@ fun ItemsScreen(
     onBack: () -> Unit,
     navController: NavHostController
 ) {
-    val app = LocalContext.current.applicationContext as android.app.Application
+    val app = LocalContext.current.applicationContext as Application
     val vm: ItemsViewModel = viewModel(factory = ItemsViewModelFactory(app, collectionId))
     val items by vm.items.collectAsState()
     val ctx = LocalContext.current
@@ -97,8 +96,6 @@ fun ItemsScreen(
             }
         }
     )
-
-
 
 
     Surface(
@@ -399,20 +396,20 @@ private fun EditItemDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Edit item") },
+        title = { Text(stringResource(R.string.edit_item_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Name") },
+                    label = { Text(stringResource(R.string.item_name_label_short)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                         value = notes,
                 onValueChange = { notes = it },
-                label = { Text("Description") },
+                label = { Text(stringResource(R.string.item_description_label_short)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 100.dp, max = 200.dp),
@@ -420,16 +417,17 @@ private fun EditItemDialog(
                 )
 
                 TextButton(onClick = onChangeImage) {
-                    Text("Change photo")
+                    Text(stringResource(R.string.change_photo))
                 }
             }
         },
         confirmButton = {
             TextButton(onClick = {
                 if (name.isNotBlank()) onSave(name, notes.ifBlank { null }) else onDismiss()
-            }) { Text(stringResource(R.string.save_buttoon))}
+            }) { Text(stringResource(R.string.save_button))}
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } }
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel_button)) } }
+
 
     )
 }
